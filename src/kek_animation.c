@@ -37,3 +37,4 @@ void animation_set_loop(struct animation *animation, bool loop)
 {
     animation->loop = loop;
 }
+

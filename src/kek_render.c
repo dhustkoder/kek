@@ -11,7 +11,7 @@ struct vertex {
     union vec4 colormask;
 };
 
-static void sprite_fill(union vec2 position, union vec2 size, union vec3 rotation, struct vertex *out);
+static void sprite_fill(union vec2 position, union vec2 size, union vec3 rotation, union vec2 uv0, union vec2 uv1, struct vertex *out);
 static void render_default_draw(struct render *render,  struct camera *camera, struct entity *entity, void *ctx);
 
 void render_init(size_t capacity)
@@ -73,16 +73,33 @@ void render_default_draw(struct render *render, struct camera *camera, struct en
 
     size = vec3_mulf(size, 4.f);
     struct vertex vertices[6]; 
-    sprite_fill(entity->position.xy, size.xy, entity->rotation, vertices);
-
 
     struct animation_frame *frame = entity_get_animation_frame(entity);
 
     if(frame)
+    {
+        struct texture *tex = frame->texture;
+        union vec2 uv0;
+        union vec2 uv1;
+        // y is flipped
+        float y = tex->height - frame->y - frame->height;
+
+        uv0.x = (float)frame->x / (float)tex->width;
+        uv0.y = (float)y / (float)tex->height;
+        uv1.x = (float)(frame->x + frame->width) / (float)tex->width;
+        uv1.y = (float)(y + frame->height) / (float)tex->height;
+        
+        sprite_fill(entity->position.xy, size.xy, entity->rotation, uv0, uv1, vertices);
         texture_bind(frame->texture, 0);
+    }
 
     else if(entity->texture)
+    {
+        const union vec2 uv0 = {0.0f, 0.0f};
+        const union vec2 uv1 = {1.0f, 1.0f};
+        sprite_fill(entity->position.xy, size.xy, entity->rotation, uv0, uv1, vertices);
         texture_bind(entity->texture, 0);
+    }
 
 
     vertex_buffer_fill(vb, (uint8_t *)vertices, sizeof(vertices));
@@ -107,7 +124,7 @@ void render_default_draw(struct render *render, struct camera *camera, struct en
     vertex_buffer_draw(vb, 0, vb->size/sizeof(struct vertex));
 }
 
-static void sprite_fill(union vec2 position, union vec2 size, union vec3 rotation, struct vertex *out)
+static void sprite_fill(union vec2 position, union vec2 size, union vec3 rotation, union vec2 uv0, union vec2 uv1, struct vertex *out)
 {
     union vec2 p0 = position;
     union vec2 p1 = vec2_add(p0, size);
@@ -119,8 +136,6 @@ static void sprite_fill(union vec2 position, union vec2 size, union vec3 rotatio
 	const float y1 =  hs.y; 
 	const float z0 = 0.0f;
 	const float z1 = 0.0f; 
-    const union vec2 uv0 = {0.0f, 0.0f};
-    const union vec2 uv1 = {1.0f, 1.0f};
 
 	const union vec4 positions[] = { 
 		{x0, y0, z0, 0}, {x1, y0, z0, 0}, {x1, y1, z0, 0}, 

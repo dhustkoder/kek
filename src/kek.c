@@ -111,6 +111,7 @@ static int kek_run(void)
         struct scene *scene = scene_get_active();
 
         scene_update(scene);
+
         scene_draw(scene);
 
         window_swap_buffers();
