@@ -111,7 +111,6 @@ void render_default_draw(struct render *render, struct camera *camera, struct en
         gl_uint uid = gl_get_uniform_location(shader, "u_texture");
         gl_uniform1i(uid, 0);
     }
-
     {
         camera_get_ortho_mvp(camera, &mvp);
         gl_uint uid = gl_get_uniform_location(shader, "u_mvp");

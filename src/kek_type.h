@@ -354,6 +354,28 @@ struct render {
     void *ctx;
 };
 
+
+struct material_property
+{
+    int type;
+    const char *name;
+    union {
+        union vec2 vec2;
+        union vec3 vec3;
+        union vec4 vec4;
+        struct mat4 mat4;
+        struct texture *texture;
+        int i;
+        unsigned int ui;
+        float f;
+    };
+};
+#define MAX_MATERIAL_PROPERTIES 16
+struct material {
+    struct material_property properties[MAX_MATERIAL_PROPERTIES];
+    size_t count;
+};
+
 struct shader {
     GLuint shader;
 };

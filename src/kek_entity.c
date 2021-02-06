@@ -78,7 +78,7 @@ void entity_update(struct entity *e)
             {
                 e->animation_frame_time -= anim->frames[idx].duration * e->animation_speed;
                 
-                if(idx < anim->frame_count - 1)
+                if(idx < anim->frame_count - 2)
                     ++idx;
                 else if(anim->loop)
                     idx = 0;

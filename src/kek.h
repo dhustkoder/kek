@@ -23,13 +23,13 @@ int  config_geti(enum config_type type);
 // KEK WINDOW 
 //**********************************************************
 int window_init(void);
-int  window_set_title(const char *title);
-int  window_set_size(unsigned int width, unsigned int height);
-int  window_get_size(unsigned int *width, unsigned int *height);
-int  window_open(const char *title, unsigned int width, unsigned int height);
+int window_set_title(const char *title);
+int window_set_size(unsigned int width, unsigned int height);
+int window_get_size(unsigned int *width, unsigned int *height);
+int window_open(const char *title, unsigned int width, unsigned int height);
 struct pal_window *window_get_pal(void);
-void       window_clearscreen(void);
-void       window_set_clearscreen_color(union vec4 color);
+void window_clearscreen(void);
+void window_set_clearscreen_color(union vec4 color);
 
 //**********************************************************
 // KEK LOG 
@@ -84,6 +84,15 @@ int  shader_load_buffer(struct shader *shader, const char *vert_buffer, const ch
 int  shader_free(struct shader *shader);
 int  shader_bind(struct shader *shader);
 
+
+//**********************************************************
+// KEK MATERIAL
+//**********************************************************
+void material_init(size_t capacity);
+struct material *material_create(void);
+void material_add_property(struct material *material, const struct material_property *property);
+void material_destroy(void);
+//
 //**********************************************************
 // KEK TEXTURE 
 //**********************************************************
