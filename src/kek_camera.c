@@ -1,39 +1,39 @@
 #include "kek.h"
 
-static struct mem_pool pool;
+static MemPool pool;
 
 void camera_init(size_t capacity)
 {
-    mem_pool_alloc(&pool, capacity, sizeof(struct camera));
+    mem_pool_alloc(&pool, capacity, sizeof(Camera));
 }
 
-struct camera *camera_create(void)
+Camera *camera_create(void)
 {
-    struct camera *camera = mem_pool_take(&pool);
+    Camera *camera = mem_pool_take(&pool);
     camera->zoom = 1.0f;
     camera->position = vec3_zero();
 
     return camera;
 }
 
-void camera_destroy(struct camera *camera)
+void camera_destroy(Camera *camera)
 {
     mem_pool_release(&pool, camera);
 }
 
-void camera_set_ortho_zoom(struct camera *camera, float zoom)
+void camera_set_ortho_zoom(Camera *camera, float zoom)
 {
     camera->zoom = zoom;
 }
 
-void camera_set_position(struct camera *camera, union vec3 position)
+void camera_set_position(Camera *camera, Vec3 position)
 {
     camera->position = position;
 }
 
-void camera_get_ortho_mvp(struct camera *camera, struct mat4 *mvp)
+void camera_get_ortho_mvp(Camera *camera, Mat4 *mvp)
 {
-    union vec3 position = camera->position;
+    Vec3 position = camera->position;
     float zoom = camera->zoom;
 
     unsigned int window_width = 0;
@@ -41,9 +41,9 @@ void camera_get_ortho_mvp(struct camera *camera, struct mat4 *mvp)
 
     window_get_size(&window_width, &window_height);
 
-    struct mat4 model      = mat4_identity();
-    struct mat4 view       = mat4_inverse(mat4_translate(position));
-    struct mat4 projection = ortho_projection(
+    Mat4 model      = mat4_identity();
+    Mat4 view       = mat4_inverse(mat4_translate(position));
+    Mat4 projection = ortho_projection(
                                -(float)window_width  / (zoom*2.0f), 
                                 (float)window_width  / (zoom*2.0f), 
                                -(float)window_height / (zoom*2.0f), 
@@ -56,10 +56,10 @@ void camera_get_ortho_mvp(struct camera *camera, struct mat4 *mvp)
 	*mvp = mat4_mul(*mvp, model);
 }
 
-union vec2 camera_get_mouse_position(struct camera *camera)
+Vec2 camera_get_mouse_position(Camera *camera)
 {
-    union vec2 mousepos = hid_get_mouse_position();
-    union vec2 pos = camera->position.xy;
+    Vec2 mousepos = hid_get_mouse_position();
+    Vec2 pos = camera->position.xy;
 
     unsigned int window_width = 0;
     unsigned int window_height = 0;

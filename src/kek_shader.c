@@ -3,18 +3,18 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-static struct mem_pool pool;
+static MemPool pool;
 
 static int shader_compile(GLuint shader, const char *code, char *error_buffer, size_t error_buffer_capacity);
 
 void shader_init(size_t capacity)
 {
-    mem_pool_alloc(&pool, capacity, sizeof(struct shader));
+    mem_pool_alloc(&pool, capacity, sizeof(Shader));
 }
 
-struct shader *shader_create(void)
+Shader *shader_create(void)
 {
-     struct shader *inst = mem_pool_take(&pool);
+     Shader *inst = mem_pool_take(&pool);
 
     if(inst == NULL)
         return NULL;
@@ -24,7 +24,7 @@ struct shader *shader_create(void)
     return inst;
 }
 
-void shader_destroy(struct shader *shader)
+void shader_destroy(Shader *shader)
 {
     gl_delete_program(shader->shader);
     shader->shader = 0;
@@ -32,7 +32,7 @@ void shader_destroy(struct shader *shader)
     mem_pool_release(&pool, shader);
 }
 
-int shader_load_files(struct shader *shader, const char *vert_file, const char *frag_file)
+int shader_load_files(Shader *shader, const char *vert_file, const char *frag_file)
 {
     size_t vert_size = 0;
     size_t frag_size = 0;
@@ -60,7 +60,7 @@ int shader_load_files(struct shader *shader, const char *vert_file, const char *
     return result;
 }
 
-int shader_load_buffer(struct shader *shader, const char *vert_buffer, const char *frag_buffer)
+int shader_load_buffer(Shader *shader, const char *vert_buffer, const char *frag_buffer)
 {
     static const size_t ERROR_BUFFER_CAPACITY = 2048;
     char *error_buffer;
@@ -68,8 +68,8 @@ int shader_load_buffer(struct shader *shader, const char *vert_buffer, const cha
     GLuint frag_shader;
     GLuint vert_shader;
 
-    enum pal_return vert_result;
-    enum pal_return frag_result;
+    PALReturn vert_result;
+    PALReturn frag_result;
 
     error_buffer = mem_stack_push(ERROR_BUFFER_CAPACITY); 
 
@@ -94,7 +94,7 @@ int shader_load_buffer(struct shader *shader, const char *vert_buffer, const cha
     return KEK_OK;
 }
 
-int shader_bind(struct shader *shader)
+int shader_bind(Shader *shader)
 {
     gl_use_program(shader->shader);
 }

@@ -1,16 +1,16 @@
 #include "kek.h"
 #include <assert.h>
 
-static struct mem_pool pool;
+static MemPool pool;
 
 void animation_init(size_t capacity)
 {
-    mem_pool_alloc(&pool, capacity, sizeof(struct animation));
+    mem_pool_alloc(&pool, capacity, sizeof(Animation));
 }
 
-struct animation *animation_create(void)
+Animation *animation_create(void)
 {
-    struct animation *animation = mem_pool_take(&pool);
+    Animation *animation = mem_pool_take(&pool);
 
     animation->frame_count = 0;
     animation->loop = 0;
@@ -19,12 +19,12 @@ struct animation *animation_create(void)
 
 }
 
-void animation_destroy(struct animation *animation)
+void animation_destroy(Animation *animation)
 {
     mem_pool_release(&pool, animation);
 }
 
-void animation_add_frame(struct animation *animation, struct animation_frame frame)
+void animation_add_frame(Animation *animation, AnimationFrame frame)
 {
     assert(animation->frame_count < MAX_ANIMATION_FRAMES);
 
@@ -33,7 +33,7 @@ void animation_add_frame(struct animation *animation, struct animation_frame fra
     animation->frame_count++;
 }
 
-void animation_set_loop(struct animation *animation, bool loop)
+void animation_set_loop(Animation *animation, bool loop)
 {
     animation->loop = loop;
 }

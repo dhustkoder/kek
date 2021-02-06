@@ -6,15 +6,15 @@
 #include "stb/stb_rect_pack.h"
 
 
-static struct mem_pool pool;
+static MemPool pool;
 void texture_init(size_t capacity)
 {
-    mem_pool_alloc(&pool, capacity, sizeof(struct texture));
+    mem_pool_alloc(&pool, capacity, sizeof(Texture));
 }
 
-struct texture *texture_create(void)
+Texture *texture_create(void)
 {
-     struct texture *inst = mem_pool_take(&pool);
+     Texture *inst = mem_pool_take(&pool);
      inst->width = 0;
      inst->height = 0;
      inst->loaded = false;
@@ -24,7 +24,7 @@ struct texture *texture_create(void)
      return inst;
 }
 
-void texture_destroy(struct texture *texture)
+void texture_destroy(Texture *texture)
 {
 
     gl_delete_textures(1, &texture->id);
@@ -32,7 +32,7 @@ void texture_destroy(struct texture *texture)
     mem_pool_release(&pool, texture);
 }
 
-int texture_load_file(struct texture *texture, const char *file)
+int texture_load_file(Texture *texture, const char *file)
 {
 	int w;
 	int h;
@@ -61,7 +61,7 @@ int texture_load_file(struct texture *texture, const char *file)
     return KEK_OK;
 }
 
-void texture_bind(struct texture *texture, int slot)
+void texture_bind(Texture *texture, int slot)
 {
     gl_active_texture(GL_TEXTURE0 + slot);
     gl_bind_texture(GL_TEXTURE_2D, texture->id);

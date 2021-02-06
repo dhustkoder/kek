@@ -1,26 +1,27 @@
 #include "kek.h"
 #include <string.h>
 
+typedef struct tag_node TagNode;
 
-struct tag_node
+typedef struct tag_node
 {
     uint32_t tag;
     void *data;
-    struct tag_node *next;
-};
+    TagNode *next;
+} TagNode;
 
-static struct mem_pool pool;
-static struct tag_node *root = NULL;
+static MemPool pool;
+static TagNode *root = NULL;
 
 void tag_init(size_t capacity)
 {
-    mem_pool_alloc(&pool, capacity, sizeof(struct tag_node));
+    mem_pool_alloc(&pool, capacity, sizeof(TagNode));
     root = NULL;
 }
 
 uint32_t tag_set(uint32_t tag, void *value)
 {
-     struct tag_node *node = mem_pool_take(&pool);
+     TagNode *node = mem_pool_take(&pool);
 
      node->tag = tag;
      node->data = value;
@@ -31,7 +32,7 @@ uint32_t tag_set(uint32_t tag, void *value)
 
 void *tag_get(uint32_t tag)
 {
-    struct tag_node *node = root;
+    TagNode *node = root;
 
     while(node)
     {
@@ -47,8 +48,8 @@ void *tag_get(uint32_t tag)
 }
 void tag_remove(uint32_t tag)
 {
-    struct tag_node *node = root;
-    struct tag_node *prev = NULL;
+    TagNode *node = root;
+    TagNode *prev = NULL;
 
     while(node)
     {

@@ -1,18 +1,19 @@
 #include "kek.h"
 #include <assert.h>
 
-struct keyboard_bind
+typedef struct
 {
     int alias;
     enum keyboard_key key;
-};
-static struct keyboard_bind *bindings = NULL;
+} KeyboardBind;
+
+static KeyboardBind *bindings = NULL;
 static size_t binding_count = 0;
 static size_t binding_capacity = 0;
 
 void hid_init(size_t alias_capacity)
 {
-    bindings = mem_stack_push(alias_capacity * sizeof(struct keyboard_bind));
+    bindings = mem_stack_push(alias_capacity * sizeof(KeyboardBind));
     binding_capacity = alias_capacity;
 }
 
@@ -75,7 +76,7 @@ bool hid_is_alias_pressed(int alias)
 
 bool hid_is_key_pressed(enum keyboard_key key)
 {
-    struct pal_window *window = window_get_pal();
+    PALWindow *window = window_get_pal();
 
     bool pressed = false;
 
@@ -86,7 +87,7 @@ bool hid_is_key_pressed(enum keyboard_key key)
 
 bool hid_is_mouse_button_pressed(enum mouse_button button)
 {
-    struct pal_window *window = window_get_pal();
+    PALWindow *window = window_get_pal();
 
     bool pressed = false;
 
@@ -95,11 +96,11 @@ bool hid_is_mouse_button_pressed(enum mouse_button button)
     return pressed;
 }
 
-union vec2 hid_get_mouse_position(void)
+Vec2 hid_get_mouse_position(void)
 {
-    struct pal_window *window = window_get_pal();
+    PALWindow *window = window_get_pal();
 
-    union vec2 p;
+    Vec2 p;
     unsigned int window_width;
     unsigned int window_height;
 

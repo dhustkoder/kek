@@ -4,13 +4,13 @@
 #include <assert.h>
 #include <limits.h>
 
-static uint8_t *index_to_addr(struct mem_pool *pool, size_t index)
+static uint8_t *index_to_addr(MemPool *pool, size_t index)
 {
     size_t offset = index * pool->stride;
     return &pool->buffer[offset];
 }
 
-static int32_t addr_to_index(struct mem_pool *pool, uint8_t *addr)
+static int32_t addr_to_index(MemPool *pool, uint8_t *addr)
 {
     uint8_t *start = pool->buffer;
     size_t offset = (size_t)(addr - start);
@@ -18,7 +18,7 @@ static int32_t addr_to_index(struct mem_pool *pool, uint8_t *addr)
     return (int32_t)(offset / pool->stride);
 }
 
-void mem_pool_alloc(struct mem_pool *pool, size_t capacity, size_t stride)
+void mem_pool_alloc(MemPool *pool, size_t capacity, size_t stride)
 {
     // assume each slot is 8 large,
     // for the free, use as a next offset
@@ -40,7 +40,7 @@ void mem_pool_alloc(struct mem_pool *pool, size_t capacity, size_t stride)
         *addr = i + 1;
     }
 }
-void mem_pool_free(struct mem_pool *pool)
+void mem_pool_free(MemPool *pool)
 {
     free(pool->buffer);
 
@@ -51,7 +51,7 @@ void mem_pool_free(struct mem_pool *pool)
     pool->use_count = 0;
 }
 
-void *mem_pool_take(struct mem_pool *pool)
+void *mem_pool_take(MemPool *pool)
 {
     if(pool->free_count == 0)
         return NULL;
@@ -66,7 +66,7 @@ void *mem_pool_take(struct mem_pool *pool)
 }
 
 
-void *mem_pool_release(struct mem_pool *pool, void *addr)
+void *mem_pool_release(MemPool *pool, void *addr)
 {
    size_t *head = (size_t *)addr;
    *head = pool->free_head;
@@ -77,10 +77,10 @@ void *mem_pool_release(struct mem_pool *pool, void *addr)
     pool->use_count--;
 }
 
-struct stack_header {
+typedef struct {
     void *addr;
     int32_t size;
-};
+} StackHeader;
 
 static uint8_t *stack_buffer = NULL;
 static size_t stack_capacity = 0;
@@ -94,12 +94,12 @@ void  mem_stack_init(size_t capacity)
 
 void *mem_stack_push(size_t size)
 {
-    if(stack_size + size + sizeof(struct stack_header)  > stack_capacity)
+    if(stack_size + size + sizeof(StackHeader)  > stack_capacity)
         return NULL;
 
     uint8_t *addr = &stack_buffer[stack_size];
 
-    struct stack_header header;
+    StackHeader header;
     header.addr = addr;
     header.size = size;
 
@@ -112,12 +112,12 @@ void *mem_stack_push(size_t size)
 
 void mem_stack_pop(void *addr)
 {
-    assert(stack_size >= sizeof(struct stack_header));
+    assert(stack_size >= sizeof(StackHeader));
 
-    struct stack_header *header = (struct stack_header *)&stack_buffer[stack_size - sizeof(struct stack_header)];
+    StackHeader *header = (StackHeader *)&stack_buffer[stack_size - sizeof(StackHeader)];
     
     assert(header->addr == addr);
-    stack_size -= sizeof(struct stack_header) + header->size;
+    stack_size -= sizeof(StackHeader) + header->size;
 }
 
 void mem_stack_free(void)

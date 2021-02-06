@@ -3,7 +3,7 @@
 #include "glad/gl.h"
 #include "GLFW/glfw3.h"
 
-struct pal_window 
+typedef struct pal_window 
 {
     GLFWwindow *glfw;
-};
+} PALWindow;

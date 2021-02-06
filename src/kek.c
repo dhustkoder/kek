@@ -36,7 +36,7 @@ float kek_get_target_frame_interval(void)
 
 static int kek_init(int argc, char **argv)
 {
-    enum pal_return pal_ret;
+    PALReturn pal_ret;
 
     framerate_fps = 60;
     log("initializing...");
@@ -108,7 +108,7 @@ static int kek_run(void)
         frame_time = pal_time_live();
         window_clearscreen();
         kek_user_update();
-        struct scene *scene = scene_get_active();
+        Scene *scene = scene_get_active();
 
         scene_update(scene);
 

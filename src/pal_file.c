@@ -2,7 +2,7 @@
 #include <string.h>
 #include <stdio.h>
 
-enum pal_return pal_file_to_buffer(const char *file, uint8_t *buffer, size_t *size_bytes, int capacity)
+PALReturn pal_file_to_buffer(const char *file, uint8_t *buffer, size_t *size_bytes, int capacity)
 {
 	int filesize = 0;
 	int copysize = 0;
@@ -43,7 +43,7 @@ enum pal_return pal_file_to_buffer(const char *file, uint8_t *buffer, size_t *si
     return PAL_OK;
 }
 
-enum pal_return pal_file_get_size(const char *file, size_t *size)
+PALReturn pal_file_get_size(const char *file, size_t *size)
 {
 	FILE *fptr = fopen(file, "rb");
 

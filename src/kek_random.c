@@ -39,9 +39,9 @@ float random_get_rangef(float min, float max)
 	float range = (max - min) * percent + min;
 	return range;
 }
-union vec2 random_get_range_v2(union vec2 min, union vec2 max)
+Vec2 random_get_range_v2(Vec2 min, Vec2 max)
 {
-	union vec2 val;
+	Vec2 val;
 	
 	val.x = random_get_rangef(min.x, max.x);
 	val.y = random_get_rangef(min.x, max.y);
@@ -50,9 +50,9 @@ union vec2 random_get_range_v2(union vec2 min, union vec2 max)
 	
 }
 
-union vec3 random_get_range_v3(union vec3 min, union vec3 max)
+Vec3 random_get_range_v3(Vec3 min, Vec3 max)
 {
-	union vec3 val;
+	Vec3 val;
 	
 	val.x = random_get_rangef(min.x, max.x);
 	val.y = random_get_rangef(min.x, max.y);
@@ -61,9 +61,9 @@ union vec3 random_get_range_v3(union vec3 min, union vec3 max)
 	return val;
 }
 
-union vec4 random_get_range_v4(union vec4 min, union vec4 max)
+Vec4 random_get_range_v4(Vec4 min, Vec4 max)
 {
-	union vec4 val;
+	Vec4 val;
 	
 	val.x = random_get_rangef(min.x, max.x);
 	val.y = random_get_rangef(min.x, max.y);

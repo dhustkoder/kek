@@ -12,7 +12,7 @@
 #define cp_shape_set_filter cpShapeSetFilter
 #define cp_circle_shape_new cpCircleShapeNew
 #define cp_space_bb_query cpSpaceBBQuery
-#define cp_space_add_collision_handler cpSpaceAddstruct collision_handler
+#define cp_space_add_collision_handler cpSpaceAddCollisionHandler
 #define cp_space_add_constraint cpSpaceAddConstraint
 #define cp_space_add_shape cpSpaceAddShape
 #define cp_space_add_body cpSpaceAddBody
@@ -24,22 +24,23 @@
 #define cp_damped_spring_new cpDampedSpringNew
 #define cp_pin_joint_set_dist cpPinJointSetDist
 
-typedef void (*EntityQueryFn)(struct entity *e, void *ctx);
+typedef void (*EntityQueryFn)(Entity *e, void *ctx);
+typedef struct collision_handler CollisionHandler;
 
-struct entity_query_context
+typedef struct 
 {
     EntityQueryFn fn;
     void *user_data;
-};
+} EntityQueryContext;
 
-struct collision_handler
+typedef struct collision_handler
 {
-    struct collision_handler *handler;
+    CollisionHandler *handler;
     uint32_t category_a;
     uint32_t category_b;
     void *ctx;
     KEKCollisionFn fn;
-};
+} CollisionHandler;
 
 #define MAX_RENDER_SHAPES 1024
 #define MAX_COLLIDE_HANDLERS 1024 
@@ -47,7 +48,7 @@ struct collision_handler
 static cpSpace *space;
 static cpShape *render_shapes[MAX_RENDER_SHAPES];
 static int32_t render_shape_count = 0;
-static struct collision_handler collide_handlers[MAX_COLLIDE_HANDLERS];
+static CollisionHandler collide_handlers[MAX_COLLIDE_HANDLERS];
 static int32_t collide_handler_count = 0;
 
 void physics_init(void)
@@ -63,7 +64,7 @@ void physics_simulate(void)
 }
 
 #if 0
-void physics_create_circle(struct entity *entity, union vec3 position, float radius, uint32_t type)
+void physics_create_circle(Entity *entity, Vec3 position, float radius, uint32_t type)
 {
     cpFloat moment = cp_moment_for_circle(0.1f, 0.0f, radius, cpvzero);
     cpBody *body = cp_body_new(10.f, moment);
@@ -81,70 +82,70 @@ void physics_create_circle(struct entity *entity, union vec3 position, float rad
 }
 #endif
 
-struct physics_body *physics_create_polygon_shape(union vec3 *positions, size_t count, uint32_t type)
+PhysicsBody *physics_create_polygon_shape(Vec3 *positions, size_t count, uint32_t type)
 {
     return NULL;
 }
 
-void physics_destroy_body(struct physics_body *body)
+void physics_destroy_body(PhysicsBody *body)
 {
 }
 
-struct physics_constraint *physics_add_damped_spring(struct physics_body *a, struct physics_body *b, union vec2 anchor_a, union vec2 anchor_b, float rest_length, float stiffness, float damping)
+PhysicsConstraint *physics_add_damped_spring(PhysicsBody *a, PhysicsBody *b, Vec2 anchor_a, Vec2 anchor_b, float rest_length, float stiffness, float damping)
 {
     return NULL;
 }
         
-struct physics_constraint *physics_add_pin_joint(struct physics_body *a, struct physics_body *b, union vec2 anchor_a, union vec2 anchor_b, float dist)
+PhysicsConstraint *physics_add_pin_joint(PhysicsBody *a, PhysicsBody *b, Vec2 anchor_a, Vec2 anchor_b, float dist)
 {
     return NULL;
 }
 
-struct physics_constraint *physics_add_pivot_joint(struct physics_body *a, struct physics_body *b, union vec2 anchor_a, union vec2 anchor_b)
+PhysicsConstraint *physics_add_pivot_joint(PhysicsBody *a, PhysicsBody *b, Vec2 anchor_a, Vec2 anchor_b)
 {
     return NULL;
 }
 
-struct physics_constraint *physics_add_rotary_limit_joint(struct physics_body *a, struct physics_body *b, float min, float max)
+PhysicsConstraint *physics_add_rotary_limit_joint(PhysicsBody *a, PhysicsBody *b, float min, float max)
 {
     return NULL;
 }
 
-void physics_set_filter(struct physics_body *e, uint32_t group, uint32_t category, uint32_t mask)
+void physics_set_filter(PhysicsBody *e, uint32_t group, uint32_t category, uint32_t mask)
 {
 }
 
-void physics_set_mass(struct physics_body *e, float mass)
+void physics_set_mass(PhysicsBody *e, float mass)
 {
 }
 
-void physics_set_force(struct physics_body *e, union vec2 force)
+void physics_set_force(PhysicsBody *e, Vec2 force)
 {
 }
 
-void physics_set_torque(struct physics_body *e, float torque)
+void physics_set_torque(PhysicsBody *e, float torque)
 {
 }
 
-void physics_set_angle(struct physics_body *e, float angle)
+void physics_set_angle(PhysicsBody *e, float angle)
 {
 }
 
-void physics_body_set_position(struct physics_body *e, union vec2 pos)
+void physics_body_set_position(PhysicsBody *e, Vec2 pos)
 {
 }
 
-union vec2 physics_body_get_position(struct physics_body *e)
+Vec2 physics_body_get_position(PhysicsBody *e)
 {
     return vec2(0,0);
 }
 
-float physics_body_get_angle(struct physics_body *e)
+float physics_body_get_angle(PhysicsBody *e)
 {
     return 0.0;
 }
 
-union vec2 physics_get_center(struct physics_body *e)
+Vec2 physics_get_center(PhysicsBody *e)
 {
     return vec2(0,0);
 }

@@ -1,19 +1,19 @@
 #include "kek.h"
 
-static struct mem_pool pool;
-static struct mem_pool pool_entities;
+static MemPool pool;
+static MemPool pool_entities;
 
-static struct scene *active_scene = NULL;
-static struct camera default_camera = {0,0,0.9};
+static Scene *active_scene = NULL;
+static Camera default_camera = {0,0,0.9};
 void scene_init(size_t capacity)
 {
-    mem_pool_alloc(&pool, capacity, sizeof(struct scene));
-    mem_pool_alloc(&pool, capacity, sizeof(struct scene));
+    mem_pool_alloc(&pool, capacity, sizeof(Scene));
+    mem_pool_alloc(&pool, capacity, sizeof(Scene));
 }
 
-struct scene *scene_create(void)
+Scene *scene_create(void)
 {
-     struct scene *scene = mem_pool_take(&pool);
+     Scene *scene = mem_pool_take(&pool);
 
      scene->entities = NULL;
      scene->entity_count = 0;
@@ -23,7 +23,7 @@ struct scene *scene_create(void)
      return scene;
 }
 
-void scene_destroy(struct scene *scene)
+void scene_destroy(Scene *scene)
 {
     render_destroy(scene->render_default);
 
@@ -33,37 +33,37 @@ void scene_destroy(struct scene *scene)
     mem_pool_release(&pool, scene);
 }
 
-void scene_set_active(struct scene *scene)
+void scene_set_active(Scene *scene)
 {
     active_scene = scene;
 }
 
-struct scene *scene_get_active(void)
+Scene *scene_get_active(void)
 {
     return active_scene;
 }
 
 
-void scene_set_camera(struct scene *scene, struct camera *camera)
+void scene_set_camera(Scene *scene, Camera *camera)
 {
     scene->camera = camera;
 }
 
-struct camera *scene_get_camera(struct scene *scene)
+Camera *scene_get_camera(Scene *scene)
 {
     return scene->camera;
 }
 
-void scene_add_entity(struct scene *scene, struct entity *entity)
+void scene_add_entity(Scene *scene, Entity *entity)
 {
     entity->scene_next_entity = scene->entities;
     scene->entities = entity;
     scene->entity_count++;
 }
 
-void scene_update(struct scene *scene)
+void scene_update(Scene *scene)
 {
-    struct entity *entity = scene->entities;
+    Entity *entity = scene->entities;
 
     while(entity)
     {
@@ -73,14 +73,14 @@ void scene_update(struct scene *scene)
     }
 }
 
-void scene_garbage_collect(struct scene *scene)
+void scene_garbage_collect(Scene *scene)
 {
-    struct entity *entity = scene->entities;
-    struct entity *prev = NULL;
+    Entity *entity = scene->entities;
+    Entity *prev = NULL;
 
     while(entity)
     {
-        struct entity *next = entity->scene_next_entity;
+        Entity *next = entity->scene_next_entity;
 
         if(entity->destroy)
         {
@@ -100,13 +100,13 @@ void scene_garbage_collect(struct scene *scene)
     }
 }
 
-void scene_draw(struct scene *scene)
+void scene_draw(Scene *scene)
 {
     // cull all objects
     // sort objects
     // order by material
     // write to vbos and keep track of each Draw
-    struct entity *entity = scene->entities;
+    Entity *entity = scene->entities;
 
     int window_width;
     int window_height;
@@ -136,9 +136,9 @@ void scene_draw(struct scene *scene)
         }
     }
 }
-void scene_query_entities_aabb(struct scene *scene, union vec2 pos, union vec2 size, KEKSceneQueryEntityFn fn, void *ctx)
+void scene_query_entities_aabb(Scene *scene, Vec2 pos, Vec2 size, KEKSceneQueryEntityFn fn, void *ctx)
 {
-    struct entity *entity = scene->entities;
+    Entity *entity = scene->entities;
 
     while(entity)
     {

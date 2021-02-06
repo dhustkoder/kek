@@ -4,14 +4,14 @@
 #include <assert.h>
 #include <stdio.h>
 
-static enum pal_return pal_glfw_has_error(struct pal_window *window)
+static PALReturn pal_glfw_has_error(PALWindow *window)
 {
     return (glfwGetError(NULL) == GLFW_NO_ERROR) ? PAL_OK : PAL_ERROR; 
 }
 
-enum pal_return pal_window_init(void)
+PALReturn pal_window_init(void)
 {
-    struct pal_window window;
+    PALWindow window;
 
     window.glfw = NULL;
 
@@ -21,7 +21,7 @@ enum pal_return pal_window_init(void)
     return PAL_OK;
 }
 
-enum pal_return pal_window_open(struct pal_window *window, const char *title, unsigned int width, unsigned int height)
+PALReturn pal_window_open(PALWindow *window, const char *title, unsigned int width, unsigned int height)
 {
     GLFWwindow *gw;
 
@@ -53,12 +53,12 @@ enum pal_return pal_window_open(struct pal_window *window, const char *title, un
     return PAL_OK;
 }
 
-bool pal_window_is_open(struct pal_window *window)
+bool pal_window_is_open(PALWindow *window)
 {
     return (window->glfw) ? true : false;
 }
 
-enum pal_return pal_window_terminate(struct pal_window *window)
+PALReturn pal_window_terminate(PALWindow *window)
 {
     window->glfw = NULL;
 
@@ -67,14 +67,14 @@ enum pal_return pal_window_terminate(struct pal_window *window)
     return pal_glfw_has_error(window);
 }
 
-enum pal_return pal_window_set_title(struct pal_window *window, const char *title)
+PALReturn pal_window_set_title(PALWindow *window, const char *title)
 {
     glfwSetWindowTitle(window->glfw, title);
 
     return pal_glfw_has_error(window);
 }
 
-enum pal_return pal_window_set_size(struct pal_window *window, unsigned int width, unsigned int height)
+PALReturn pal_window_set_size(PALWindow *window, unsigned int width, unsigned int height)
 {
     int fbwidth;
     int fbheight; 
@@ -84,35 +84,35 @@ enum pal_return pal_window_set_size(struct pal_window *window, unsigned int widt
     return pal_glfw_has_error(window);
 }
 
-enum pal_return pal_window_get_size(struct pal_window *window, unsigned int *width, unsigned int *height)
+PALReturn pal_window_get_size(PALWindow *window, unsigned int *width, unsigned int *height)
 {
     glfwGetWindowSize(window->glfw, width, height);
 
     return pal_glfw_has_error(window);
 }
 
-enum pal_return pal_window_get_framebuffer_size(struct pal_window *window, unsigned int *width, unsigned int *height)
+PALReturn pal_window_get_framebuffer_size(PALWindow *window, unsigned int *width, unsigned int *height)
 {
     glfwGetFramebufferSize(window->glfw, width, height);
 
     return pal_glfw_has_error(window);
 }
 
-enum pal_return pal_window_poll(struct pal_window *window)
+PALReturn pal_window_poll(PALWindow *window)
 {
     glfwPollEvents();
 
     return pal_glfw_has_error(window);
 }
 
-enum pal_return pal_window_swap_buffers(struct pal_window *window)
+PALReturn pal_window_swap_buffers(PALWindow *window)
 {
     glfwSwapBuffers(window->glfw);
 
     return pal_glfw_has_error(window);
 }
 
-enum pal_return pal_window_is_keyboard_pressed(struct pal_window *window, int key, bool *pressed)
+PALReturn pal_window_is_keyboard_pressed(PALWindow *window, int key, bool *pressed)
 {
     *pressed = (glfwGetKey(window->glfw, key) != GLFW_RELEASE) ? true : false;
 
@@ -120,14 +120,14 @@ enum pal_return pal_window_is_keyboard_pressed(struct pal_window *window, int ke
 }
 
 
-enum pal_return pal_window_is_mouse_button_pressed(struct pal_window *window, int button, bool *pressed)
+PALReturn pal_window_is_mouse_button_pressed(PALWindow *window, int button, bool *pressed)
 {
     *pressed = (glfwGetMouseButton(window->glfw, button) != GLFW_RELEASE) ? true : false;
 
     return pal_glfw_has_error(window);
 }
 
-enum pal_return pal_window_get_mouse_position(struct pal_window *window, float *x, float *y)
+PALReturn pal_window_get_mouse_position(PALWindow *window, float *x, float *y)
 {
     double xpos, ypos;
     glfwGetCursorPos(window->glfw, &xpos, &ypos);

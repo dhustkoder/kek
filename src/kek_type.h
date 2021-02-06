@@ -17,17 +17,19 @@
 #define KUT_MAX(a, b) (((a) > (b)) ? (a) : (b)) 
 
 // forward declarations
-struct entity;
-struct camera;
-struct render;
+typedef struct entity Entity;
+typedef struct camera Camera;
+typedef struct render Render;
+typedef struct shader Shader;
 
-typedef void (*KEKEntityInitFn)(struct entity *entity, void *ctx); 
-typedef void (*KEKEntityTerminateFn)(struct entity *entity, void *ctx); 
-typedef void (*KEKEntityUpdateFn)(struct entity *entity, void *ctx); 
-typedef void (*KEKEntityQueryFn)(struct entity *e, void *ctx);
-typedef void (*KEKCollisionFn)(struct entity *a, struct entity *b, void *ctx);
-typedef void (*KEKRenderFn)(struct render *render, struct camera *camera, struct entity *entity, void *ctx);
-typedef void (*KEKSceneQueryEntityFn)(struct entity *entity, void *ctx);
+
+typedef void (*KEKEntityInitFn)(Entity *entity, void *ctx); 
+typedef void (*KEKEntityTerminateFn)(Entity *entity, void *ctx); 
+typedef void (*KEKEntityUpdateFn)(Entity *entity, void *ctx); 
+typedef void (*KEKEntityQueryFn)(Entity *e, void *ctx);
+typedef void (*KEKCollisionFn)(Entity *a, Entity *b, void *ctx);
+typedef void (*KEKRenderFn)(Render *render, Camera *camera, Entity *entity, void *ctx);
+typedef void (*KEKSceneQueryEntityFn)(Entity *entity, void *ctx);
 
 enum {
     KEK_OK,
@@ -49,7 +51,7 @@ enum {
 };
 
 // Keyboard keys (US keyboard layout)
-enum keyboard_key {
+typedef enum keyboard_key {
     // Alphanumeric keys
     KEK_KBD_KEY_APOSTROPHE      = 39,
     KEK_KBD_KEY_COMMA           = 44,
@@ -160,16 +162,16 @@ enum keyboard_key {
     KEK_KBD_KEY_KP_ADD          = 334,
     KEK_KBD_KEY_KP_ENTER        = 335,
     KEK_KBD_KEY_KP_EQUAL        = 336
-};
+} KeyboardKey;
 
-enum mouse_button {
+typedef enum mouse_button {
     KEK_MOUSE_BUTTON_LEFT   = 0,
     KEK_MOUSE_BUTTON_RIGHT  = 1,
     KEK_MOUSE_BUTTON_MIDDLE = 2
-};
+} MouseButton;
 
 
-enum config_type {
+typedef enum config_type {
     KEK_CFG_MEM_STACK_CAPACITY,
     KEK_CFG_MEM_TAG_CAPACITY,
     KEK_CFG_MEM_CAMERA_CAPACITY,
@@ -185,9 +187,9 @@ enum config_type {
     KEK_CFG_MEM_ENTITY_TYPE_CAPACITY,
     KEK_CFG_MEM_KEY_BIND_ALIAS_CAPACITY,
     KEK_CFG_NUM_TYPES,
-};
+} ConfigType;
 
-union vec2 {
+typedef union vec2 {
 	struct {
 		float v[2];
 	};
@@ -196,9 +198,9 @@ union vec2 {
 		float x;
 		float y;
 	};
-};
+} Vec2;
 
-union vec3 {
+typedef union vec3 {
 	struct {
 		float v[3];
 	};
@@ -216,25 +218,25 @@ union vec3 {
 	};
 
 	struct {
-		union vec2 xy;
+		Vec2 xy;
 	};
 
 	struct {
-		union vec2 rg;
+		Vec2 rg;
 	};
 
 	struct {
 		float unused0;
-		union vec2 yz;
+		Vec2 yz;
 	};
 
 	struct {
 		float unused1;
-		union vec2 gb;
+		Vec2 gb;
 	};
-};
+} Vec3;
 
-union vec4 {
+typedef union vec4 {
 	struct {
 		float v[4];
 	};
@@ -254,170 +256,171 @@ union vec4 {
 	};
 
 	struct {
-		union vec3 xyz;
+		Vec3 xyz;
 	};
 
 	struct {
-		union vec3 rgb;
+		Vec3 rgb;
 	};
 	struct {
 		float unused0;
-		union vec3 yzw;
+		Vec3 yzw;
 	};
 	struct {
 		float unused1;
-		union vec3 gba;
+		Vec3 gba;
 	};
 
 	struct {
-		union vec2 xy;
+		Vec2 xy;
 	};
 
 	struct {
-		union vec2 rg;
+		Vec2 rg;
 	};
 
 	struct {
 		float unused2;
-		union vec2 yz;
+		Vec2 yz;
 	};
 	struct {
 		float unused3;
-		union vec2 gb;
+		Vec2 gb;
 	};
 	struct {
 		float unused4;
 		float unused5;
-		union vec2 zw;
+		Vec2 zw;
 	};
 	struct {
 		float unused6;
 		float unused7;
-		union vec2 ba;
+		Vec2 ba;
 	};
-};
+} Vec4;
 
-struct rect2 {
-	union vec2 position;
-	union vec2 size;
-};
+typedef struct rect2 {
+	Vec2 position;
+	Vec2 size;
+} Rect2;
 
-struct cube {
-	union vec3 position;
-	union vec3 size;
-};
+typedef struct cube {
+	Vec3 position;
+	Vec3 size;
+} Cube;
 
-struct mat4 {
+typedef struct mat4{
 	float m[4][4]; //[row][column]
-};
+} Mat4;
 
-struct camera {
-    union vec3 position;
+typedef struct camera {
+    Vec3 position;
     float zoom;
-};
+} Camera;
 
-struct texture {
+typedef struct texture {
     GLuint id;
     unsigned int height;
     unsigned int width;
     bool loaded;
-};
+} Texture;
 
-struct animation_frame {
-    struct texture *texture;
+typedef struct animation_frame {
+    Texture *texture;
     unsigned int x;
     unsigned int y;
     unsigned int width;
     unsigned int height;
     float duration; // in seconds
-};
+} AnimationFrame;
 
 #define MAX_ANIMATION_FRAMES 16
-struct animation {
-    struct animation_frame frames[MAX_ANIMATION_FRAMES];
+typedef struct animation {
+    AnimationFrame frames[MAX_ANIMATION_FRAMES];
     size_t frame_count;
     bool loop;
-};
+} Animation;
 
-struct vertex_buffer {
+typedef struct vertex_buffer {
     GLuint vao;
     GLuint vbo;
     void *map_buffer;
     size_t capacity;
     size_t size;
-};
+} VertexBuffer;
 
-struct render {
-    struct shader *shader;
-    struct vertex_buffer *vb;
+typedef struct render {
+    Shader *shader;
+    VertexBuffer *vb;
     KEKRenderFn draw_callback;
     void *ctx;
-};
+} Render;
 
 
-struct material_property
+typedef struct material_property
 {
     int type;
     const char *name;
     union {
-        union vec2 vec2;
-        union vec3 vec3;
-        union vec4 vec4;
-        struct mat4 mat4;
-        struct texture *texture;
+        Vec2 vec2;
+        Vec3 vec3;
+        Vec4 vec4;
+        Mat4 mat4;
+        Texture *texture;
         int i;
         unsigned int ui;
         float f;
     };
-};
+} MaterialProperty;
+
 #define MAX_MATERIAL_PROPERTIES 16
-struct material {
-    struct material_property properties[MAX_MATERIAL_PROPERTIES];
+typedef struct material {
+    MaterialProperty properties[MAX_MATERIAL_PROPERTIES];
     size_t count;
-};
+} Material;
 
-struct shader {
+typedef struct shader {
     GLuint shader;
-};
+} Shader;
 
-struct entity {
+typedef struct entity {
     bool destroy;
     uint32_t type;
-    union vec3 position;
-    union vec3 velocity;
-    union vec3 rotation;
-    union vec3 size;
+    Vec3 position;
+    Vec3 velocity;
+    Vec3 rotation;
+    Vec3 size;
 
-    struct texture *texture;
-    struct animation *animation;
+    Texture *texture;
+    Animation *animation;
     unsigned int animation_frame;
     float animation_frame_time;
     float animation_speed;
 
-    struct entity *scene_next_entity;
-};
+    Entity *scene_next_entity;
+} Entity;
 
-struct scene {
-    struct entity *entities;
-    struct render *render_default;
-    struct camera *camera;
+typedef struct scene {
+    Entity *entities;
+    Render *render_default;
+    Camera *camera;
     size_t entity_count;
-};
+} Scene;
 
-struct mem_pool {
+typedef struct mem_pool {
     uint8_t *buffer;
     size_t capacity;
     size_t stride;
     size_t free_head;
     size_t free_count;
     size_t use_count;
-};
+} MemPool;
 
-struct physics_body {
+typedef struct physics_body {
     int dummy;
-};
+} PhysicsBody;
 
-struct physics_constraint {
+typedef struct physics_constraint {
     int dummy;
-};
+} PhysicsConstraint;
 

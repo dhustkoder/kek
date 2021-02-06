@@ -1,27 +1,27 @@
 #include "kek.h"
 
-static struct mem_pool pool;
-static struct shader *shader = NULL;
+static MemPool pool;
+static Shader *shader = NULL;
 #define KEK_VERTEX_BUFFER_CAPACITY (1024*1024)
 
-struct vertex {
-    union vec3 position;
-    union vec3 normal;
-    union vec2 uv;
-    union vec4 colormask;
-};
+typedef struct vertex {
+    Vec3 position;
+    Vec3 normal;
+    Vec2 uv;
+    Vec4 colormask;
+} Vertex;
 
-static void sprite_fill(union vec2 position, union vec2 size, union vec3 rotation, union vec2 uv0, union vec2 uv1, struct vertex *out);
-static void render_default_draw(struct render *render,  struct camera *camera, struct entity *entity, void *ctx);
+static void sprite_fill(Vec2 position, Vec2 size, Vec3 rotation, Vec2 uv0, Vec2 uv1, Vertex *out);
+static void render_default_draw(Render *render,  Camera *camera, Entity *entity, void *ctx);
 
 void render_init(size_t capacity)
 {
-    mem_pool_alloc(&pool, capacity, sizeof(struct render));
+    mem_pool_alloc(&pool, capacity, sizeof(Render));
 }
 
-struct render *render_create(void)
+Render *render_create(void)
 {
-     struct render *render = mem_pool_take(&pool);
+     Render *render = mem_pool_take(&pool);
 
      render->draw_callback = NULL;
      render->ctx = NULL;
@@ -45,18 +45,18 @@ struct render *render_create(void)
     return render;
 }
 
-void render_destroy(struct render *render)
+void render_destroy(Render *render)
 {
     mem_pool_release(&pool, render);
 }
 
-void render_set_draw_callback(struct render *render, KEKRenderFn fn, void *ctx)
+void render_set_draw_callback(Render *render, KEKRenderFn fn, void *ctx)
 {
     render->draw_callback = fn;
     render->ctx = ctx;
 }
 
-void render_draw(struct render *render, struct camera *camera, struct entity *entity)
+void render_draw(Render *render, Camera *camera, Entity *entity)
 {
     if(!render || !render->draw_callback)
         return;
@@ -64,23 +64,23 @@ void render_draw(struct render *render, struct camera *camera, struct entity *en
     render->draw_callback(render, camera, entity, render->ctx);
 }
 
-void render_default_draw(struct render *render, struct camera *camera, struct entity *entity, void *ctx)
+void render_default_draw(Render *render, Camera *camera, Entity *entity, void *ctx)
 {
-    union vec3 size = entity->size;
-    struct mat4 mvp;
-    struct vertex_buffer *vb = render->vb;
+    Vec3 size = entity->size;
+    Mat4 mvp;
+    VertexBuffer *vb = render->vb;
     GLuint shader = render->shader->shader;
 
     size = vec3_mulf(size, 4.f);
-    struct vertex vertices[6]; 
+    Vertex vertices[6]; 
 
-    struct animation_frame *frame = entity_get_animation_frame(entity);
+    AnimationFrame *frame = entity_get_animation_frame(entity);
 
     if(frame)
     {
-        struct texture *tex = frame->texture;
-        union vec2 uv0;
-        union vec2 uv1;
+        Texture *tex = frame->texture;
+        Vec2 uv0;
+        Vec2 uv1;
         // y is flipped
         float y = tex->height - frame->y - frame->height;
 
@@ -95,8 +95,8 @@ void render_default_draw(struct render *render, struct camera *camera, struct en
 
     else if(entity->texture)
     {
-        const union vec2 uv0 = {0.0f, 0.0f};
-        const union vec2 uv1 = {1.0f, 1.0f};
+        const Vec2 uv0 = {0.0f, 0.0f};
+        const Vec2 uv1 = {1.0f, 1.0f};
         sprite_fill(entity->position.xy, size.xy, entity->rotation, uv0, uv1, vertices);
         texture_bind(entity->texture, 0);
     }
@@ -120,14 +120,14 @@ void render_default_draw(struct render *render, struct camera *camera, struct en
     gl_disable(GL_DEPTH_TEST);
     gl_enable(GL_BLEND);
     gl_blend_func(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    vertex_buffer_draw(vb, 0, vb->size/sizeof(struct vertex));
+    vertex_buffer_draw(vb, 0, vb->size/sizeof(Vertex));
 }
 
-static void sprite_fill(union vec2 position, union vec2 size, union vec3 rotation, union vec2 uv0, union vec2 uv1, struct vertex *out)
+static void sprite_fill(Vec2 position, Vec2 size, Vec3 rotation, Vec2 uv0, Vec2 uv1, Vertex *out)
 {
-    union vec2 p0 = position;
-    union vec2 p1 = vec2_add(p0, size);
-    union vec2 hs = vec2_mulf(size, 0.5f);
+    Vec2 p0 = position;
+    Vec2 p1 = vec2_add(p0, size);
+    Vec2 hs = vec2_mulf(size, 0.5f);
 
 	const float x0 = -hs.x;
 	const float x1 =  hs.x;
@@ -136,27 +136,27 @@ static void sprite_fill(union vec2 position, union vec2 size, union vec3 rotatio
 	const float z0 = 0.0f;
 	const float z1 = 0.0f; 
 
-	const union vec4 positions[] = { 
+	const Vec4 positions[] = { 
 		{x0, y0, z0, 0}, {x1, y0, z0, 0}, {x1, y1, z0, 0}, 
 		{x0, y0, z0, 0}, {x1, y1, z0, 0}, {x0, y1, z1, 0}
 	};
 
-	const union vec2 uvs[] = { 
+	const Vec2 uvs[] = { 
 		{uv0.x, uv0.y}, {uv1.x, uv0.y}, {uv1.x, uv1.y}, 
 		{uv0.x, uv0.y}, {uv1.x, uv1.y}, {uv0.x, uv1.y}
 	};
 
-    struct vertex vertices[6];
+    Vertex vertices[6];
     
-    struct mat4 rot = mat4_identity();
+    Mat4 rot = mat4_identity();
     rot = mat4_mul(rot, rotatex(rotation.x));
     rot = mat4_mul(rot, rotatey(rotation.y));
     rot = mat4_mul(rot, rotatez(rotation.z));
     
     for(int32_t i = 0; i < 6; ++i)
     {
-        union vec4 rp = mat4_mul_vec4(rot, positions[i]);
-        union vec3 vert_position = vec3_add(vec2to3(position), rp.xyz);
+        Vec4 rp = mat4_mul_vec4(rot, positions[i]);
+        Vec3 vert_position = vec3_add(vec2to3(position), rp.xyz);
 
         vertices[i].position  = vert_position;
         vertices[i].uv        = uvs[i];

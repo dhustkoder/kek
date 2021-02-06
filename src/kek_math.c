@@ -1,97 +1,97 @@
 #include "kek.h"
 #include <float.h>
 
-union vec2 vec2_zero()
+Vec2 vec2_zero()
 {
-	return (union vec2){ 0.0f, 0.0f };
+	return (Vec2){ 0.0f, 0.0f };
 }
 
-union vec3 vec3_zero()
+Vec3 vec3_zero()
 {
-	return (union vec3){ 0.0f, 0.0f, 0.0f };
+	return (Vec3){ 0.0f, 0.0f, 0.0f };
 }
 
-union vec4 vec4_zero()
+Vec4 vec4_zero()
 {
-	return (union vec4){ 0.0f, 0.0f, 0.0f, 0.0f };
+	return (Vec4){ 0.0f, 0.0f, 0.0f, 0.0f };
 }
 
-union vec2 vec2_identity()
+Vec2 vec2_identity()
 {
-	return (union vec2){ 1.0f, 1.0f };
+	return (Vec2){ 1.0f, 1.0f };
 }
 
-union vec3 vec3_identity()
+Vec3 vec3_identity()
 {
-	return (union vec3){ 1.0f, 1.0f, 1.0f };
+	return (Vec3){ 1.0f, 1.0f, 1.0f };
 }
 
-union vec4 vec4_identity()
+Vec4 vec4_identity()
 {
-	return (union vec4){ 1.0f, 1.0f, 1.0f, 1.0f };
+	return (Vec4){ 1.0f, 1.0f, 1.0f, 1.0f };
 }
 
-union vec2 vec2(float x, float y)
+Vec2 vec2(float x, float y)
 {
-	return (union vec2){ x, y };
+	return (Vec2){ x, y };
 }
 
-union vec3 vec3(float x, float y, float z)
+Vec3 vec3(float x, float y, float z)
 {
-	return (union vec3){ x, y, z };
+	return (Vec3){ x, y, z };
 }
 
-union vec4 vec4(float x, float y, float z, float w)
+Vec4 vec4(float x, float y, float z, float w)
 {
-	return (union vec4){ x, y, z, w };
+	return (Vec4){ x, y, z, w };
 }
 
-union vec2 vec3to2(union vec3 v)
+Vec2 vec3to2(Vec3 v)
 {
-	return (union vec2){ v.x, v.y };
+	return (Vec2){ v.x, v.y };
 }
 
-union vec2 vec4to2(union vec4 v)
+Vec2 vec4to2(Vec4 v)
 {
-	return (union vec2){ v.x, v.y };
+	return (Vec2){ v.x, v.y };
 }
 
-union vec3 vec2to3(union vec2 v)
+Vec3 vec2to3(Vec2 v)
 {
-	return (union vec3){ v.x, v.y, 0 };
+	return (Vec3){ v.x, v.y, 0 };
 }
 
-union vec3 vec4to3(union vec4 v)
+Vec3 vec4to3(Vec4 v)
 {
-	return (union vec3){ v.x, v.y, v.z };
+	return (Vec3){ v.x, v.y, v.z };
 }
 
-union vec4 vec2to4(union vec2 v)
+Vec4 vec2to4(Vec2 v)
 {
-	return (union vec4){ v.x, v.y, 0.0f, 0.0f };
+	return (Vec4){ v.x, v.y, 0.0f, 0.0f };
 }
 
-union vec4 vec3to4(union vec3 v)
+Vec4 vec3to4(Vec3 v)
 {
-	return (union vec4){ v.x, v.y, v.z, 0.0f };
+	return (Vec4){ v.x, v.y, v.z, 0.0f };
 }
 
-float vec2_dot_product(union vec2 a, union vec2 b)
+float vec2_dot_product(Vec2 a, Vec2 b)
 {
 	return (a.x * b.x) + (a.y * b.y);
 }
 
-float vec3_dot_product(union vec3 a, union vec3 b)
+float vec3_dot_product(Vec3 a, Vec3 b)
 {
 	return (a.x * b.x) + (a.y * b.y) + (a.z * b.z);
 }
 
-float vec4_dot_product(union vec4 a, union vec4 b)
+float vec4_dot_product(Vec4 a, Vec4 b)
 {
 	return (a.x * b.x) + (a.y * b.y) + (a.z * b.z) + (a.w * b.w);
 }
 
-union vec2 vec2_project(union vec2 u, union vec2 v)
+Vec2 vec2_project(Vec2 u, Vec2 v)
 {
 	float uvdot = vec2_dot_product(u, v);
 	float vvdot = vec2_dot_product(v, v);
@@ -99,7 +99,7 @@ union vec2 vec2_project(union vec2 u, union vec2 v)
 	return vec2_mulf(v, uvdot / vvdot);
 }
 
-union vec3 vec3_project(union vec3 u, union vec3 v)
+Vec3 vec3_project(Vec3 u, Vec3 v)
 {
 	float uvdot = vec3_dot_product(u, v);
 	float vvdot = vec3_dot_product(v, v);
@@ -107,7 +107,7 @@ union vec3 vec3_project(union vec3 u, union vec3 v)
 	return vec3_mulf(v, uvdot / vvdot);
 }
 
-union vec4 vec4_project(union vec4 u, union vec4 v)
+Vec4 vec4_project(Vec4 u, Vec4 v)
 {
 	float uvdot = vec4_dot_product(u, v);
 	float vvdot = vec4_dot_product(v, v);
@@ -115,9 +115,9 @@ union vec4 vec4_project(union vec4 u, union vec4 v)
 	return vec4_mulf(v, uvdot / vvdot);
 }
 
-union vec3 cross_product(union vec3 v1, union vec3 vec2)
+Vec3 cross_product(Vec3 v1, Vec3 vec2)
 {
-	union vec3 v;
+	Vec3 v;
 
 	v.x = (v1.y * vec2.z) - (v1.z * vec2.y);
 	v.y = (v1.z * vec2.x) - (v1.x * vec2.z);
@@ -126,32 +126,32 @@ union vec3 cross_product(union vec3 v1, union vec3 vec2)
 	return v;
 }
 
-float vec2_length2(union vec2 v)
+float vec2_length2(Vec2 v)
 {
 	return vec2_dot_product(v, v);
 }
 
-float vec3_length2(union vec3 v)
+float vec3_length2(Vec3 v)
 {
 	return vec3_dot_product(v, v);
 }
 
-float vec4_length2(union vec4 v)
+float vec4_length2(Vec4 v)
 {
 	return vec4_dot_product(v, v);
 }
 
-float vec2_length(union vec2 v)
+float vec2_length(Vec2 v)
 {
 	return sqrtf(vec2_length2(v));
 }
 
-float vec3_length(union vec3 v)
+float vec3_length(Vec3 v)
 {
 	return sqrtf(vec3_length2(v));
 }
 
-float vec4_length(union vec4 v)
+float vec4_length(Vec4 v)
 {
 	return sqrtf(vec4_length2(v));
 }
@@ -170,7 +170,7 @@ int signi(int sign)
 	return 0;
 }
 
-union vec2 vec2_sign(union vec2 v)
+Vec2 vec2_sign(Vec2 v)
 {
 	v.x = signf(v.x);
 	v.y = signf(v.y);
@@ -178,7 +178,7 @@ union vec2 vec2_sign(union vec2 v)
 	return v;
 }
 
-union vec3 vec3_sign(union vec3 v)
+Vec3 vec3_sign(Vec3 v)
 {
 	v.x = signf(v.x);
 	v.y = signf(v.y);
@@ -187,7 +187,7 @@ union vec3 vec3_sign(union vec3 v)
 	return v;
 }
 
-union vec4 vec4_sign(union vec4 v)
+Vec4 vec4_sign(Vec4 v)
 {
 	v.x = signf(v.x);
 	v.y = signf(v.y);
@@ -197,44 +197,44 @@ union vec4 vec4_sign(union vec4 v)
 	return v;
 }
 
-union vec2 vec2_normal(union vec2 v)
+Vec2 vec2_normal(Vec2 v)
 {
 	return vec2_divf(v, vec2_length(v));
 }
 
-union vec3 vec3_normal(union vec3 v)
+Vec3 vec3_normal(Vec3 v)
 {
 	return vec3_divf(v, vec3_length(v));
 }
 
-union vec4 vec4_normal(union vec4 v)
+Vec4 vec4_normal(Vec4 v)
 {
 	return vec4_divf(v, vec4_length(v));
 }
 
-union vec2 vec2_negative(union vec2 v)
+Vec2 vec2_negative(Vec2 v)
 {
 	return vec2_mulf(v, -1.f);
 }
 
-union vec3 vec3_negative(union vec3 v)
+Vec3 vec3_negative(Vec3 v)
 {
 	return vec3_mulf(v, -1.f);
 }
 
-union vec4 vec4_negative(union vec4 v)
+Vec4 vec4_negative(Vec4 v)
 {
 	return vec4_mulf(v, -1.f);
 }
 
-union vec2 vec2_abs(union vec2 v)
+Vec2 vec2_abs(Vec2 v)
 {
 	v.x = fabsf(v.x);
 	v.y = fabsf(v.y);
 	return v;
 }
 
-union vec3 vec3_abs(union vec3 v)
+Vec3 vec3_abs(Vec3 v)
 {
 	v.x = fabsf(v.x);
 	v.y = fabsf(v.y);
@@ -242,7 +242,7 @@ union vec3 vec3_abs(union vec3 v)
 	return v;
 }
 
-union vec4 vec4_abs(union vec4 v)
+Vec4 vec4_abs(Vec4 v)
 {
 	v.x = fabsf(v.x);
 	v.y = fabsf(v.y);
@@ -251,9 +251,9 @@ union vec4 vec4_abs(union vec4 v)
 	return v;
 }
 
-union vec2 vec2_clamp(union vec2 v, union vec2 min, union vec2 max)
+Vec2 vec2_clamp(Vec2 v, Vec2 min, Vec2 max)
 {
-	union vec2 value;
+	Vec2 value;
 	value.x = KUT_MAX(v.x, min.x);
 	value.x = KUT_MIN(v.x, max.x);
 
@@ -263,9 +263,9 @@ union vec2 vec2_clamp(union vec2 v, union vec2 min, union vec2 max)
 	return value;
 }
 
-union vec3 vec3_clamp(union vec3 v, union vec3 min, union vec3 max)
+Vec3 vec3_clamp(Vec3 v, Vec3 min, Vec3 max)
 {
-	union vec3 value;
+	Vec3 value;
 	value.x = KUT_MAX(v.x, min.x);
 	value.x = KUT_MIN(v.x, max.x);
 
@@ -278,9 +278,9 @@ union vec3 vec3_clamp(union vec3 v, union vec3 min, union vec3 max)
 	return value;
 }
 
-union vec4 vec4_clamp(union vec4 v, union vec4 min, union vec4 max)
+Vec4 vec4_clamp(Vec4 v, Vec4 min, Vec4 max)
 {
-	union vec4 value;
+	Vec4 value;
 	value.x = KUT_MAX(v.x, min.x);
 	value.x = KUT_MIN(v.x, max.x);
 
@@ -296,130 +296,130 @@ union vec4 vec4_clamp(union vec4 v, union vec4 min, union vec4 max)
 	return value;
 }
 
-union vec2 vec2_add(union vec2 a, union vec2 b)
+Vec2 vec2_add(Vec2 a, Vec2 b)
 {
-	return (union vec2){ a.x + b.x, a.y + b.y };
+	return (Vec2){ a.x + b.x, a.y + b.y };
 }
 
-union vec2 vec2_sub(union vec2 a, union vec2 b)
+Vec2 vec2_sub(Vec2 a, Vec2 b)
 {
-	return (union vec2){ a.x - b.x, a.y - b.y };
+	return (Vec2){ a.x - b.x, a.y - b.y };
 }
 
-union vec2 vec2_mul(union vec2 a, union vec2 b)
+Vec2 vec2_mul(Vec2 a, Vec2 b)
 {
-	return (union vec2){ a.x * b.x, a.y * b.y };
+	return (Vec2){ a.x * b.x, a.y * b.y };
 }
 
-union vec2 vec2_div(union vec2 a, union vec2 b)
+Vec2 vec2_div(Vec2 a, Vec2 b)
 {
-	return (union vec2){ a.x / b.x, a.y / b.y };
+	return (Vec2){ a.x / b.x, a.y / b.y };
 }
 
-union vec2 vec2_addf(union vec2 a, float b)
+Vec2 vec2_addf(Vec2 a, float b)
 {
 
-	return (union vec2){ a.x + b, a.y + b };
+	return (Vec2){ a.x + b, a.y + b };
 }
 
-union vec2 vec2_subf(union vec2 a, float b)
+Vec2 vec2_subf(Vec2 a, float b)
 {
-	return (union vec2){ a.x - b, a.y - b };
+	return (Vec2){ a.x - b, a.y - b };
 }
 
-union vec2 vec2_mulf(union vec2 a, float b)
+Vec2 vec2_mulf(Vec2 a, float b)
 {
-	return (union vec2){ a.x * b, a.y * b };
+	return (Vec2){ a.x * b, a.y * b };
 }
 
-union vec2 vec2_divf(union vec2 a, float b)
+Vec2 vec2_divf(Vec2 a, float b)
 {
-	return (union vec2){ a.x / b, a.y / b };
+	return (Vec2){ a.x / b, a.y / b };
 }
 
-union vec3 vec3_add(union vec3 a, union vec3 b)
+Vec3 vec3_add(Vec3 a, Vec3 b)
 {
-	return (union vec3){ a.x + b.x, a.y + b.y, a.z + b.z };
+	return (Vec3){ a.x + b.x, a.y + b.y, a.z + b.z };
 }
 
-union vec3 vec3_sub(union vec3 a, union vec3 b)
+Vec3 vec3_sub(Vec3 a, Vec3 b)
 {
-	return (union vec3){ a.x - b.x, a.y - b.y, a.z - b.z };
+	return (Vec3){ a.x - b.x, a.y - b.y, a.z - b.z };
 }
 
-union vec3 vec3_mul(union vec3 a, union vec3 b)
+Vec3 vec3_mul(Vec3 a, Vec3 b)
 {
-	return (union vec3){ a.x * b.x, a.y * b.y, a.z * b.z };
+	return (Vec3){ a.x * b.x, a.y * b.y, a.z * b.z };
 }
 
-union vec3 vec3_div(union vec3 a, union vec3 b)
+Vec3 vec3_div(Vec3 a, Vec3 b)
 {
-	return (union vec3){ a.x / b.x, a.y / b.y, a.z / b.z };
+	return (Vec3){ a.x / b.x, a.y / b.y, a.z / b.z };
 }
 
-union vec3 vec3_addf(union vec3 a, float b)
+Vec3 vec3_addf(Vec3 a, float b)
 {
-	return (union vec3){ a.x + b, a.y + b, a.z + b };
+	return (Vec3){ a.x + b, a.y + b, a.z + b };
 }
 
-union vec3 vec3_subf(union vec3 a, float b)
+Vec3 vec3_subf(Vec3 a, float b)
 {
-	return (union vec3){ a.x - b, a.y - b, a.z - b };
+	return (Vec3){ a.x - b, a.y - b, a.z - b };
 }
 
-union vec3 vec3_mulf(union vec3 a, float b)
+Vec3 vec3_mulf(Vec3 a, float b)
 {
-	return (union vec3){ a.x * b, a.y * b, a.z * b };
+	return (Vec3){ a.x * b, a.y * b, a.z * b };
 }
 
-union vec3 vec3_divf(union vec3 a, float b)
+Vec3 vec3_divf(Vec3 a, float b)
 {
-	return (union vec3){ a.x / b, a.y / b, a.z / b };
+	return (Vec3){ a.x / b, a.y / b, a.z / b };
 }
 
-union vec4 vec4_add(union vec4 a, union vec4 b)
+Vec4 vec4_add(Vec4 a, Vec4 b)
 {
-	return (union vec4){ a.x + b.x, a.y + b.y, a.z + b.z, a.w + b.w };
+	return (Vec4){ a.x + b.x, a.y + b.y, a.z + b.z, a.w + b.w };
 }
 
-union vec4 vec4_sub(union vec4 a, union vec4 b)
+Vec4 vec4_sub(Vec4 a, Vec4 b)
 {
-	return (union vec4){ a.x - b.x, a.y - b.y, a.z - b.z, a.w - b.w };
+	return (Vec4){ a.x - b.x, a.y - b.y, a.z - b.z, a.w - b.w };
 }
 
-union vec4 vec4_mul(union vec4 a, union vec4 b)
+Vec4 vec4_mul(Vec4 a, Vec4 b)
 {
-	return (union vec4){ a.x * b.x, a.y * b.y, a.z * b.z, a.w * b.w };
+	return (Vec4){ a.x * b.x, a.y * b.y, a.z * b.z, a.w * b.w };
 }
 
-union vec4 vec4_div(union vec4 a, union vec4 b)
+Vec4 vec4_div(Vec4 a, Vec4 b)
 {
-	return (union vec4){ a.x / b.x, a.y / b.y, a.z / b.z, a.w / b.w };
+	return (Vec4){ a.x / b.x, a.y / b.y, a.z / b.z, a.w / b.w };
 }
 
-union vec4 vec4_addf(union vec4 a, float b)
+Vec4 vec4_addf(Vec4 a, float b)
 {
-	return (union vec4){ a.x + b, a.y + b, a.z + b, a.w + b };
+	return (Vec4){ a.x + b, a.y + b, a.z + b, a.w + b };
 }
 
-union vec4 vec4_subf(union vec4 a, float b)
+Vec4 vec4_subf(Vec4 a, float b)
 {
-	return (union vec4){ a.x - b, a.y - b, a.z - b, a.w - b };
+	return (Vec4){ a.x - b, a.y - b, a.z - b, a.w - b };
 }
 
-union vec4 vec4_mulf(union vec4 a, float b)
+Vec4 vec4_mulf(Vec4 a, float b)
 {
-	return (union vec4){ a.x * b, a.y * b, a.z * b, a.w * b };
+	return (Vec4){ a.x * b, a.y * b, a.z * b, a.w * b };
 }
 
-union vec4 vec4_divf(union vec4 a, float b)
+Vec4 vec4_divf(Vec4 a, float b)
 {
-	return (union vec4){ a.x / b, a.y / b, a.z / b, a.w / b };
+	return (Vec4){ a.x / b, a.y / b, a.z / b, a.w / b };
 }
 
-struct mat4 mat4_mul(struct mat4 a, struct mat4 b)
+Mat4 mat4_mul(Mat4 a, Mat4 b)
 {
-	struct mat4 r;
+	Mat4 r;
 
 	for (int columns = 0; columns < 4; ++columns) {
 		for (int rows = 0; rows < 4; ++rows) {
@@ -437,9 +437,9 @@ struct mat4 mat4_mul(struct mat4 a, struct mat4 b)
 	return r;
 }
 
-union vec4 mat4_mul_vec4(struct mat4 m, union vec4 v)
+Vec4 mat4_mul_vec4(Mat4 m, Vec4 v)
 {
-	union vec4 res;
+	Vec4 res;
 	res.x = m.m[0][0] * v.x + m.m[1][0] * v.y + m.m[2][0] * v.z +
 		m.m[3][0] * v.w;
 	res.y = m.m[0][1] * v.x + m.m[1][1] * v.y + m.m[2][1] * v.z +
@@ -451,7 +451,7 @@ union vec4 mat4_mul_vec4(struct mat4 m, union vec4 v)
 	return res;
 }
 
-struct mat4 mat4_mulf(struct mat4 m, float v)
+Mat4 mat4_mulf(Mat4 m, float v)
 {
 	float *cell =  &m.m[0][0];
 
@@ -468,7 +468,7 @@ struct mat4 mat4_mulf(struct mat4 m, float v)
 #define COLLISION_LEFT  0x04
 #define COLLISION_RIGHT 0x08
 // collision masks are relative to "a"
-unsigned int aabb2(struct rect2 a, struct rect2 b)
+unsigned int aabb2(Rect2 a, Rect2 b)
 {
 	float ax0 = a.position.x - a.size.x / 2;
 	float ax1 = a.position.x + a.size.x / 2;
@@ -483,7 +483,7 @@ unsigned int aabb2(struct rect2 a, struct rect2 b)
 
 
 	if(ax0 < bx1 && ax1 > bx0 && ay0 < by1 && ay1 > by0) {
-		union vec2 d = vec2_sub(b.position, a.position);
+		Vec2 d = vec2_sub(b.position, a.position);
 
 		if(d.x >= 0.0f)
 			flags |= COLLISION_RIGHT;
@@ -500,20 +500,20 @@ unsigned int aabb2(struct rect2 a, struct rect2 b)
 
 	return flags;
 }
-unsigned int aabb(union vec2 p0, union vec2 s0, union vec2 p1, union vec2 s1)
+unsigned int aabb(Vec2 p0, Vec2 s0, Vec2 p1, Vec2 s1)
 {
-    struct rect2 a;
+    Rect2 a;
     a.position = p0;
     a.size = s0;
 
-    struct rect2 b;
+    Rect2 b;
     b.position = p1;
     b.size = s1;
 
     return aabb2(a, b);
 }
 
-unsigned int aabb3(struct cube a, struct cube b)
+unsigned int aabb3(Cube a, Cube b)
 {
 	float ax0 = a.position.x - a.size.x / 2;
 	float ax1 = a.position.x + a.size.x / 2;
@@ -532,9 +532,9 @@ unsigned int aabb3(struct cube a, struct cube b)
 			az0 < bz1 && az1 > bz0) ? 1 : 0;
 }
 
-struct mat4 mat4_zero()
+Mat4 mat4_zero()
 {
-	struct mat4 m;
+	Mat4 m;
 
 	float *cell =  &m.m[0][0];
 
@@ -544,9 +544,9 @@ struct mat4 mat4_zero()
 	return m;
 }
 
-struct mat4 mat4_identity()
+Mat4 mat4_identity()
 {
-	struct mat4 m = mat4_zero();
+	Mat4 m = mat4_zero();
 	float *cell = &m.m[0][0];
 
 	for (int i = 0; i < 16; ++i)
@@ -560,10 +560,10 @@ struct mat4 mat4_identity()
 	return m;
 }
 
-int line_intersect(union vec3 p0, union vec3 v0, union vec3 p1, union vec3 v1, union vec3 *c)
+int line_intersect(Vec3 p0, Vec3 v0, Vec3 p1, Vec3 v1, Vec3 *c)
 {
-	union vec3 q0 = vec3_add(p0, v0);
-	union vec3 q1 = vec3_add(p1, v1);
+	Vec3 q0 = vec3_add(p0, v0);
+	Vec3 q1 = vec3_add(p1, v1);
 	float x;
 	float y;
 
@@ -664,9 +664,9 @@ float rad_to_deg(float rad)
 	return (rad / (2.f * KUT_PI)) * 360.f;
 }
 
-struct mat4 mat4_translate(const union vec3 v)
+Mat4 mat4_translate(const Vec3 v)
 {
-	struct mat4 m = mat4_identity();
+	Mat4 m = mat4_identity();
 
 	m.m[3][0] = v.x;
 	m.m[3][1] = v.y;
@@ -675,9 +675,9 @@ struct mat4 mat4_translate(const union vec3 v)
 	return m;
 }
 
-struct mat4 mat4_scale(const union vec3 v)
+Mat4 mat4_scale(const Vec3 v)
 {
-	struct mat4 m = mat4_identity();
+	Mat4 m = mat4_identity();
 
 	m.m[0][0] = v.x;
 	m.m[1][1] = v.y;
@@ -691,12 +691,12 @@ float magnitudef(float v)
 	return (v < 0) ? v * -1.f : v;
 }
 
-struct mat4 rotatex(float angle)
+Mat4 rotatex(float angle)
 {
 	float c = cosf(angle);
 	float s = sinf(angle);
 
-	struct mat4 r;
+	Mat4 r;
 	r.m[0][0] = 1;
 	r.m[0][1] = 0;
 	r.m[0][2] = 0;
@@ -716,12 +716,12 @@ struct mat4 rotatex(float angle)
 	return (r);
 }
 
-struct mat4 rotatey(float angle)
+Mat4 rotatey(float angle)
 {
 	float c = cosf(angle);
 	float s = sinf(angle);
 
-	struct mat4 r;
+	Mat4 r;
 	r.m[0][0] = c;
 	r.m[0][1] = 0;
 	r.m[0][2] = s;
@@ -742,12 +742,12 @@ struct mat4 rotatey(float angle)
 	return (r);
 }
 
-struct mat4 rotatez(float angle)
+Mat4 rotatez(float angle)
 {
 	float c = cosf(angle);
 	float s = sinf(angle);
 
-	struct mat4 r;
+	Mat4 r;
 	r.m[0][0] = c;
 	r.m[0][1] = -s;
 	r.m[0][2] = 0;
@@ -767,12 +767,12 @@ struct mat4 rotatez(float angle)
 	return (r);
 }
 
-struct mat4 ortho_projection(float left, float right, float bottom,
+Mat4 ortho_projection(float left, float right, float bottom,
 			float top, float near, float far)
 {
 	float rl, tb, fn;
 
-	struct mat4 m = mat4_zero();
+	Mat4 m = mat4_zero();
 
 	rl = 1.0f / (right - left);
 	tb = 1.0f / (top - bottom);
@@ -789,16 +789,16 @@ struct mat4 ortho_projection(float left, float right, float bottom,
 	return m;
 }
 
-union vec3 unproject(union vec3 pos, struct mat4 viewproj, union vec4 viewport)
+Vec3 unproject(Vec3 pos, Mat4 viewproj, Vec4 viewport)
 {
 	//normalize to [-1,1]
-	union vec4 v;
+	Vec4 v;
 	v.x = 2.0f * (pos.x - viewport.x) / viewport.z - 1.0f;
 	v.y = 2.0f * (pos.y - viewport.y) / viewport.w - 1.0f;
 	v.z = 2.0f * pos.z - 1.0f;
 	v.w = 1.0f;
 
-	struct mat4 inv = mat4_inverse(viewproj);
+	Mat4 inv = mat4_inverse(viewproj);
 
 	v = mat4_mul_vec4(inv, v);
 
@@ -807,23 +807,23 @@ union vec3 unproject(union vec3 pos, struct mat4 viewproj, union vec4 viewport)
 	return vec4to3(v);
 }
 
-union vec3 screen_to_world_coord(struct mat4 projection,
-                             struct mat4 view,
-                             union vec4 viewport,
-                             union vec2 coord)
+Vec3 screen_to_world_coord(Mat4 projection,
+                             Mat4 view,
+                             Vec4 viewport,
+                             Vec2 coord)
 {
-	struct mat4 vp = mat4_mul(view, projection);
-	union vec2 dimensions;
+	Mat4 vp = mat4_mul(view, projection);
+	Vec2 dimensions;
 	dimensions.x = viewport.z - viewport.x;
 	dimensions.y = viewport.w - viewport.y;
 	
-	union vec3 screen_pos0 = vec3(coord.x, dimensions.y - coord.y, 0.0f);
-	union vec3 screen_pos1 = vec3(coord.x, dimensions.y - coord.y, 1.0f);
+	Vec3 screen_pos0 = vec3(coord.x, dimensions.y - coord.y, 0.0f);
+	Vec3 screen_pos1 = vec3(coord.x, dimensions.y - coord.y, 1.0f);
 	
-	union vec3 a = unproject(screen_pos0, vp, viewport);
-	union vec3 b = unproject(screen_pos1, vp, viewport);
-	union vec3 ray = vec3_sub(b, a);
-	union vec3 raydir = vec3_normal(ray);
+	Vec3 a = unproject(screen_pos0, vp, viewport);
+	Vec3 b = unproject(screen_pos1, vp, viewport);
+	Vec3 ray = vec3_sub(b, a);
+	Vec3 raydir = vec3_normal(ray);
 	// some linear algebra
 	// x = ax + (bx - ax)*t
 	// y = ay + (by - ay)*t
@@ -837,12 +837,12 @@ union vec3 screen_to_world_coord(struct mat4 projection,
 	
 	return vec3_add(a, vec3_mulf(raydir, t));
 }
-struct mat4 perspective_projection(float fovy, float aspect, float near,
+Mat4 perspective_projection(float fovy, float aspect, float near,
 			      float far)
 {
 	float f, fn;
 
-	struct mat4 m = mat4_zero();
+	Mat4 m = mat4_zero();
 
 	f = 1.0f / tanf(fovy * 0.5f);
 	fn = 1.0f / (near - far);
@@ -856,12 +856,12 @@ struct mat4 perspective_projection(float fovy, float aspect, float near,
 	return m;
 }
 
-struct mat4 look_at(union vec3 eye, union vec3 center, union vec3 up)
+Mat4 look_at(Vec3 eye, Vec3 center, Vec3 up)
 {
-	union vec3 f;
-	union vec3 s;
-	union vec3 u;
-	union vec3 c;
+	Vec3 f;
+	Vec3 s;
+	Vec3 u;
+	Vec3 c;
 
 	f = vec3_sub(center, eye);
 	f = vec3_normal(f);
@@ -870,7 +870,7 @@ struct mat4 look_at(union vec3 eye, union vec3 center, union vec3 up)
 	s = vec3_normal(c);
 	u = cross_product(s, f);
 
-	struct mat4 m;
+	Mat4 m;
 	m.m[0][0] = s.x;
 	m.m[0][1] = u.x;
 	m.m[0][2] = -f.x;
@@ -894,9 +894,9 @@ struct mat4 look_at(union vec3 eye, union vec3 center, union vec3 up)
 	return m;
 }
 
-struct mat4 mat4_inverse(const struct mat4 mat)
+Mat4 mat4_inverse(const Mat4 mat)
 {
-	struct mat4 dest;
+	Mat4 dest;
 	float t[6];
 	float det;
 	float a = mat.m[0][0], b = mat.m[0][1], c = mat.m[0][2],
@@ -955,9 +955,9 @@ struct mat4 mat4_inverse(const struct mat4 mat)
 	return dest;
 }
 
-struct mat4 mat4_transpose(struct mat4 *m)
+Mat4 mat4_transpose(Mat4 *m)
 {
-	struct mat4 mat;
+	Mat4 mat;
 
 	for (int row = 0; row < 4; ++row) {
 		for (int col = 0; col < 4; ++col) {
@@ -978,10 +978,10 @@ int sum(const int *list, int count)
 	return sum;
 }
 
-void vec3_minmax(union vec3 *p0, union vec3 *p1)
+void vec3_minmax(Vec3 *p0, Vec3 *p1)
 {
-	union vec3 t0 = *p0;
-	union vec3 t1 = *p1;
+	Vec3 t0 = *p0;
+	Vec3 t1 = *p1;
 	
 	p0->x = KUT_MIN(t0.x, t1.x);
 	p0->y = KUT_MIN(t0.y, t1.y);
@@ -992,10 +992,10 @@ void vec3_minmax(union vec3 *p0, union vec3 *p1)
 	p1->z = KUT_MAX(t0.z, t1.z);
 }
 
-void vec3_order(union vec3 *p0, union vec3 *p1)
+void vec3_order(Vec3 *p0, Vec3 *p1)
 {
-	union vec3 t0 = *p0;
-	union vec3 t1 = *p1;
+	Vec3 t0 = *p0;
+	Vec3 t1 = *p1;
 	
 	p0->x = KUT_MIN(t0.x, t1.x);
 	p0->y = KUT_MIN(t0.y, t1.y);
@@ -1006,7 +1006,7 @@ void vec3_order(union vec3 *p0, union vec3 *p1)
 	p1->z = KUT_MAX(t0.z, t1.z);
 }
 
-union vec2 line_line_intersect_point(union vec2 p0, union vec2 p1, union vec2 q0, union vec2 q1)
+Vec2 line_line_intersect_point(Vec2 p0, Vec2 p1, Vec2 q0, Vec2 q1)
 {
 	float pa = p1.x - p0.x;
 	float pb = p1.y - p0.y;
@@ -1041,7 +1041,7 @@ union vec2 line_line_intersect_point(union vec2 p0, union vec2 p1, union vec2 q0
 	//todo: upport for m == infinite
 }
 
-bool circle_circle_intersect(union vec2 p0, float r0, union vec2 p1, float r1)
+bool circle_circle_intersect(Vec2 p0, float r0, Vec2 p1, float r1)
 {
 	float dx = p1.x - p0.x;
 	float dy = p1.y - p0.y;
@@ -1053,19 +1053,19 @@ bool circle_circle_intersect(union vec2 p0, float r0, union vec2 p1, float r1)
 }
 
 
-bool line_circle_collision(union vec2 p0, union vec2 p1, union vec2 c, float r, union vec2 *intersect)
+bool line_circle_collision(Vec2 p0, Vec2 p1, Vec2 c, float r, Vec2 *intersect)
 {
-    union vec2 a = vec2_sub(c, p0);
-    union vec2 b = vec2_sub(p1, p0);
+    Vec2 a = vec2_sub(c, p0);
+    Vec2 b = vec2_sub(p1, p0);
     float a_dot_b = vec2_dot_product(a, b);
     float b_dot_b = vec2_dot_product(b, b); // b^2
 
     // intersection point = P0 + B(A dot B)/ |B|^2
-    union vec2 i = vec2_mulf(b, a_dot_b);
+    Vec2 i = vec2_mulf(b, a_dot_b);
     i = vec2_divf(i, b_dot_b);
     i = vec2_add(p0, i);
 
-    union vec2 dd = vec2_sub(c, i);
+    Vec2 dd = vec2_sub(c, i);
 
     float d2 = vec2_dot_product(dd, dd);
     float r2 = r * r;
@@ -1081,9 +1081,9 @@ bool line_circle_collision(union vec2 p0, union vec2 p1, union vec2 c, float r, 
     return false;
 }
 
-float line_slope(union vec2 p0, union vec2 p1)
+float line_slope(Vec2 p0, Vec2 p1)
 {
-	union vec2 p;
+	Vec2 p;
 	p.x = p1.x - p0.x;
 	p.y = p1.y - p0.y;
 
@@ -1091,9 +1091,9 @@ float line_slope(union vec2 p0, union vec2 p1)
 	return p.y / p.x;
 }
 
-float line_normal_slope(union vec2 p0, union vec2 p1)
+float line_normal_slope(Vec2 p0, Vec2 p1)
 {
-	union vec2 p;
+	Vec2 p;
 	p.x = p1.x - p0.x;
 	p.y = p1.y - p0.y;
 
@@ -1102,13 +1102,13 @@ float line_normal_slope(union vec2 p0, union vec2 p1)
 	return -p.x / p.y;
 }
 
-bool point_line_bounce(union vec2 c0, union vec2 vel, union vec2 p0, union vec2 p1, union vec2 *p_intersect, union vec2 *c_out, union vec2 *dir)
+bool point_line_bounce(Vec2 c0, Vec2 vel, Vec2 p0, Vec2 p1, Vec2 *p_intersect, Vec2 *c_out, Vec2 *dir)
 {
-  union vec2 p = vec2_sub(p1, p0);
-  union vec2 p_unit = vec2_normal(p);
-  union vec2 c1 = vec2_add(c0, vel);
-  union vec2 c = vec2_sub(c1, c0);
-  union vec2 c_unit = vec2_normal(c);
+  Vec2 p = vec2_sub(p1, p0);
+  Vec2 p_unit = vec2_normal(p);
+  Vec2 c1 = vec2_add(c0, vel);
+  Vec2 c = vec2_sub(c1, c0);
+  Vec2 c_unit = vec2_normal(c);
 
   // find b points in y = mx + b
   // b = y - mx
@@ -1130,14 +1130,14 @@ bool point_line_bounce(union vec2 c0, union vec2 vel, union vec2 p0, union vec2 
   // y = (m_r * b_c + b_p) / (1 - m_r)
   float m_r = m_p / m_c;
 
-  union vec2 i; // i is for intercept
+  Vec2 i; // i is for intercept
   i.y = (m_r * b_c + b_p) / (1 - m_r);
   i.x = (i.y - b_c) / m_c;
 
-  union vec2 cmin;
-  union vec2 cmax;
-  union vec2 pmin;
-  union vec2 pmax;
+  Vec2 cmin;
+  Vec2 cmax;
+  Vec2 pmin;
+  Vec2 pmax;
 
   cmin.x = KUT_MIN(c0.x, c1.x);
   cmax.x = KUT_MAX(c0.x, c1.x);
@@ -1170,13 +1170,13 @@ bool point_line_bounce(union vec2 c0, union vec2 vel, union vec2 p0, union vec2 
       return false;
 
 
-  union vec2 q = vec2_sub(c1, i);
+  Vec2 q = vec2_sub(c1, i);
   float l = vec2_dot_product(q, p_unit);
-  union vec2 s = vec2_mulf(p_unit, l);
-  union vec2 t = vec2_add(i, s);
+  Vec2 s = vec2_mulf(p_unit, l);
+  Vec2 t = vec2_add(i, s);
 
-  union vec2 a = vec2_sub(t, c1);
-  union vec2 a2 = vec2_mulf(a, 2.0f);
+  Vec2 a = vec2_sub(t, c1);
+  Vec2 a2 = vec2_mulf(a, 2.0f);
 
   *c_out = vec2_add(c1, a2);
   *dir = vec2_normal(vec2_sub(*c_out, i));
