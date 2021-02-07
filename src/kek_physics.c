@@ -39,7 +39,7 @@ typedef struct collision_handler
     uint32_t category_a;
     uint32_t category_b;
     void *ctx;
-    KEKCollisionFn fn;
+    CollisionFn fn;
 } CollisionHandler;
 
 #define MAX_RENDER_SHAPES 1024

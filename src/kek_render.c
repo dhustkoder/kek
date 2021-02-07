@@ -50,7 +50,7 @@ void render_destroy(Render *render)
     mem_pool_release(&pool, render);
 }
 
-void render_set_draw_callback(Render *render, KEKRenderFn fn, void *ctx)
+void render_set_draw_callback(Render *render, RenderFn fn, void *ctx)
 {
     render->draw_callback = fn;
     render->ctx = ctx;
@@ -78,16 +78,8 @@ void render_default_draw(Render *render, Camera *camera, Entity *entity, void *c
 
     if(frame)
     {
-        Texture *tex = frame->texture;
-        Vec2 uv0;
-        Vec2 uv1;
-        // y is flipped
-        float y = tex->height - frame->y - frame->height;
-
-        uv0.x = (float)frame->x / (float)tex->width;
-        uv0.y = (float)y / (float)tex->height;
-        uv1.x = (float)(frame->x + frame->width) / (float)tex->width;
-        uv1.y = (float)(y + frame->height) / (float)tex->height;
+        Vec2 uv0 = frame->uv0;
+        Vec2 uv1 = frame->uv1;
         
         sprite_fill(entity->position.xy, size.xy, entity->rotation, uv0, uv1, vertices);
         texture_bind(frame->texture, 0);

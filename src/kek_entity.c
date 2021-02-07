@@ -4,9 +4,9 @@ typedef struct entity_callbacks EntityCallbacks;
 
 typedef struct entity_callbacks {
     uint32_t type;
-    KEKEntityInitFn init;
-    KEKEntityTerminateFn terminate;
-    KEKEntityUpdateFn update;
+    EntityInitFn init;
+    EntityTerminateFn terminate;
+    EntityUpdateFn update;
     void *ctx;
     EntityCallbacks *next;
 } EntityCallbacks;
@@ -98,19 +98,19 @@ void entity_update(Entity *e)
     }
 }
 
-void entity_set_init_callback(uint32_t type, KEKEntityInitFn callback)
+void entity_set_init_callback(uint32_t type, EntityInitFn callback)
 {
     EntityCallbacks *cb = entity_getinsert_callbacks(type);
     cb->init = callback;
 }
 
-void entity_set_update_callback(uint32_t type, KEKEntityUpdateFn callback)
+void entity_set_update_callback(uint32_t type, EntityUpdateFn callback)
 {
     EntityCallbacks *cb = entity_getinsert_callbacks(type);
     cb->update = callback;
 }
 
-void entity_set_terminate_callback(uint32_t type, KEKEntityTerminateFn callback)
+void entity_set_terminate_callback(uint32_t type, EntityTerminateFn callback)
 {
     EntityCallbacks *cb = entity_getinsert_callbacks(type);
     cb->terminate = callback;

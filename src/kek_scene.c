@@ -136,7 +136,7 @@ void scene_draw(Scene *scene)
         }
     }
 }
-void scene_query_entities_aabb(Scene *scene, Vec2 pos, Vec2 size, KEKSceneQueryEntityFn fn, void *ctx)
+void scene_query_entities_aabb(Scene *scene, Vec2 pos, Vec2 size, SceneQueryEntityFn fn, void *ctx)
 {
     Entity *entity = scene->entities;
 

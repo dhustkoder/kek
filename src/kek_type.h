@@ -23,13 +23,13 @@ typedef struct render Render;
 typedef struct shader Shader;
 
 
-typedef void (*KEKEntityInitFn)(Entity *entity, void *ctx); 
-typedef void (*KEKEntityTerminateFn)(Entity *entity, void *ctx); 
-typedef void (*KEKEntityUpdateFn)(Entity *entity, void *ctx); 
-typedef void (*KEKEntityQueryFn)(Entity *e, void *ctx);
-typedef void (*KEKCollisionFn)(Entity *a, Entity *b, void *ctx);
-typedef void (*KEKRenderFn)(Render *render, Camera *camera, Entity *entity, void *ctx);
-typedef void (*KEKSceneQueryEntityFn)(Entity *entity, void *ctx);
+typedef void (*EntityInitFn)(Entity *entity, void *ctx); 
+typedef void (*EntityTerminateFn)(Entity *entity, void *ctx); 
+typedef void (*EntityUpdateFn)(Entity *entity, void *ctx); 
+typedef void (*EntityQueryFn)(Entity *e, void *ctx);
+typedef void (*CollisionFn)(Entity *a, Entity *b, void *ctx);
+typedef void (*RenderFn)(Render *render, Camera *camera, Entity *entity, void *ctx);
+typedef void (*SceneQueryEntityFn)(Entity *entity, void *ctx);
 
 enum {
     KEK_OK,
@@ -325,12 +325,45 @@ typedef struct texture {
     bool loaded;
 } Texture;
 
+#if 0
+typedef enum material_property_type{
+    MATERIAL_PROPERTY_VEC2,
+    MATERIAL_PROPERTY_VEC3,
+    MATERIAL_PROPERTY_VEC4,
+    MATERIAL_PROPERTY_MAT4,
+    MATERIAL_PROPERTY_TEXTURE,
+    MATERIAL_PROPERTY_INT,
+    MATERIAL_PROPERTY_UINT,
+    MATERIAL_PROPERTY_FLOAT,
+} MaterialPropertyType;
+
+typedef struct material_property
+{
+    MaterialPropertyType type;
+    const char *name;
+    union {
+        Vec2 vec2;
+        Vec3 vec3;
+        Vec4 vec4;
+        Mat4 mat4;
+        Texture *texture;
+        int i;
+        unsigned int ui;
+        float f;
+    };
+} MaterialProperty;
+
+#define MATERIAL_PROPERTY_CAPACITY 16
+typedef struct material {
+    MaterialProperty properties[MATERIAL_PROPERTY_CAPACITY];
+    size_t count;
+} Material;
+#endif
+
 typedef struct animation_frame {
     Texture *texture;
-    unsigned int x;
-    unsigned int y;
-    unsigned int width;
-    unsigned int height;
+    Vec2 uv0;
+    Vec2 uv1;
     float duration; // in seconds
 } AnimationFrame;
 
@@ -352,32 +385,10 @@ typedef struct vertex_buffer {
 typedef struct render {
     Shader *shader;
     VertexBuffer *vb;
-    KEKRenderFn draw_callback;
+    RenderFn draw_callback;
     void *ctx;
 } Render;
 
-
-typedef struct material_property
-{
-    int type;
-    const char *name;
-    union {
-        Vec2 vec2;
-        Vec3 vec3;
-        Vec4 vec4;
-        Mat4 mat4;
-        Texture *texture;
-        int i;
-        unsigned int ui;
-        float f;
-    };
-} MaterialProperty;
-
-#define MAX_MATERIAL_PROPERTIES 16
-typedef struct material {
-    MaterialProperty properties[MAX_MATERIAL_PROPERTIES];
-    size_t count;
-} Material;
 
 typedef struct shader {
     GLuint shader;
