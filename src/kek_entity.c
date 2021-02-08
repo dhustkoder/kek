@@ -75,7 +75,7 @@ void entity_update(Entity *e)
             {
                 e->animation_frame_time -= anim->frames[idx].duration * e->animation_speed;
                 
-                if(idx < anim->frame_count - 2)
+                if(idx < anim->frame_count - 1)
                     ++idx;
                 else if(anim->loop)
                     idx = 0;
