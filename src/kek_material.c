@@ -1,6 +1,7 @@
 #include "kek.h"
 #include <assert.h>
 
+#if 0
 static MemPool pool;
 
 void material_init(size_t capacity)
@@ -27,4 +28,4 @@ void material_destroy(void)
 {
     mem_pool_release(&pool, material);
 }
-//
+#endif
