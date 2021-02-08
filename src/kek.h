@@ -154,7 +154,6 @@ void            entity_init(size_t capacity, size_t type_capacity, size_t user_d
 Entity         *entity_create(uint32_t type);
 void            entity_destroy(Entity *entity);
 void            entity_release(Entity *entity);
-void            entity_set_init_callback(uint32_t type, EntityInitFn callback);
 void            entity_set_update_callback(uint32_t type, EntityUpdateFn callback);
 void            entity_set_terminate_callback(uint32_t type, EntityTerminateFn callback);
 void            entity_set_callback_context(uint32_t type, void *ctx);

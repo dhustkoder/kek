@@ -23,7 +23,6 @@ typedef struct render Render;
 typedef struct shader Shader;
 
 
-typedef void (*EntityInitFn)(Entity *entity, void *ctx); 
 typedef void (*EntityTerminateFn)(Entity *entity, void *ctx); 
 typedef void (*EntityUpdateFn)(Entity *entity, void *ctx); 
 typedef void (*EntityQueryFn)(Entity *e, void *ctx);

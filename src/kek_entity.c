@@ -4,7 +4,6 @@ typedef struct entity_callbacks EntityCallbacks;
 
 typedef struct entity_callbacks {
     uint32_t type;
-    EntityInitFn init;
     EntityTerminateFn terminate;
     EntityUpdateFn update;
     void *ctx;
@@ -44,10 +43,6 @@ Entity *entity_create(uint32_t type)
     inst->animation_frame = 0;
     inst->animation_speed = 1.0f;
     inst->animation_frame_time = 0.0f;
-
-    EntityCallbacks *cb = entity_getinsert_callbacks(type);
-    if(cb && cb->init)
-        cb->init(inst, cb->ctx);
 
     return inst;
 }
@@ -98,12 +93,6 @@ void entity_update(Entity *e)
     }
 }
 
-void entity_set_init_callback(uint32_t type, EntityInitFn callback)
-{
-    EntityCallbacks *cb = entity_getinsert_callbacks(type);
-    cb->init = callback;
-}
-
 void entity_set_update_callback(uint32_t type, EntityUpdateFn callback)
 {
     EntityCallbacks *cb = entity_getinsert_callbacks(type);
@@ -148,7 +137,6 @@ static EntityCallbacks *entity_getinsert_callbacks(uint32_t type)
     cb = mem_pool_take(&pool_callbacks);
 
     cb->type = type;
-    cb->init = NULL;
     cb->terminate = NULL;
     cb->update = NULL;
     cb->ctx = NULL;
