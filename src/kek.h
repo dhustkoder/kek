@@ -109,6 +109,7 @@ void       animation_init(size_t capacity);
 Animation *animation_create(void);
 void       animation_destroy(Animation *animation);
 void       animation_add_frame(Animation *animation, AnimationFrame frame);
+void       animation_add_frame_clip(Animation *animation, Texture *texture, int x, int y, int clip_width, int clip_height, float duration);
 void       animation_set_loop(Animation *animation, bool loop);
 
 //**********************************************************
