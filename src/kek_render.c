@@ -11,7 +11,7 @@ typedef struct vertex {
     Vec4 colormask;
 } Vertex;
 
-static void sprite_fill(Vec2 position, Vec2 size, Vec3 rotation, Vec2 uv0, Vec2 uv1, Vertex *out);
+static void sprite_fill(Vec2 position, Vec2 size, Vec3 rotation, Vec2 uv0, Vec2 uv1, Vec4 colormask, Vertex *out);
 static void render_default_draw(Render *render,  Camera *camera, Entity *entity, void *ctx);
 
 void render_init(size_t capacity)
@@ -80,8 +80,9 @@ void render_default_draw(Render *render, Camera *camera, Entity *entity, void *c
     {
         Vec2 uv0 = frame->uv0;
         Vec2 uv1 = frame->uv1;
+        Vec4 colormask = entity->colormask;
         
-        sprite_fill(entity->position.xy, size.xy, entity->rotation, uv0, uv1, vertices);
+        sprite_fill(entity->position.xy, size.xy, entity->rotation, uv0, uv1, colormask, vertices);
         texture_bind(frame->texture, 0);
     }
 
@@ -89,7 +90,8 @@ void render_default_draw(Render *render, Camera *camera, Entity *entity, void *c
     {
         const Vec2 uv0 = {0.0f, 0.0f};
         const Vec2 uv1 = {1.0f, 1.0f};
-        sprite_fill(entity->position.xy, size.xy, entity->rotation, uv0, uv1, vertices);
+        const Vec4 colormask = entity->colormask;
+        sprite_fill(entity->position.xy, size.xy, entity->rotation, uv0, uv1, colormask, vertices);
         texture_bind(entity->texture, 0);
     }
 
@@ -115,7 +117,7 @@ void render_default_draw(Render *render, Camera *camera, Entity *entity, void *c
     vertex_buffer_draw(vb, 0, vb->size/sizeof(Vertex));
 }
 
-static void sprite_fill(Vec2 position, Vec2 size, Vec3 rotation, Vec2 uv0, Vec2 uv1, Vertex *out)
+static void sprite_fill(Vec2 position, Vec2 size, Vec3 rotation, Vec2 uv0, Vec2 uv1, Vec4 colormask, Vertex *out)
 {
     Vec2 p0 = position;
     Vec2 p1 = vec2_add(p0, size);
@@ -153,7 +155,7 @@ static void sprite_fill(Vec2 position, Vec2 size, Vec3 rotation, Vec2 uv0, Vec2 
         vertices[i].position  = vert_position;
         vertices[i].uv        = uvs[i];
         vertices[i].normal    = vec3(0,0,1);
-        vertices[i].colormask = vec4(1,1,1,1);
+        vertices[i].colormask = colormask;
     }
 
     memcpy(out, vertices, sizeof(vertices));

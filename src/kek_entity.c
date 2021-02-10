@@ -38,11 +38,13 @@ Entity *entity_create(uint32_t type)
     inst->rotation = vec3_zero();
     inst->size     = vec3(128, 128, 128);
 
+    inst->colormask = vec4(1,1,1,1);
     inst->texture = NULL;
     inst->animation = NULL;
     inst->animation_frame = 0;
     inst->animation_speed = 1.0f;
     inst->animation_frame_time = 0.0f;
+
 
     return inst;
 }

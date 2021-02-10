@@ -400,6 +400,7 @@ typedef struct entity {
     Vec3 velocity;
     Vec3 rotation;
     Vec3 size;
+    Vec4 colormask;
 
     Texture *texture;
     Animation *animation;
