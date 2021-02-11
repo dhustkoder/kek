@@ -55,14 +55,21 @@ void  mem_stack_pop(void *addr);
 void  mem_stack_free(void);
 
 //**********************************************************
-// KEK WINDOW 
+// KEK SPATIAL MAP 
 //**********************************************************
-void qtree_init(size_t capacity); 
-QTree *qtree_create(MemPool *pool, size_t max_depth); 
-QNode *qtree_create_node(QTree *tree, void *data);
-QNode *qtree_move_node(QNode *node, int x, int y);
-void qtree_destroy_node(QNode *node);
-void qtree_query(QTree *tree, int x0, int y0, int x1, int y1, QTreeQueryFn fn, void *ctx);
+void spatialmap_init(size_t capacity);
+SpatialMap *spatialmap_create(SpatialNode **node_list, MemPool *node_pool, size_t xbits, size_t ybits);
+SpatialNode *spatialmap_create_node(SpatialMap *map, void *data);
+void spatialmap_destroy_node(SpatialNode *node);
+SpatialNode *spatialmap_move_node(SpatialNode *node, int x, int y);
+void spatialmap_query(SpatialMap *spatial, int x0, int y0, int x1, int y1, SpatialMapQueryFn fn, void *ctx);
+
+void spatialmap_init(size_t capacity); 
+SpatialMap *spatialmap_create(SpatialNode **node_list, MemPool *node_pool, size_t width, size_t height);
+SpatialNode *spatialmap_create_node(SpatialMap *map, void *data);
+SpatialNode *spatialmap_move_node(SpatialNode *node, int x, int y);
+void spatialmap_destroy_node(SpatialNode *node);
+void spatialmap_query(SpatialMap *map, int x0, int y0, int x1, int y1, SpatialMapQueryFn fn, void *ctx);
 
 //**********************************************************
 // KEK VERTEX BUFFER
@@ -177,8 +184,11 @@ void            entity_set_terminate_callback(uint32_t type, EntityTerminateFn c
 void            entity_set_callback_context(uint32_t type, void *ctx);
 void           *entity_get_user_data(Entity *entity);
 void            entity_update(Entity *e);
+Vec3            entity_size(Entity *e);
 void            entity_set_size(Entity *e, Vec3 size);
+Vec3            entity_position(Entity *e);
 void            entity_set_position(Entity *e, Vec3 position);
+Vec3            entity_velocity(Entity *e);
 void            entity_set_velocity(Entity *e, Vec3 velocity);
 void            entity_set_texture(Entity *e, Texture *texture);
 void            entity_set_animation(Entity *e, Animation *animation);

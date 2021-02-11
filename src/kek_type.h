@@ -21,7 +21,7 @@ typedef struct camera Camera;
 typedef struct render Render;
 typedef struct shader Shader;
 typedef struct event Event;
-typedef struct qnode QNode;
+typedef struct spatial_node SpatialNode;
 
 
 typedef void (*EventCallback)(Event *event, void *ctx);
@@ -31,7 +31,7 @@ typedef void (*EntityQueryFn)(Entity *e, void *ctx);
 typedef void (*CollisionFn)(Entity *a, Entity *b, void *ctx);
 typedef void (*RenderFn)(Render *render, Camera *camera, Entity *entity, void *ctx);
 typedef void (*SceneQueryEntityFn)(Entity *entity, void *ctx);
-typedef void (*QTreeQueryFn)(QNode *node, void *ctx);
+typedef void (*SpatialMapQueryFn)(SpatialNode *node, void *ctx);
 
 
 enum {
@@ -188,7 +188,7 @@ typedef enum config_type {
     KEK_CFG_MEM_ENTITY_CAPACITY,
     KEK_CFG_MEM_ENTITY_USER_DATA_SIZE,
     KEK_CFG_MEM_ENTITY_TYPE_CAPACITY,
-    KEK_CFG_MEM_QTREE_CAPACITY,
+    KEK_CFG_MEM_SPATIAL_MAP_CAPACITY,
     KEK_CFG_MEM_KEY_BIND_ALIAS_CAPACITY,
     KEK_CFG_NUM_TYPES,
 } ConfigType;
@@ -407,39 +407,25 @@ typedef struct shader {
     GLuint shader;
 } Shader;
 
-typedef struct qnode QNode;
-typedef struct qtree QTree;
+typedef struct spatial_map SpatialMap;
+typedef struct spatial_node SpatialNode;
 
-typedef enum qnode_type{
-    QNODE_DATA,
-    QNODE_LEAF,
-    QNODE_PARENT,
+typedef struct spatial_node {
+    SpatialNode *prev;
+    SpatialNode *next;
+    void *data;
+    SpatialMap *map;
+    uint64_t key;
+} SpatialNode;
 
-} QNodeType;
-
-typedef struct qnode {
-    QNodeType type;
-    union {
-        QNode *children;
-        void *data;
-    };
-    int x;
-    int y;
-    int width;
-    int height;
-
-    size_t count;
-    size_t depth;
-    QTree *tree;
-    QNode *next;
-    QNode *parent;
-} QNode;
-
-typedef struct qtree {
-    QNode *root;
+typedef struct spatial_map {
+    SpatialNode **nodes;
     MemPool *node_pool;
-    size_t max_depth;
-} QTree;
+    uint64_t xmask;
+    uint64_t ymask;
+    size_t xbits;
+    size_t ybits;
+} SpatialMap;
 
 typedef struct entity {
     bool destroy;
@@ -456,7 +442,7 @@ typedef struct entity {
     float animation_frame_time;
     float animation_speed;
 
-    QNode *qnode;
+    SpatialNode *snode;
     Entity *scene_next_entity;
 } Entity;
 
