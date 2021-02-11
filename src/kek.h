@@ -55,6 +55,16 @@ void  mem_stack_pop(void *addr);
 void  mem_stack_free(void);
 
 //**********************************************************
+// KEK WINDOW 
+//**********************************************************
+void qtree_init(size_t capacity); 
+QTree *qtree_create(MemPool *pool, size_t max_depth); 
+QNode *qtree_create_node(QTree *tree, void *data);
+QNode *qtree_move_node(QNode *node, int x, int y);
+void qtree_destroy_node(QNode *node);
+void qtree_query(QTree *tree, int x0, int y0, int x1, int y1, QTreeQueryFn fn, void *ctx);
+
+//**********************************************************
 // KEK VERTEX BUFFER
 //**********************************************************
 void          vertex_buffer_init(size_t capacity);
@@ -113,6 +123,13 @@ void       animation_add_frame_clip(Animation *animation, Texture *texture, int 
 void       animation_set_loop(Animation *animation, bool loop);
 
 //**********************************************************
+// KEK EVENT 
+//**********************************************************
+void event_init(size_t capacity);
+void event_register(int id, EventCallback cb, void *ctx); 
+void event_submit(int id, void *data);
+
+//**********************************************************
 // KEK RENDER
 //**********************************************************
 void    render_init(size_t capacity);
@@ -160,29 +177,24 @@ void            entity_set_terminate_callback(uint32_t type, EntityTerminateFn c
 void            entity_set_callback_context(uint32_t type, void *ctx);
 void           *entity_get_user_data(Entity *entity);
 void            entity_update(Entity *e);
+void            entity_set_size(Entity *e, Vec3 size);
+void            entity_set_position(Entity *e, Vec3 position);
+void            entity_set_velocity(Entity *e, Vec3 velocity);
+void            entity_set_texture(Entity *e, Texture *texture);
 void            entity_set_animation(Entity *e, Animation *animation);
+void            entity_set_rotation(Entity *e, Vec3 rotation);
+void            entity_set_rotation_z(Entity *e, float rotation);
 void            entity_reset_animation(Entity *e);
 void            entity_set_animation_speed(Entity *e, float speed);
 AnimationFrame *entity_get_animation_frame(Entity *e);
+void            entity_query(Vec2 p0, Vec2 p1, EntityQueryFn fn, void *ctx);
 
 void               physics_init(void);
 void               physics_simulate(void);              
-PhysicsBody       *physics_create_circle(Vec3 position, float radius, uint32_t type);
-PhysicsBody       *physics_create_polygon_shape(Vec3 *positions, size_t count, uint32_t type);
+PhysicsBody       *physics_create_circle_body(Vec3 position, float radius, uint32_t type);
 void               physics_destroy_body(PhysicsBody *body);
-PhysicsConstraint *physics_add_damped_spring(PhysicsBody *a, PhysicsBody *b, Vec2 anchor_a, Vec2 anchor_b, float rest_length, float stiffness, float damping);
-PhysicsConstraint *physics_add_pin_joint(PhysicsBody *a, PhysicsBody *b, Vec2 anchor_a, Vec2 anchor_b, float dist);
-PhysicsConstraint *physics_add_pivot_joint(PhysicsBody *a, PhysicsBody *b, Vec2 anchor_a, Vec2 anchor_b);
-PhysicsConstraint *physics_add_rotary_limit_joint(PhysicsBody *a, PhysicsBody *b, float min, float max);
-void               physics_set_filter(PhysicsBody *e, uint32_t group, uint32_t category, uint32_t mask);
-void               physics_set_mass(PhysicsBody *e, float mass);
-void               physics_set_force(PhysicsBody *e, Vec2 force);
-void               physics_set_torque(PhysicsBody *e, float torque);
-void               physics_set_angle(PhysicsBody *e, float angle);
 void               physics_body_set_position(PhysicsBody *e, Vec2 pos);
 Vec2               physics_body_get_position(PhysicsBody *e);
-float              physics_body_get_angle(PhysicsBody *e);
-Vec2               physics_get_center(PhysicsBody *e);
 
 //**********************************************************
 // KEK KEY 

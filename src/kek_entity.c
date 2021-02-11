@@ -1,4 +1,5 @@
 #include "kek.h"
+#define QTREE_MAX_DEPTH 9 
 
 typedef struct entity_callbacks EntityCallbacks;
 
@@ -12,6 +13,8 @@ typedef struct entity_callbacks {
 
 static MemPool pool_entity;
 static MemPool pool_callbacks;
+static MemPool pool_qnode;
+static QTree *qtree;
 static EntityCallbacks *root_callbacks = NULL;
 
 static EntityCallbacks *entity_getinsert_callbacks(uint32_t type);
@@ -20,7 +23,18 @@ void entity_init(size_t capacity, size_t type_capacity, size_t user_data_stride)
 {
     mem_pool_alloc(&pool_entity, capacity, sizeof(Entity) + user_data_stride);
     mem_pool_alloc(&pool_callbacks, type_capacity, sizeof(EntityCallbacks));
+    mem_pool_alloc(&pool_qnode, capacity * QTREE_MAX_DEPTH, sizeof(QNode));
+
+    qtree = qtree_create(&pool_qnode, QTREE_MAX_DEPTH);
+
     root_callbacks = NULL;
+}
+
+void qtree_print(QNode *node);
+void entity_print_qtree(void)
+{
+    qtree_print(qtree->root);
+    printf("\n\n");
 }
 
 Entity *entity_create(uint32_t type)
@@ -33,7 +47,6 @@ Entity *entity_create(uint32_t type)
     inst->destroy = false;
     inst->type = type;
     inst->scene_next_entity = NULL;
-    inst->position = vec3_zero();
     inst->velocity = vec3_zero();
     inst->rotation = vec3_zero();
     inst->size     = vec3(128, 128, 128);
@@ -45,18 +58,43 @@ Entity *entity_create(uint32_t type)
     inst->animation_speed = 1.0f;
     inst->animation_frame_time = 0.0f;
 
+    inst->position = vec3_zero();
+    inst->qnode = qtree_create_node(qtree, inst);
+
+    qtree_move_node(inst->qnode, 0, 0);
+
 
     return inst;
 }
 
 void entity_destroy(Entity *entity)
 {
+    qtree_destroy_node(entity->qnode);
     mem_pool_release(&pool_entity, entity);
 }
 
 void entity_release(Entity *entity)
 {
     entity->destroy = true;
+}
+
+
+typedef struct {
+    EntityQueryFn fn;
+    void *ctx;
+}EntityQueryData ;
+
+void query_qtree_cb(QNode *node, void *ctx)
+{
+    EntityQueryData *data = ctx;
+
+    data->fn(node->data, data->ctx);
+}
+
+void entity_query(Vec2 p0, Vec2 p1, EntityQueryFn fn, void *ctx)
+{
+    EntityQueryData data = {fn, ctx};
+    qtree_query(qtree, p0.x, p0.y, p1.x, p1.y, query_qtree_cb, &data);
 }
 
 void entity_update(Entity *e)
@@ -168,6 +206,37 @@ void entity_set_animation(Entity *e, Animation *animation)
     e->animation = animation;
 
     entity_reset_animation(e);
+}
+
+void entity_set_size(Entity *e, Vec3 size)
+{
+    e->size = size;
+}
+
+void entity_set_position(Entity *e, Vec3 position)
+{
+    e->position = position;
+    qtree_move_node(e->qnode, (int)position.x, (int)position.y);
+}
+
+void entity_set_velocity(Entity *e, Vec3 velocity)
+{
+    e->velocity = velocity;
+}
+
+void entity_set_rotation(Entity *e, Vec3 rotation)
+{
+    e->rotation = rotation;
+}
+
+void entity_set_texture(Entity *e, Texture *texture)
+{
+    e->texture = texture;
+}
+
+void entity_set_rotation_z(Entity *e, float rotation)
+{
+    e->rotation.z = rotation;
 }
 
 void entity_reset_animation(Entity *e)

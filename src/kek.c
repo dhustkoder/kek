@@ -52,6 +52,9 @@ static int kek_init(int argc, char **argv)
     tag_init(
         config_geti(KEK_CFG_MEM_TAG_CAPACITY));
 
+    qtree_init(
+        config_geti(KEK_CFG_MEM_QTREE_CAPACITY));
+
     window_init();
 
     hid_init(
@@ -95,6 +98,7 @@ void kek_quit(void)
     quit = true;
 }
 
+void entity_print_qtree(void);
 static int kek_run(void)
 {
     log("running...");
@@ -112,6 +116,7 @@ static int kek_run(void)
 
         scene_update(scene);
 
+        entity_print_qtree();
         scene_draw(scene);
 
         window_swap_buffers();

@@ -20,6 +20,7 @@ void config_init(void)
     config[KEK_CFG_MEM_RENDER_CAPACITY]                = 128;
     config[KEK_CFG_MEM_KEY_BIND_ALIAS_CAPACITY]        = 256;
     config[KEK_CFG_MEM_ANIMATION_CAPACITY]             = 1024;
+    config[KEK_CFG_MEM_QTREE_CAPACITY]                 = 512;
 }
 
 void config_seti(enum config_type type, int value)

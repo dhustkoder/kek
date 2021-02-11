@@ -7,7 +7,6 @@
 #include <stdint.h>
 #include <math.h>
 
-
 #define KUT_ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
 #define KUT_STRUCT_ATTRIB_SIZE(type, member) sizeof(((type *)0)->member)
 
@@ -21,14 +20,19 @@ typedef struct entity Entity;
 typedef struct camera Camera;
 typedef struct render Render;
 typedef struct shader Shader;
+typedef struct event Event;
+typedef struct qnode QNode;
 
 
+typedef void (*EventCallback)(Event *event, void *ctx);
 typedef void (*EntityTerminateFn)(Entity *entity, void *ctx); 
 typedef void (*EntityUpdateFn)(Entity *entity, void *ctx); 
 typedef void (*EntityQueryFn)(Entity *e, void *ctx);
 typedef void (*CollisionFn)(Entity *a, Entity *b, void *ctx);
 typedef void (*RenderFn)(Render *render, Camera *camera, Entity *entity, void *ctx);
 typedef void (*SceneQueryEntityFn)(Entity *entity, void *ctx);
+typedef void (*QTreeQueryFn)(QNode *node, void *ctx);
+
 
 enum {
     KEK_OK,
@@ -184,6 +188,7 @@ typedef enum config_type {
     KEK_CFG_MEM_ENTITY_CAPACITY,
     KEK_CFG_MEM_ENTITY_USER_DATA_SIZE,
     KEK_CFG_MEM_ENTITY_TYPE_CAPACITY,
+    KEK_CFG_MEM_QTREE_CAPACITY,
     KEK_CFG_MEM_KEY_BIND_ALIAS_CAPACITY,
     KEK_CFG_NUM_TYPES,
 } ConfigType;
@@ -312,6 +317,15 @@ typedef struct mat4{
 	float m[4][4]; //[row][column]
 } Mat4;
 
+typedef struct mem_pool {
+    uint8_t *buffer;
+    size_t capacity;
+    size_t stride;
+    size_t free_head;
+    size_t free_count;
+    size_t use_count;
+} MemPool;
+
 typedef struct camera {
     Vec3 position;
     float zoom;
@@ -393,6 +407,40 @@ typedef struct shader {
     GLuint shader;
 } Shader;
 
+typedef struct qnode QNode;
+typedef struct qtree QTree;
+
+typedef enum qnode_type{
+    QNODE_DATA,
+    QNODE_LEAF,
+    QNODE_PARENT,
+
+} QNodeType;
+
+typedef struct qnode {
+    QNodeType type;
+    union {
+        QNode *children;
+        void *data;
+    };
+    int x;
+    int y;
+    int width;
+    int height;
+
+    size_t count;
+    size_t depth;
+    QTree *tree;
+    QNode *next;
+    QNode *parent;
+} QNode;
+
+typedef struct qtree {
+    QNode *root;
+    MemPool *node_pool;
+    size_t max_depth;
+} QTree;
+
 typedef struct entity {
     bool destroy;
     uint32_t type;
@@ -408,6 +456,7 @@ typedef struct entity {
     float animation_frame_time;
     float animation_speed;
 
+    QNode *qnode;
     Entity *scene_next_entity;
 } Entity;
 
@@ -418,15 +467,6 @@ typedef struct scene {
     size_t entity_count;
 } Scene;
 
-typedef struct mem_pool {
-    uint8_t *buffer;
-    size_t capacity;
-    size_t stride;
-    size_t free_head;
-    size_t free_count;
-    size_t use_count;
-} MemPool;
-
 typedef struct physics_body {
     int dummy;
 } PhysicsBody;
@@ -434,4 +474,9 @@ typedef struct physics_body {
 typedef struct physics_constraint {
     int dummy;
 } PhysicsConstraint;
+
+typedef struct event {
+    int id;
+    void *data;
+} Event;
 
