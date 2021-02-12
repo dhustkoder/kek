@@ -3,12 +3,12 @@
 
 static MemPool pool;
 
-void animation_init(size_t capacity)
+void init_animation(size_t capacity)
 {
     mem_pool_alloc(&pool, capacity, sizeof(Animation));
 }
 
-Animation *animation_create(void)
+Animation *create_animation(void)
 {
     Animation *animation = mem_pool_take(&pool);
 
@@ -19,12 +19,12 @@ Animation *animation_create(void)
 
 }
 
-void animation_destroy(Animation *animation)
+void destroy_animation(Animation *animation)
 {
     mem_pool_release(&pool, animation);
 }
 
-void animation_add_frame(Animation *animation, AnimationFrame frame)
+void add_animation_frame(Animation *animation, AnimationFrame frame)
 {
     assert(animation->frame_count < MAX_ANIMATION_FRAMES);
 
@@ -33,7 +33,7 @@ void animation_add_frame(Animation *animation, AnimationFrame frame)
     animation->frame_count++;
 }
 
-void animation_add_frame_clip(Animation *animation, Texture *texture, int x, int y, int clip_width, int clip_height, float duration)
+void add_animation_frame_clip(Animation *animation, Texture *texture, int x, int y, int clip_width, int clip_height, float duration)
 {
     AnimationFrame frame;
 
@@ -47,10 +47,10 @@ void animation_add_frame_clip(Animation *animation, Texture *texture, int x, int
     frame.uv1.y = (float)(y + clip_height)/(float)texture->height;
     frame.duration = duration;
 
-    animation_add_frame(animation, frame);
+    add_animation_frame(animation, frame);
 }
 
-void animation_set_loop(Animation *animation, bool loop)
+void animation_loop(Animation *animation, bool loop)
 {
     animation->loop = loop;
 }

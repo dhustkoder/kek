@@ -1,10 +1,10 @@
 #include "kek.h"
 
-void physics_init(void)
+void init_physics(void)
 {
 }
 
-void physics_simulate(void)
+void simulate_physics(void)
 {
 }
 

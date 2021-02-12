@@ -2,7 +2,7 @@
 
 static int config[KEK_CFG_NUM_TYPES];
 
-void config_init(void)
+void init_config(void)
 {
     for(size_t i = 0; i < KEK_CFG_NUM_TYPES; ++i)
         config[i] = 0;
@@ -23,12 +23,12 @@ void config_init(void)
     config[KEK_CFG_MEM_SPATIAL_MAP_CAPACITY]           = 512;
 }
 
-void config_seti(enum config_type type, int value)
+void configi(enum config_type type, int value)
 {
     config[type] = value;
 }
 
-int config_geti(enum config_type type)
+int get_configi(enum config_type type)
 {
     return config[type];
 }

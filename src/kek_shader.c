@@ -5,14 +5,14 @@
 
 static MemPool pool;
 
-static int shader_compile(GLuint shader, const char *code, char *error_buffer, size_t error_buffer_capacity);
+static int compile_shader(GLuint shader, const char *code, char *error_buffer, size_t error_buffer_capacity);
 
-void shader_init(size_t capacity)
+void init_shader(size_t capacity)
 {
     mem_pool_alloc(&pool, capacity, sizeof(Shader));
 }
 
-Shader *shader_create(void)
+Shader *create_shader(void)
 {
      Shader *inst = mem_pool_take(&pool);
 
@@ -24,7 +24,7 @@ Shader *shader_create(void)
     return inst;
 }
 
-void shader_destroy(Shader *shader)
+void destroy_shader(Shader *shader)
 {
     gl_delete_program(shader->shader);
     shader->shader = 0;
@@ -32,7 +32,7 @@ void shader_destroy(Shader *shader)
     mem_pool_release(&pool, shader);
 }
 
-int shader_load_files(Shader *shader, const char *vert_file, const char *frag_file)
+int load_shader_files(Shader *shader, const char *vert_file, const char *frag_file)
 {
     size_t vert_size = 0;
     size_t frag_size = 0;
@@ -52,7 +52,7 @@ int shader_load_files(Shader *shader, const char *vert_file, const char *frag_fi
     vert_buffer[vert_size] = '\0';
     frag_buffer[frag_size] = '\0';
 
-    result = shader_load_buffer(shader, vert_buffer, frag_buffer);
+    result = load_shader_buffer(shader, vert_buffer, frag_buffer);
 
     mem_stack_pop(frag_buffer);
     mem_stack_pop(vert_buffer);
@@ -60,7 +60,7 @@ int shader_load_files(Shader *shader, const char *vert_file, const char *frag_fi
     return result;
 }
 
-int shader_load_buffer(Shader *shader, const char *vert_buffer, const char *frag_buffer)
+int load_shader_buffer(Shader *shader, const char *vert_buffer, const char *frag_buffer)
 {
     static const size_t ERROR_BUFFER_CAPACITY = 2048;
     char *error_buffer;
@@ -76,10 +76,10 @@ int shader_load_buffer(Shader *shader, const char *vert_buffer, const char *frag
     vert_shader = gl_create_shader(GL_VERTEX_SHADER);
     frag_shader = gl_create_shader(GL_FRAGMENT_SHADER);
 
-    vert_result = shader_compile(vert_shader, 
+    vert_result = compile_shader(vert_shader, 
                         vert_buffer, error_buffer, ERROR_BUFFER_CAPACITY);
 
-    frag_result = shader_compile(frag_shader, 
+    frag_result = compile_shader(frag_shader, 
                         frag_buffer, error_buffer, ERROR_BUFFER_CAPACITY);
 
     gl_attach_shader(shader->shader, vert_shader);
@@ -94,12 +94,12 @@ int shader_load_buffer(Shader *shader, const char *vert_buffer, const char *frag
     return KEK_OK;
 }
 
-int shader_bind(Shader *shader)
+int bind_shader(Shader *shader)
 {
     gl_use_program(shader->shader);
 }
 
-static int shader_compile(GLuint shader, const char *code, char *error_buffer, size_t error_buffer_capacity)
+static int compile_shader(GLuint shader, const char *code, char *error_buffer, size_t error_buffer_capacity)
 {
     gl_shader_source(shader, 1, (const char **)&code, 0);
     gl_compile_shader(shader);

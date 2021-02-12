@@ -7,12 +7,12 @@
 
 
 static MemPool pool;
-void texture_init(size_t capacity)
+void init_texture(size_t capacity)
 {
     mem_pool_alloc(&pool, capacity, sizeof(Texture));
 }
 
-Texture *texture_create(void)
+Texture *create_texture(void)
 {
      Texture *inst = mem_pool_take(&pool);
      inst->width = 0;
@@ -24,7 +24,7 @@ Texture *texture_create(void)
      return inst;
 }
 
-void texture_destroy(Texture *texture)
+void destroy_texture(Texture *texture)
 {
 
     gl_delete_textures(1, &texture->id);
@@ -32,7 +32,7 @@ void texture_destroy(Texture *texture)
     mem_pool_release(&pool, texture);
 }
 
-int texture_load_file(Texture *texture, const char *file)
+int load_texture_file(Texture *texture, const char *file)
 {
 	int w;
 	int h;
@@ -61,7 +61,7 @@ int texture_load_file(Texture *texture, const char *file)
     return KEK_OK;
 }
 
-void texture_bind(Texture *texture, int slot)
+void bind_texture(Texture *texture, int slot)
 {
     gl_active_texture(GL_TEXTURE0 + slot);
     gl_bind_texture(GL_TEXTURE_2D, texture->id);

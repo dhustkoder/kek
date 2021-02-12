@@ -9,7 +9,7 @@ static PALReturn pal_glfw_has_error(PALWindow *window)
     return (glfwGetError(NULL) == GLFW_NO_ERROR) ? PAL_OK : PAL_ERROR; 
 }
 
-PALReturn pal_window_init(void)
+PALReturn pal_init_window(void)
 {
     PALWindow window;
 
@@ -21,7 +21,7 @@ PALReturn pal_window_init(void)
     return PAL_OK;
 }
 
-PALReturn pal_window_open(PALWindow *window, const char *title, unsigned int width, unsigned int height)
+PALReturn pal_open_window(PALWindow *window, const char *title, unsigned int width, unsigned int height)
 {
     GLFWwindow *gw;
 
@@ -53,12 +53,12 @@ PALReturn pal_window_open(PALWindow *window, const char *title, unsigned int wid
     return PAL_OK;
 }
 
-bool pal_window_is_open(PALWindow *window)
+bool pal_is_window_open(PALWindow *window)
 {
     return (window->glfw) ? true : false;
 }
 
-PALReturn pal_window_terminate(PALWindow *window)
+PALReturn pal_terminate_window(PALWindow *window)
 {
     window->glfw = NULL;
 
@@ -67,14 +67,14 @@ PALReturn pal_window_terminate(PALWindow *window)
     return pal_glfw_has_error(window);
 }
 
-PALReturn pal_window_set_title(PALWindow *window, const char *title)
+PALReturn pal_window_title(PALWindow *window, const char *title)
 {
     glfwSetWindowTitle(window->glfw, title);
 
     return pal_glfw_has_error(window);
 }
 
-PALReturn pal_window_set_size(PALWindow *window, unsigned int width, unsigned int height)
+PALReturn pal_window_size(PALWindow *window, unsigned int width, unsigned int height)
 {
     int fbwidth;
     int fbheight; 
@@ -84,35 +84,35 @@ PALReturn pal_window_set_size(PALWindow *window, unsigned int width, unsigned in
     return pal_glfw_has_error(window);
 }
 
-PALReturn pal_window_get_size(PALWindow *window, unsigned int *width, unsigned int *height)
+PALReturn pal_get_window_size(PALWindow *window, unsigned int *width, unsigned int *height)
 {
     glfwGetWindowSize(window->glfw, width, height);
 
     return pal_glfw_has_error(window);
 }
 
-PALReturn pal_window_get_framebuffer_size(PALWindow *window, unsigned int *width, unsigned int *height)
+PALReturn pal_get_window_framebuffer_size(PALWindow *window, unsigned int *width, unsigned int *height)
 {
     glfwGetFramebufferSize(window->glfw, width, height);
 
     return pal_glfw_has_error(window);
 }
 
-PALReturn pal_window_poll(PALWindow *window)
+PALReturn pal_poll_window(PALWindow *window)
 {
     glfwPollEvents();
 
     return pal_glfw_has_error(window);
 }
 
-PALReturn pal_window_swap_buffers(PALWindow *window)
+PALReturn pal_swap_window_buffers(PALWindow *window)
 {
     glfwSwapBuffers(window->glfw);
 
     return pal_glfw_has_error(window);
 }
 
-PALReturn pal_window_is_keyboard_pressed(PALWindow *window, int key, bool *pressed)
+PALReturn pal_is_keyboard_pressed(PALWindow *window, int key, bool *pressed)
 {
     *pressed = (glfwGetKey(window->glfw, key) != GLFW_RELEASE) ? true : false;
 
@@ -120,14 +120,14 @@ PALReturn pal_window_is_keyboard_pressed(PALWindow *window, int key, bool *press
 }
 
 
-PALReturn pal_window_is_mouse_button_pressed(PALWindow *window, int button, bool *pressed)
+PALReturn pal_is_mouse_button_pressed(PALWindow *window, int button, bool *pressed)
 {
     *pressed = (glfwGetMouseButton(window->glfw, button) != GLFW_RELEASE) ? true : false;
 
     return pal_glfw_has_error(window);
 }
 
-PALReturn pal_window_get_mouse_position(PALWindow *window, float *x, float *y)
+PALReturn pal_get_mouse_position(PALWindow *window, float *x, float *y)
 {
     double xpos, ypos;
     glfwGetCursorPos(window->glfw, &xpos, &ypos);

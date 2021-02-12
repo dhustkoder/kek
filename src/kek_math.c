@@ -1,32 +1,32 @@
 #include "kek.h"
 #include <float.h>
 
-Vec2 vec2_zero()
+Vec2 zero_vec2()
 {
 	return (Vec2){ 0.0f, 0.0f };
 }
 
-Vec3 vec3_zero()
+Vec3 zero_vec3()
 {
 	return (Vec3){ 0.0f, 0.0f, 0.0f };
 }
 
-Vec4 vec4_zero()
+Vec4 zero_vec4()
 {
 	return (Vec4){ 0.0f, 0.0f, 0.0f, 0.0f };
 }
 
-Vec2 vec2_identity()
+Vec2 identity_vec2()
 {
 	return (Vec2){ 1.0f, 1.0f };
 }
 
-Vec3 vec3_identity()
+Vec3 identity_vec3()
 {
 	return (Vec3){ 1.0f, 1.0f, 1.0f };
 }
 
-Vec4 vec4_identity()
+Vec4 identity_vec4()
 {
 	return (Vec4){ 1.0f, 1.0f, 1.0f, 1.0f };
 }
@@ -76,43 +76,43 @@ Vec4 vec3to4(Vec3 v)
 	return (Vec4){ v.x, v.y, v.z, 0.0f };
 }
 
-float vec2_dot_product(Vec2 a, Vec2 b)
+float dot_product_vec2(Vec2 a, Vec2 b)
 {
 	return (a.x * b.x) + (a.y * b.y);
 }
 
-float vec3_dot_product(Vec3 a, Vec3 b)
+float dot_product_vec3(Vec3 a, Vec3 b)
 {
 	return (a.x * b.x) + (a.y * b.y) + (a.z * b.z);
 }
 
-float vec4_dot_product(Vec4 a, Vec4 b)
+float dot_product_vec4(Vec4 a, Vec4 b)
 {
 	return (a.x * b.x) + (a.y * b.y) + (a.z * b.z) + (a.w * b.w);
 }
 
-Vec2 vec2_project(Vec2 u, Vec2 v)
+Vec2 project_vec2(Vec2 u, Vec2 v)
 {
-	float uvdot = vec2_dot_product(u, v);
-	float vvdot = vec2_dot_product(v, v);
+	float uvdot = dot_product_vec2(u, v);
+	float vvdot = dot_product_vec2(v, v);
 
-	return vec2_mulf(v, uvdot / vvdot);
+	return mul_vec2_f(v, uvdot / vvdot);
 }
 
-Vec3 vec3_project(Vec3 u, Vec3 v)
+Vec3 project_vec3(Vec3 u, Vec3 v)
 {
-	float uvdot = vec3_dot_product(u, v);
-	float vvdot = vec3_dot_product(v, v);
+	float uvdot = dot_product_vec3(u, v);
+	float vvdot = dot_product_vec3(v, v);
 
-	return vec3_mulf(v, uvdot / vvdot);
+	return mul_vec3_f(v, uvdot / vvdot);
 }
 
-Vec4 vec4_project(Vec4 u, Vec4 v)
+Vec4 project_vec4(Vec4 u, Vec4 v)
 {
-	float uvdot = vec4_dot_product(u, v);
-	float vvdot = vec4_dot_product(v, v);
+	float uvdot = dot_product_vec4(u, v);
+	float vvdot = dot_product_vec4(v, v);
 
-	return vec4_mulf(v, uvdot / vvdot);
+	return mul_vec4_f(v, uvdot / vvdot);
 }
 
 Vec3 cross_product(Vec3 v1, Vec3 vec2)
@@ -126,34 +126,34 @@ Vec3 cross_product(Vec3 v1, Vec3 vec2)
 	return v;
 }
 
-float vec2_length2(Vec2 v)
+float length2_vec2(Vec2 v)
 {
-	return vec2_dot_product(v, v);
+	return dot_product_vec2(v, v);
 }
 
-float vec3_length2(Vec3 v)
+float length2_vec3(Vec3 v)
 {
-	return vec3_dot_product(v, v);
+	return dot_product_vec3(v, v);
 }
 
-float vec4_length2(Vec4 v)
+float length2_vec4(Vec4 v)
 {
-	return vec4_dot_product(v, v);
+	return dot_product_vec4(v, v);
 }
 
-float vec2_length(Vec2 v)
+float length_vec2(Vec2 v)
 {
-	return sqrtf(vec2_length2(v));
+	return sqrtf(length2_vec2(v));
 }
 
-float vec3_length(Vec3 v)
+float length_vec3(Vec3 v)
 {
-	return sqrtf(vec3_length2(v));
+	return sqrtf(length2_vec3(v));
 }
 
-float vec4_length(Vec4 v)
+float length_vec4(Vec4 v)
 {
-	return sqrtf(vec4_length2(v));
+	return sqrtf(length2_vec4(v));
 }
 
 float signf(float v)
@@ -170,7 +170,7 @@ int signi(int sign)
 	return 0;
 }
 
-Vec2 vec2_sign(Vec2 v)
+Vec2 sign_vec2(Vec2 v)
 {
 	v.x = signf(v.x);
 	v.y = signf(v.y);
@@ -178,7 +178,7 @@ Vec2 vec2_sign(Vec2 v)
 	return v;
 }
 
-Vec3 vec3_sign(Vec3 v)
+Vec3 sign_vec3(Vec3 v)
 {
 	v.x = signf(v.x);
 	v.y = signf(v.y);
@@ -187,7 +187,7 @@ Vec3 vec3_sign(Vec3 v)
 	return v;
 }
 
-Vec4 vec4_sign(Vec4 v)
+Vec4 sign_vec4(Vec4 v)
 {
 	v.x = signf(v.x);
 	v.y = signf(v.y);
@@ -197,44 +197,44 @@ Vec4 vec4_sign(Vec4 v)
 	return v;
 }
 
-Vec2 vec2_normal(Vec2 v)
+Vec2 normal_vec2(Vec2 v)
 {
-	return vec2_divf(v, vec2_length(v));
+	return div_vec2_f(v, length_vec2(v));
 }
 
-Vec3 vec3_normal(Vec3 v)
+Vec3 normal_vec3(Vec3 v)
 {
-	return vec3_divf(v, vec3_length(v));
+	return div_vec3_f(v, length_vec3(v));
 }
 
-Vec4 vec4_normal(Vec4 v)
+Vec4 normal_vec4(Vec4 v)
 {
-	return vec4_divf(v, vec4_length(v));
+	return div_vec4_f(v, length_vec4(v));
 }
 
-Vec2 vec2_negative(Vec2 v)
+Vec2 negative_vec2(Vec2 v)
 {
-	return vec2_mulf(v, -1.f);
+	return mul_vec2_f(v, -1.f);
 }
 
-Vec3 vec3_negative(Vec3 v)
+Vec3 negative_vec3(Vec3 v)
 {
-	return vec3_mulf(v, -1.f);
+	return mul_vec3_f(v, -1.f);
 }
 
-Vec4 vec4_negative(Vec4 v)
+Vec4 negative_vec4(Vec4 v)
 {
-	return vec4_mulf(v, -1.f);
+	return mul_vec4_f(v, -1.f);
 }
 
-Vec2 vec2_abs(Vec2 v)
+Vec2 abs_vec2(Vec2 v)
 {
 	v.x = fabsf(v.x);
 	v.y = fabsf(v.y);
 	return v;
 }
 
-Vec3 vec3_abs(Vec3 v)
+Vec3 abs_vec3(Vec3 v)
 {
 	v.x = fabsf(v.x);
 	v.y = fabsf(v.y);
@@ -242,7 +242,7 @@ Vec3 vec3_abs(Vec3 v)
 	return v;
 }
 
-Vec4 vec4_abs(Vec4 v)
+Vec4 abs_vec4(Vec4 v)
 {
 	v.x = fabsf(v.x);
 	v.y = fabsf(v.y);
@@ -251,7 +251,7 @@ Vec4 vec4_abs(Vec4 v)
 	return v;
 }
 
-Vec2 vec2_clamp(Vec2 v, Vec2 min, Vec2 max)
+Vec2 clamp_vec2(Vec2 v, Vec2 min, Vec2 max)
 {
 	Vec2 value;
 	value.x = KUT_MAX(v.x, min.x);
@@ -263,7 +263,7 @@ Vec2 vec2_clamp(Vec2 v, Vec2 min, Vec2 max)
 	return value;
 }
 
-Vec3 vec3_clamp(Vec3 v, Vec3 min, Vec3 max)
+Vec3 clamp_vec3(Vec3 v, Vec3 min, Vec3 max)
 {
 	Vec3 value;
 	value.x = KUT_MAX(v.x, min.x);
@@ -278,7 +278,7 @@ Vec3 vec3_clamp(Vec3 v, Vec3 min, Vec3 max)
 	return value;
 }
 
-Vec4 vec4_clamp(Vec4 v, Vec4 min, Vec4 max)
+Vec4 clamp_vec4(Vec4 v, Vec4 min, Vec4 max)
 {
 	Vec4 value;
 	value.x = KUT_MAX(v.x, min.x);
@@ -296,58 +296,58 @@ Vec4 vec4_clamp(Vec4 v, Vec4 min, Vec4 max)
 	return value;
 }
 
-Vec2 vec2_add(Vec2 a, Vec2 b)
+Vec2 add_vec2(Vec2 a, Vec2 b)
 {
 	return (Vec2){ a.x + b.x, a.y + b.y };
 }
 
-Vec2 vec2_sub(Vec2 a, Vec2 b)
+Vec2 sub_vec2(Vec2 a, Vec2 b)
 {
 	return (Vec2){ a.x - b.x, a.y - b.y };
 }
 
-Vec2 vec2_mul(Vec2 a, Vec2 b)
+Vec2 mul_vec2(Vec2 a, Vec2 b)
 {
 	return (Vec2){ a.x * b.x, a.y * b.y };
 }
 
-Vec2 vec2_div(Vec2 a, Vec2 b)
+Vec2 div_vec2(Vec2 a, Vec2 b)
 {
 	return (Vec2){ a.x / b.x, a.y / b.y };
 }
 
-Vec2 vec2_addf(Vec2 a, float b)
+Vec2 add_vec2_f(Vec2 a, float b)
 {
 
 	return (Vec2){ a.x + b, a.y + b };
 }
 
-Vec2 vec2_subf(Vec2 a, float b)
+Vec2 sub_vec2_f(Vec2 a, float b)
 {
 	return (Vec2){ a.x - b, a.y - b };
 }
 
-Vec2 vec2_mulf(Vec2 a, float b)
+Vec2 mul_vec2_f(Vec2 a, float b)
 {
 	return (Vec2){ a.x * b, a.y * b };
 }
 
-Vec2 vec2_divf(Vec2 a, float b)
+Vec2 div_vec2_f(Vec2 a, float b)
 {
 	return (Vec2){ a.x / b, a.y / b };
 }
 
-Vec3 vec3_add(Vec3 a, Vec3 b)
+Vec3 add_vec3(Vec3 a, Vec3 b)
 {
 	return (Vec3){ a.x + b.x, a.y + b.y, a.z + b.z };
 }
 
-Vec3 vec3_sub(Vec3 a, Vec3 b)
+Vec3 sub_vec3(Vec3 a, Vec3 b)
 {
 	return (Vec3){ a.x - b.x, a.y - b.y, a.z - b.z };
 }
 
-Vec3 vec3_mul(Vec3 a, Vec3 b)
+Vec3 mul_vec3(Vec3 a, Vec3 b)
 {
 	return (Vec3){ a.x * b.x, a.y * b.y, a.z * b.z };
 }
@@ -357,67 +357,67 @@ Vec3 vec3_div(Vec3 a, Vec3 b)
 	return (Vec3){ a.x / b.x, a.y / b.y, a.z / b.z };
 }
 
-Vec3 vec3_addf(Vec3 a, float b)
+Vec3 add_vec3_f(Vec3 a, float b)
 {
 	return (Vec3){ a.x + b, a.y + b, a.z + b };
 }
 
-Vec3 vec3_subf(Vec3 a, float b)
+Vec3 subf_vec3(Vec3 a, float b)
 {
 	return (Vec3){ a.x - b, a.y - b, a.z - b };
 }
 
-Vec3 vec3_mulf(Vec3 a, float b)
+Vec3 mul_vec3_f(Vec3 a, float b)
 {
 	return (Vec3){ a.x * b, a.y * b, a.z * b };
 }
 
-Vec3 vec3_divf(Vec3 a, float b)
+Vec3 div_vec3_f(Vec3 a, float b)
 {
 	return (Vec3){ a.x / b, a.y / b, a.z / b };
 }
 
-Vec4 vec4_add(Vec4 a, Vec4 b)
+Vec4 add_vec4(Vec4 a, Vec4 b)
 {
 	return (Vec4){ a.x + b.x, a.y + b.y, a.z + b.z, a.w + b.w };
 }
 
-Vec4 vec4_sub(Vec4 a, Vec4 b)
+Vec4 sub_vec4(Vec4 a, Vec4 b)
 {
 	return (Vec4){ a.x - b.x, a.y - b.y, a.z - b.z, a.w - b.w };
 }
 
-Vec4 vec4_mul(Vec4 a, Vec4 b)
+Vec4 mul_vec4(Vec4 a, Vec4 b)
 {
 	return (Vec4){ a.x * b.x, a.y * b.y, a.z * b.z, a.w * b.w };
 }
 
-Vec4 vec4_div(Vec4 a, Vec4 b)
+Vec4 div_vec4(Vec4 a, Vec4 b)
 {
 	return (Vec4){ a.x / b.x, a.y / b.y, a.z / b.z, a.w / b.w };
 }
 
-Vec4 vec4_addf(Vec4 a, float b)
+Vec4 add_vec4_f(Vec4 a, float b)
 {
 	return (Vec4){ a.x + b, a.y + b, a.z + b, a.w + b };
 }
 
-Vec4 vec4_subf(Vec4 a, float b)
+Vec4 sub_vec4_f(Vec4 a, float b)
 {
 	return (Vec4){ a.x - b, a.y - b, a.z - b, a.w - b };
 }
 
-Vec4 vec4_mulf(Vec4 a, float b)
+Vec4 mul_vec4_f(Vec4 a, float b)
 {
 	return (Vec4){ a.x * b, a.y * b, a.z * b, a.w * b };
 }
 
-Vec4 vec4_divf(Vec4 a, float b)
+Vec4 div_vec4_f(Vec4 a, float b)
 {
 	return (Vec4){ a.x / b, a.y / b, a.z / b, a.w / b };
 }
 
-Mat4 mat4_mul(Mat4 a, Mat4 b)
+Mat4 mul_mat4(Mat4 a, Mat4 b)
 {
 	Mat4 r;
 
@@ -437,7 +437,7 @@ Mat4 mat4_mul(Mat4 a, Mat4 b)
 	return r;
 }
 
-Vec4 mat4_mul_vec4(Mat4 m, Vec4 v)
+Vec4 mul_mat4_vec4(Mat4 m, Vec4 v)
 {
 	Vec4 res;
 	res.x = m.m[0][0] * v.x + m.m[1][0] * v.y + m.m[2][0] * v.z +
@@ -451,7 +451,7 @@ Vec4 mat4_mul_vec4(Mat4 m, Vec4 v)
 	return res;
 }
 
-Mat4 mat4_mulf(Mat4 m, float v)
+Mat4 mul_mat4_f(Mat4 m, float v)
 {
 	float *cell =  &m.m[0][0];
 
@@ -483,7 +483,7 @@ unsigned int aabb2(Rect2 a, Rect2 b)
 
 
 	if(ax0 < bx1 && ax1 > bx0 && ay0 < by1 && ay1 > by0) {
-		Vec2 d = vec2_sub(b.position, a.position);
+		Vec2 d = sub_vec2(b.position, a.position);
 
 		if(d.x >= 0.0f)
 			flags |= COLLISION_RIGHT;
@@ -532,7 +532,7 @@ unsigned int aabb3(Cube a, Cube b)
 			az0 < bz1 && az1 > bz0) ? 1 : 0;
 }
 
-Mat4 mat4_zero()
+Mat4 zero_mat4()
 {
 	Mat4 m;
 
@@ -544,9 +544,9 @@ Mat4 mat4_zero()
 	return m;
 }
 
-Mat4 mat4_identity()
+Mat4 identity_mat4()
 {
-	Mat4 m = mat4_zero();
+	Mat4 m = zero_mat4();
 	float *cell = &m.m[0][0];
 
 	for (int i = 0; i < 16; ++i)
@@ -562,8 +562,8 @@ Mat4 mat4_identity()
 
 int line_intersect(Vec3 p0, Vec3 v0, Vec3 p1, Vec3 v1, Vec3 *c)
 {
-	Vec3 q0 = vec3_add(p0, v0);
-	Vec3 q1 = vec3_add(p1, v1);
+	Vec3 q0 = add_vec3(p0, v0);
+	Vec3 q1 = add_vec3(p1, v1);
 	float x;
 	float y;
 
@@ -664,9 +664,9 @@ float rad_to_deg(float rad)
 	return (rad / (2.f * KUT_PI)) * 360.f;
 }
 
-Mat4 mat4_translate(const Vec3 v)
+Mat4 translate_mat4(const Vec3 v)
 {
-	Mat4 m = mat4_identity();
+	Mat4 m = identity_mat4();
 
 	m.m[3][0] = v.x;
 	m.m[3][1] = v.y;
@@ -675,9 +675,9 @@ Mat4 mat4_translate(const Vec3 v)
 	return m;
 }
 
-Mat4 mat4_scale(const Vec3 v)
+Mat4 scale_mat4(const Vec3 v)
 {
-	Mat4 m = mat4_identity();
+	Mat4 m = identity_mat4();
 
 	m.m[0][0] = v.x;
 	m.m[1][1] = v.y;
@@ -772,7 +772,7 @@ Mat4 ortho_projection(float left, float right, float bottom,
 {
 	float rl, tb, fn;
 
-	Mat4 m = mat4_zero();
+	Mat4 m = zero_mat4();
 
 	rl = 1.0f / (right - left);
 	tb = 1.0f / (top - bottom);
@@ -798,11 +798,11 @@ Vec3 unproject(Vec3 pos, Mat4 viewproj, Vec4 viewport)
 	v.z = 2.0f * pos.z - 1.0f;
 	v.w = 1.0f;
 
-	Mat4 inv = mat4_inverse(viewproj);
+	Mat4 inv = inverse_mat4(viewproj);
 
-	v = mat4_mul_vec4(inv, v);
+	v = mul_mat4_vec4(inv, v);
 
-	v = vec4_mulf(v, 1.0f / v.w);
+	v = mul_vec4_f(v, 1.0f / v.w);
 
 	return vec4to3(v);
 }
@@ -812,7 +812,7 @@ Vec3 screen_to_world_coord(Mat4 projection,
                              Vec4 viewport,
                              Vec2 coord)
 {
-	Mat4 vp = mat4_mul(view, projection);
+	Mat4 vp = mul_mat4(view, projection);
 	Vec2 dimensions;
 	dimensions.x = viewport.z - viewport.x;
 	dimensions.y = viewport.w - viewport.y;
@@ -822,8 +822,8 @@ Vec3 screen_to_world_coord(Mat4 projection,
 	
 	Vec3 a = unproject(screen_pos0, vp, viewport);
 	Vec3 b = unproject(screen_pos1, vp, viewport);
-	Vec3 ray = vec3_sub(b, a);
-	Vec3 raydir = vec3_normal(ray);
+	Vec3 ray = sub_vec3(b, a);
+	Vec3 raydir = normal_vec3(ray);
 	// some linear algebra
 	// x = ax + (bx - ax)*t
 	// y = ay + (by - ay)*t
@@ -835,14 +835,14 @@ Vec3 screen_to_world_coord(Mat4 projection,
 	// -az/(bz-az) = t
 	float t = -a.z / (raydir.z);
 	
-	return vec3_add(a, vec3_mulf(raydir, t));
+	return add_vec3(a, mul_vec3_f(raydir, t));
 }
 Mat4 perspective_projection(float fovy, float aspect, float near,
 			      float far)
 {
 	float f, fn;
 
-	Mat4 m = mat4_zero();
+	Mat4 m = zero_mat4();
 
 	f = 1.0f / tanf(fovy * 0.5f);
 	fn = 1.0f / (near - far);
@@ -863,11 +863,11 @@ Mat4 look_at(Vec3 eye, Vec3 center, Vec3 up)
 	Vec3 u;
 	Vec3 c;
 
-	f = vec3_sub(center, eye);
-	f = vec3_normal(f);
+	f = sub_vec3(center, eye);
+	f = normal_vec3(f);
 
 	c = cross_product(f, up);
-	s = vec3_normal(c);
+	s = normal_vec3(c);
 	u = cross_product(s, f);
 
 	Mat4 m;
@@ -883,9 +883,9 @@ Mat4 look_at(Vec3 eye, Vec3 center, Vec3 up)
 	m.m[2][1] = u.z;
 	m.m[2][2] = -f.z;
 
-	m.m[3][0] = -vec3_dot_product(s, eye);
-	m.m[3][1] = -vec3_dot_product(u, eye);
-	m.m[3][2] = vec3_dot_product(f, eye);
+	m.m[3][0] = -dot_product_vec3(s, eye);
+	m.m[3][1] = -dot_product_vec3(u, eye);
+	m.m[3][2] = dot_product_vec3(f, eye);
 
 	m.m[0][3] = 0.0f;
 	m.m[1][3] = 0.0f;
@@ -894,7 +894,7 @@ Mat4 look_at(Vec3 eye, Vec3 center, Vec3 up)
 	return m;
 }
 
-Mat4 mat4_inverse(const Mat4 mat)
+Mat4 inverse_mat4(const Mat4 mat)
 {
 	Mat4 dest;
 	float t[6];
@@ -950,12 +950,12 @@ Mat4 mat4_inverse(const Mat4 mat)
 	det = 1.0f / (a * dest.m[0][0] + b * dest.m[1][0] + c * dest.m[2][0] +
 		      d * dest.m[3][0]);
 
-	dest = mat4_mulf(dest, det);
+	dest = mul_mat4_f(dest, det);
 
 	return dest;
 }
 
-Mat4 mat4_transpose(Mat4 *m)
+Mat4 transpose_mat4(Mat4 *m)
 {
 	Mat4 mat;
 
@@ -978,7 +978,7 @@ int sum(const int *list, int count)
 	return sum;
 }
 
-void vec3_minmax(Vec3 *p0, Vec3 *p1)
+void minmax_vec3(Vec3 *p0, Vec3 *p1)
 {
 	Vec3 t0 = *p0;
 	Vec3 t1 = *p1;
@@ -992,7 +992,7 @@ void vec3_minmax(Vec3 *p0, Vec3 *p1)
 	p1->z = KUT_MAX(t0.z, t1.z);
 }
 
-void vec3_order(Vec3 *p0, Vec3 *p1)
+void order_vec3(Vec3 *p0, Vec3 *p1)
 {
 	Vec3 t0 = *p0;
 	Vec3 t1 = *p1;
@@ -1055,19 +1055,19 @@ bool circle_circle_intersect(Vec2 p0, float r0, Vec2 p1, float r1)
 
 bool line_circle_collision(Vec2 p0, Vec2 p1, Vec2 c, float r, Vec2 *intersect)
 {
-    Vec2 a = vec2_sub(c, p0);
-    Vec2 b = vec2_sub(p1, p0);
-    float a_dot_b = vec2_dot_product(a, b);
-    float b_dot_b = vec2_dot_product(b, b); // b^2
+    Vec2 a = sub_vec2(c, p0);
+    Vec2 b = sub_vec2(p1, p0);
+    float a_dot_b = dot_product_vec2(a, b);
+    float b_dot_b = dot_product_vec2(b, b); // b^2
 
     // intersection point = P0 + B(A dot B)/ |B|^2
-    Vec2 i = vec2_mulf(b, a_dot_b);
-    i = vec2_divf(i, b_dot_b);
-    i = vec2_add(p0, i);
+    Vec2 i = mul_vec2_f(b, a_dot_b);
+    i = div_vec2_f(i, b_dot_b);
+    i = add_vec2(p0, i);
 
-    Vec2 dd = vec2_sub(c, i);
+    Vec2 dd = sub_vec2(c, i);
 
-    float d2 = vec2_dot_product(dd, dd);
+    float d2 = dot_product_vec2(dd, dd);
     float r2 = r * r;
 
 
@@ -1104,11 +1104,11 @@ float line_normal_slope(Vec2 p0, Vec2 p1)
 
 bool point_line_bounce(Vec2 c0, Vec2 vel, Vec2 p0, Vec2 p1, Vec2 *p_intersect, Vec2 *c_out, Vec2 *dir)
 {
-  Vec2 p = vec2_sub(p1, p0);
-  Vec2 p_unit = vec2_normal(p);
-  Vec2 c1 = vec2_add(c0, vel);
-  Vec2 c = vec2_sub(c1, c0);
-  Vec2 c_unit = vec2_normal(c);
+  Vec2 p = sub_vec2(p1, p0);
+  Vec2 p_unit = normal_vec2(p);
+  Vec2 c1 = add_vec2(c0, vel);
+  Vec2 c = sub_vec2(c1, c0);
+  Vec2 c_unit = normal_vec2(c);
 
   // find b points in y = mx + b
   // b = y - mx
@@ -1149,7 +1149,7 @@ bool point_line_bounce(Vec2 c0, Vec2 vel, Vec2 p0, Vec2 p1, Vec2 *p_intersect, V
   pmax.y = KUT_MAX(p0.y, p1.y);
 
   *c_out = c1;
-  *dir = vec2_normal(vel); //todo: normalize
+  *dir = normal_vec2(vel); //todo: normalize
 
   if(i.x < cmin.x)
       return false;
@@ -1170,16 +1170,16 @@ bool point_line_bounce(Vec2 c0, Vec2 vel, Vec2 p0, Vec2 p1, Vec2 *p_intersect, V
       return false;
 
 
-  Vec2 q = vec2_sub(c1, i);
-  float l = vec2_dot_product(q, p_unit);
-  Vec2 s = vec2_mulf(p_unit, l);
-  Vec2 t = vec2_add(i, s);
+  Vec2 q = sub_vec2(c1, i);
+  float l = dot_product_vec2(q, p_unit);
+  Vec2 s = mul_vec2_f(p_unit, l);
+  Vec2 t = add_vec2(i, s);
 
-  Vec2 a = vec2_sub(t, c1);
-  Vec2 a2 = vec2_mulf(a, 2.0f);
+  Vec2 a = sub_vec2(t, c1);
+  Vec2 a2 = mul_vec2_f(a, 2.0f);
 
-  *c_out = vec2_add(c1, a2);
-  *dir = vec2_normal(vec2_sub(*c_out, i));
+  *c_out = add_vec2(c1, a2);
+  *dir = normal_vec2(sub_vec2(*c_out, i));
   *p_intersect = i;
 
   //printf("c0:%f,%f, c1:%f,%f cu:%f,%f l:%f s:%f,%f, t:%f,%f a:%f,%f\n",

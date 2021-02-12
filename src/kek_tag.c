@@ -13,13 +13,13 @@ typedef struct tag_node
 static MemPool pool;
 static TagNode *root = NULL;
 
-void tag_init(size_t capacity)
+void init_tag(size_t capacity)
 {
     mem_pool_alloc(&pool, capacity, sizeof(TagNode));
     root = NULL;
 }
 
-uint32_t tag_set(uint32_t tag, void *value)
+uint32_t set_tag(uint32_t tag, void *value)
 {
      TagNode *node = mem_pool_take(&pool);
 
@@ -30,7 +30,7 @@ uint32_t tag_set(uint32_t tag, void *value)
      root = node;
 }
 
-void *tag_get(uint32_t tag)
+void *get_tag(uint32_t tag)
 {
     TagNode *node = root;
 
@@ -46,7 +46,7 @@ void *tag_get(uint32_t tag)
 
     return NULL;
 }
-void tag_remove(uint32_t tag)
+void remove_tag(uint32_t tag)
 {
     TagNode *node = root;
     TagNode *prev = NULL;

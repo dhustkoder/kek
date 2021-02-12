@@ -3,9 +3,9 @@
 #include "pal.h"
 #include <stdio.h>
 
-static int kek_init(int argc, char **argv);
-static int kek_run(void);
-static int kek_terminate(void);
+static int init_kek(int argc, char **argv);
+static int run_kek(void);
+static int terminate(void);
 static void kek_print_screen_size(void);
 
 extern int kek_user_pre_init(int argc, char **argv);
@@ -19,114 +19,114 @@ static float frame_time = 0.0f;
 
 void pal_main(int argc, char **argv)
 {
-    kek_init(argc, argv);
-    kek_run();
-    kek_terminate();
+    init_kek(argc, argv);
+    run_kek();
+    terminate();
 }
 
-void kek_set_framerate(int fps)
+void framerate(int fps)
 {
     framerate_fps = fps;
 }
-float kek_get_target_frame_interval(void)
+float get_target_frame_interval(void)
 {
     return 1.0f/(float)framerate_fps;
 
 }
 
-static int kek_init(int argc, char **argv)
+static int init_kek(int argc, char **argv)
 {
     PALReturn pal_ret;
 
     framerate_fps = 60;
     log("initializing...");
 
-    config_init();
+    init_config();
     kek_user_pre_init(argc, argv);
 
     size_t capacity;
 
     mem_stack_init(
-        config_geti(KEK_CFG_MEM_STACK_CAPACITY));
+        get_configi(KEK_CFG_MEM_STACK_CAPACITY));
 
-    tag_init(
-        config_geti(KEK_CFG_MEM_TAG_CAPACITY));
+    init_tag(
+        get_configi(KEK_CFG_MEM_TAG_CAPACITY));
 
     spatialmap_init(
-        config_geti(KEK_CFG_MEM_SPATIAL_MAP_CAPACITY));
+        get_configi(KEK_CFG_MEM_SPATIAL_MAP_CAPACITY));
 
-    window_init();
+    init_window();
 
-    hid_init(
-        config_geti(KEK_CFG_MEM_KEY_BIND_ALIAS_CAPACITY));
+    init_hid(
+        get_configi(KEK_CFG_MEM_KEY_BIND_ALIAS_CAPACITY));
 
-    camera_init(
-        config_geti(KEK_CFG_MEM_CAMERA_CAPACITY));
+    init_camera(
+        get_configi(KEK_CFG_MEM_CAMERA_CAPACITY));
 
-    vertex_buffer_init(
-        config_geti(KEK_CFG_MEM_VERTEX_BUFFER_CAPACITY));
+    init_vertex_buffer(
+        get_configi(KEK_CFG_MEM_VERTEX_BUFFER_CAPACITY));
 
-    shader_init(
-        config_geti(KEK_CFG_MEM_SHADER_CAPACITY));
+    init_shader(
+        get_configi(KEK_CFG_MEM_SHADER_CAPACITY));
 
-    texture_init(
-        config_geti(KEK_CFG_MEM_TEXTURE_CAPACITY));
+    init_texture(
+        get_configi(KEK_CFG_MEM_TEXTURE_CAPACITY));
 
-    render_init(
-        config_geti(KEK_CFG_MEM_RENDER_CAPACITY));
+    init_render(
+        get_configi(KEK_CFG_MEM_RENDER_CAPACITY));
 
-    scene_init(
-        config_geti(KEK_CFG_MEM_SCENE_CAPACITY));
+    init_scene(
+        get_configi(KEK_CFG_MEM_SCENE_CAPACITY));
 
-    animation_init(
-        config_geti(KEK_CFG_MEM_ANIMATION_CAPACITY));
+    init_animation(
+        get_configi(KEK_CFG_MEM_ANIMATION_CAPACITY));
 
-    physics_init();
+    init_physics();
 
-    entity_init(
-        config_geti(KEK_CFG_MEM_ENTITY_CAPACITY),
-        config_geti(KEK_CFG_MEM_ENTITY_TYPE_CAPACITY),
-        config_geti(KEK_CFG_MEM_ENTITY_USER_DATA_SIZE));
+    init_entity(
+        get_configi(KEK_CFG_MEM_ENTITY_CAPACITY),
+        get_configi(KEK_CFG_MEM_ENTITY_TYPE_CAPACITY),
+        get_configi(KEK_CFG_MEM_ENTITY_USER_DATA_SIZE));
 
-    random_init();
+    init_random();
 
     return kek_user_enter(argc, argv);
 }
 
-void kek_quit(void)
+void quit_kek(void)
 {
     quit = true;
 }
 
-static int kek_run(void)
+static int run_kek(void)
 {
     log("running...");
 
     while(!quit)
     {
-        float wait_until = pal_time_live() + (1.0f/(float)framerate_fps);
+        float wait_until = pal_time() + (1.0f/(float)framerate_fps);
 
-        window_poll();
+        poll_window();
 
-        frame_time = pal_time_live();
-        window_clearscreen();
+        frame_time = pal_time();
+        clearscreen();
         kek_user_update();
-        Scene *scene = scene_get_active();
+        Scene *scene = get_active_scene();
 
-        scene_update(scene);
+        update_scene(scene);
 
-        scene_draw(scene);
+        draw_scene(scene);
 
-        window_swap_buffers();
+        swap_window_buffers();
 
-        scene_garbage_collect(scene);
-        while(pal_time_live() < wait_until) {}
+        garbage_collect_scene(scene);
+        while(pal_time() < wait_until) {}
     }
 
     return KEK_OK;
 }
 
-static int kek_terminate(void)
+static int terminate(void)
 {
     log("exiting...");
     
@@ -137,7 +137,7 @@ static int kek_terminate(void)
     return ret;
 }
     
-float kek_get_frame_time(void)
+float get_frame_time(void)
 {
     return frame_time;
 }

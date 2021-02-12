@@ -24,9 +24,9 @@ static SpatialMap *smap = NULL;
 static EntityCallbacks *root_callbacks = NULL;
 static SpatialNode **spatial_node_list = NULL;
 
-static EntityCallbacks *entity_getinsert_callbacks(uint32_t type);
+static EntityCallbacks *getinsert_entity_callbacks(uint32_t type);
 
-void entity_init(size_t capacity, size_t type_capacity, size_t user_data_stride)
+void init_entity(size_t capacity, size_t type_capacity, size_t user_data_stride)
 {
     mem_pool_alloc(&pool_entity, capacity, sizeof(Entity) + user_data_stride);
     mem_pool_alloc(&pool_callbacks, type_capacity, sizeof(EntityCallbacks));
@@ -42,7 +42,7 @@ void entity_init(size_t capacity, size_t type_capacity, size_t user_data_stride)
     root_callbacks = NULL;
 }
 
-Entity *entity_create(uint32_t type)
+Entity *create_entity(uint32_t type)
 {
      Entity *inst = mem_pool_take(&pool_entity);
 
@@ -52,8 +52,8 @@ Entity *entity_create(uint32_t type)
     inst->destroy = false;
     inst->type = type;
     inst->scene_next_entity = NULL;
-    inst->velocity = vec3_zero();
-    inst->rotation = vec3_zero();
+    inst->velocity = zero_vec3();
+    inst->rotation = zero_vec3();
     inst->size     = vec3(128, 128, 128);
 
     inst->colormask = vec4(1,1,1,1);
@@ -63,7 +63,7 @@ Entity *entity_create(uint32_t type)
     inst->animation_speed = 1.0f;
     inst->animation_frame_time = 0.0f;
 
-    inst->position = vec3_zero();
+    inst->position = zero_vec3();
     inst->snode = spatialmap_create_node(smap, inst);
 
     spatialmap_move_node(inst->snode, 0, 0);
@@ -71,13 +71,13 @@ Entity *entity_create(uint32_t type)
     return inst;
 }
 
-void entity_destroy(Entity *entity)
+void destroy_entity(Entity *entity)
 {
     spatialmap_destroy_node(entity->snode);
     mem_pool_release(&pool_entity, entity);
 }
 
-void entity_release(Entity *entity)
+void release_entity(Entity *entity)
 {
     entity->destroy = true;
 }
@@ -94,7 +94,7 @@ void query_spatialmap_cb(SpatialNode *node, void *ctx)
     data->fn(node->data, data->ctx);
 }
 
-void entity_query(Vec2 p0, Vec2 p1, EntityQueryFn fn, void *ctx)
+void query_entity(Vec2 p0, Vec2 p1, EntityQueryFn fn, void *ctx)
 {
     EntityQueryData data = {fn, ctx};
     int x0 = WORLD_TO_SPATIAL_CELL(p0.x);
@@ -104,9 +104,9 @@ void entity_query(Vec2 p0, Vec2 p1, EntityQueryFn fn, void *ctx)
     spatialmap_query(smap, x0, y0, x1, y1, query_spatialmap_cb, &data);
 }
 
-void entity_update(Entity *e)
+void update_entity(Entity *e)
 {
-    EntityCallbacks *cb = entity_getinsert_callbacks(e->type);
+    EntityCallbacks *cb = getinsert_entity_callbacks(e->type);
     if(cb && cb->update)
     {
         // update the animation
@@ -133,32 +133,32 @@ void entity_update(Entity *e)
             }
 
             e->animation_frame = idx;
-            e->animation_frame_time += kek_get_target_frame_interval() * e->animation_speed;
+            e->animation_frame_time += get_target_frame_interval() * e->animation_speed;
         }
 
         cb->update(e, cb->ctx);
     }
 }
 
-void entity_set_update_callback(uint32_t type, EntityUpdateFn callback)
+void entity_update_callback(uint32_t type, EntityUpdateFn callback)
 {
-    EntityCallbacks *cb = entity_getinsert_callbacks(type);
+    EntityCallbacks *cb = getinsert_entity_callbacks(type);
     cb->update = callback;
 }
 
-void entity_set_terminate_callback(uint32_t type, EntityTerminateFn callback)
+void entity_terminate_callback(uint32_t type, EntityTerminateFn callback)
 {
-    EntityCallbacks *cb = entity_getinsert_callbacks(type);
+    EntityCallbacks *cb = getinsert_entity_callbacks(type);
     cb->terminate = callback;
 }
 
-void entity_set_callback_context(uint32_t type, void *ctx)
+void entity_callback_context(uint32_t type, void *ctx)
 {
-    EntityCallbacks *cb = entity_getinsert_callbacks(type);
+    EntityCallbacks *cb = getinsert_entity_callbacks(type);
     cb->ctx = ctx;
 }
 
-void *entity_get_user_data(Entity *entity)
+void *get_entity_user_data(Entity *entity)
 {
     uint8_t *addr = (uint8_t *)entity;
 
@@ -167,7 +167,7 @@ void *entity_get_user_data(Entity *entity)
     return addr;
 }
 
-static EntityCallbacks *entity_getinsert_callbacks(uint32_t type)
+static EntityCallbacks *getinsert_entity_callbacks(uint32_t type)
 {
     EntityCallbacks *cb = root_callbacks;
 
@@ -194,7 +194,7 @@ static EntityCallbacks *entity_getinsert_callbacks(uint32_t type)
     return cb;
 }
 
-AnimationFrame *entity_get_animation_frame(Entity *e)
+AnimationFrame *get_entity_animation_frame(Entity *e)
 {
     if(!e->animation)
         return NULL;
@@ -208,34 +208,34 @@ AnimationFrame *entity_get_animation_frame(Entity *e)
     return &e->animation->frames[e->animation_frame];
 }
 
-void entity_set_animation(Entity *e, Animation *animation)
+void entity_animation(Entity *e, Animation *animation)
 {
     e->animation = animation;
 
-    entity_reset_animation(e);
+    reset_entity_animation(e);
 }
 
-Vec3 entity_size(Entity *e)
+Vec3 get_entity_size(Entity *e)
 {
     return e->size;
 }
 
-void entity_set_size(Entity *e, Vec3 size)
+void entity_size(Entity *e, Vec3 size)
 {
     e->size = size;
 }
 
-Vec3 entity_position(Entity *e)
+Vec3 get_entity_position(Entity *e)
 {
     return e->position;
 }
 
-Vec3 entity_velocity(Entity *e)
+Vec3 get_entity_velocity(Entity *e)
 {
     return e->velocity;
 }
 
-void entity_set_position(Entity *e, Vec3 position)
+void entity_position(Entity *e, Vec3 position)
 {
     e->position = position;
     int x = WORLD_TO_SPATIAL_CELL(position.x);
@@ -243,33 +243,33 @@ void entity_set_position(Entity *e, Vec3 position)
     spatialmap_move_node(e->snode, x, y);
 }
 
-void entity_set_velocity(Entity *e, Vec3 velocity)
+void entity_velocity(Entity *e, Vec3 velocity)
 {
     e->velocity = velocity;
 }
 
-void entity_set_rotation(Entity *e, Vec3 rotation)
+void entity_rotation(Entity *e, Vec3 rotation)
 {
     e->rotation = rotation;
 }
 
-void entity_set_texture(Entity *e, Texture *texture)
+void entity_texture(Entity *e, Texture *texture)
 {
     e->texture = texture;
 }
 
-void entity_set_rotation_z(Entity *e, float rotation)
+void entity_rotation_z(Entity *e, float rotation)
 {
     e->rotation.z = rotation;
 }
 
-void entity_reset_animation(Entity *e)
+void reset_entity_animation(Entity *e)
 {
     e->animation_frame = 0;
     e->animation_frame_time = 0.0f;
 }
 
-void entity_set_animation_speed(Entity *e, float speed)
+void entity_animation_speed(Entity *e, float speed)
 {
     e->animation_speed = speed;
 }

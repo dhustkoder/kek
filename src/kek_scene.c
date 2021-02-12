@@ -5,27 +5,27 @@ static MemPool pool_entities;
 
 static Scene *active_scene = NULL;
 static Camera default_camera = {0,0,0.9};
-void scene_init(size_t capacity)
+void init_scene(size_t capacity)
 {
     mem_pool_alloc(&pool, capacity, sizeof(Scene));
     mem_pool_alloc(&pool, capacity, sizeof(Scene));
 }
 
-Scene *scene_create(void)
+Scene *create_scene(void)
 {
      Scene *scene = mem_pool_take(&pool);
 
      scene->entities = NULL;
      scene->entity_count = 0;
-     scene->render_default = render_create();
+     scene->render_default = create_render();
      scene->camera = &default_camera;
 
      return scene;
 }
 
-void scene_destroy(Scene *scene)
+void destroy_scene(Scene *scene)
 {
-    render_destroy(scene->render_default);
+    destroy_render(scene->render_default);
 
     if(scene == active_scene)
         active_scene = NULL;
@@ -33,47 +33,47 @@ void scene_destroy(Scene *scene)
     mem_pool_release(&pool, scene);
 }
 
-void scene_set_active(Scene *scene)
+void scene_active(Scene *scene)
 {
     active_scene = scene;
 }
 
-Scene *scene_get_active(void)
+Scene *get_active_scene(void)
 {
     return active_scene;
 }
 
 
-void scene_set_camera(Scene *scene, Camera *camera)
+void scene_camera(Scene *scene, Camera *camera)
 {
     scene->camera = camera;
 }
 
-Camera *scene_get_camera(Scene *scene)
+Camera *get_scene_camera(Scene *scene)
 {
     return scene->camera;
 }
 
-void scene_add_entity(Scene *scene, Entity *entity)
+void add_scene_entity(Scene *scene, Entity *entity)
 {
     entity->scene_next_entity = scene->entities;
     scene->entities = entity;
     scene->entity_count++;
 }
 
-void scene_update(Scene *scene)
+void update_scene(Scene *scene)
 {
     Entity *entity = scene->entities;
 
     while(entity)
     {
-        entity_update(entity);
+        update_entity(entity);
 
         entity = entity->scene_next_entity;
     }
 }
 
-void scene_garbage_collect(Scene *scene)
+void garbage_collect_scene(Scene *scene)
 {
     Entity *entity = scene->entities;
     Entity *prev = NULL;
@@ -89,7 +89,7 @@ void scene_garbage_collect(Scene *scene)
             else
                 scene->entities = next;
 
-            entity_destroy(entity);
+            destroy_entity(entity);
         }
         else
         {
@@ -100,7 +100,7 @@ void scene_garbage_collect(Scene *scene)
     }
 }
 
-void scene_draw(Scene *scene)
+void draw_scene(Scene *scene)
 {
     // cull all objects
     // sort objects
@@ -110,7 +110,7 @@ void scene_draw(Scene *scene)
 
     int window_width;
     int window_height;
-    window_get_size(&window_width, &window_height);
+    get_window_size(&window_width, &window_height);
 
     size_t vertices = 0;
 
@@ -130,13 +130,13 @@ void scene_draw(Scene *scene)
         while(entity)
         {
             if(entity->type == i)
-                render_draw(scene->render_default, scene->camera, entity);
+                draw_render(scene->render_default, scene->camera, entity);
 
             entity = entity->scene_next_entity;
         }
     }
 }
-void scene_query_entities_aabb(Scene *scene, Vec2 pos, Vec2 size, SceneQueryEntityFn fn, void *ctx)
+void query_scene_entities_aabb(Scene *scene, Vec2 pos, Vec2 size, SceneQueryEntityFn fn, void *ctx)
 {
     Entity *entity = scene->entities;
 

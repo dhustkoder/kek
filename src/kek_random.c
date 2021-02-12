@@ -13,7 +13,7 @@ static unsigned int seed = 0xDEADBEEF;
 static unsigned long mt[STATE_VECTOR_LENGTH];
 static int rand_index = 0;
 
-void random_init(void)
+void init_random(void)
 {
 	mt[0] = seed & 0xffffffff;
 
@@ -22,58 +22,58 @@ void random_init(void)
 	}
 }
 
-int random_get_rangei(int min, int max)
+int get_random_rangei(int min, int max)
 {
 	assert(min <= max);
-	unsigned int value = random_getui();
+	unsigned int value = get_randomui();
 	unsigned int range = (unsigned int)(max - min) + 1;
 	value = value % range;
 	return (int)value + min;
 }
 
-float random_get_rangef(float min, float max)
+float get_random_rangef(float min, float max)
 {
 	assert(min <= max);
-	float value = (float)random_getui(); //domain: [0min -> 0xFFFFFFFF]
+	float value = (float)get_randomui(); //domain: [0min -> 0xFFFFFFFF]
 	float percent = value / (float)0xFFFFFFFF;
 	float range = (max - min) * percent + min;
 	return range;
 }
-Vec2 random_get_range_v2(Vec2 min, Vec2 max)
+Vec2 get_random_range_v2(Vec2 min, Vec2 max)
 {
 	Vec2 val;
 	
-	val.x = random_get_rangef(min.x, max.x);
-	val.y = random_get_rangef(min.x, max.y);
+	val.x = get_random_rangef(min.x, max.x);
+	val.y = get_random_rangef(min.x, max.y);
 
 	return val;
 	
 }
 
-Vec3 random_get_range_v3(Vec3 min, Vec3 max)
+Vec3 get_random_range_v3(Vec3 min, Vec3 max)
 {
 	Vec3 val;
 	
-	val.x = random_get_rangef(min.x, max.x);
-	val.y = random_get_rangef(min.x, max.y);
-	val.z = random_get_rangef(min.z, max.z);
+	val.x = get_random_rangef(min.x, max.x);
+	val.y = get_random_rangef(min.x, max.y);
+	val.z = get_random_rangef(min.z, max.z);
 
 	return val;
 }
 
-Vec4 random_get_range_v4(Vec4 min, Vec4 max)
+Vec4 get_random_range_v4(Vec4 min, Vec4 max)
 {
 	Vec4 val;
 	
-	val.x = random_get_rangef(min.x, max.x);
-	val.y = random_get_rangef(min.x, max.y);
-	val.z = random_get_rangef(min.z, max.z);
-	val.w = random_get_rangef(min.w, max.w);
+	val.x = get_random_rangef(min.x, max.x);
+	val.y = get_random_rangef(min.x, max.y);
+	val.z = get_random_rangef(min.z, max.z);
+	val.w = get_random_rangef(min.w, max.w);
 
 	return val;
 }
 
-unsigned int random_getui(void)
+unsigned int get_randomui(void)
 {
 	unsigned long y;
 	static unsigned long mag[2] = {
@@ -114,7 +114,7 @@ unsigned int random_getui(void)
 	return y;
 }
 
-float random_getf(void)
+float get_randomf(void)
 {
-	return ((float)random_getui() / (unsigned int)0xffffffff);
+	return ((float)get_randomui() / (unsigned int)0xffffffff);
 }

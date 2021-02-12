@@ -11,13 +11,13 @@ static KeyboardBind *bindings = NULL;
 static size_t binding_count = 0;
 static size_t binding_capacity = 0;
 
-void hid_init(size_t alias_capacity)
+void init_hid(size_t alias_capacity)
 {
     bindings = mem_stack_push(alias_capacity * sizeof(KeyboardBind));
     binding_capacity = alias_capacity;
 }
 
-void hid_bind_alias_to_key(int alias, enum keyboard_key key)
+void bind_hid_alias_to_key(int alias, enum keyboard_key key)
 {
     assert(binding_count < binding_capacity); 
 
@@ -26,7 +26,7 @@ void hid_bind_alias_to_key(int alias, enum keyboard_key key)
     ++binding_count;
 }
 
-void hid_unbind_key(enum keyboard_key key)
+void unbind_hid_key(enum keyboard_key key)
 {
     size_t i = 0;
     while(i < binding_count)
@@ -43,7 +43,7 @@ void hid_unbind_key(enum keyboard_key key)
     }
 }
 
-void unbind_alias(int alias)
+void unbind_hid_alias(int alias)
 {
     size_t i = 0;
     while(i < binding_count)
@@ -60,13 +60,13 @@ void unbind_alias(int alias)
     }
 }
 
-bool hid_is_alias_pressed(int alias)
+bool is_hid_alias_pressed(int alias)
 {
     for(size_t i = 0; i < binding_count; ++i)
     {
         if(bindings[i].alias == alias)
         {
-            if(hid_is_key_pressed(bindings[i].key))
+            if(is_hid_key_pressed(bindings[i].key))
                 return true;
         }
     }
@@ -74,39 +74,39 @@ bool hid_is_alias_pressed(int alias)
     return false;
 }
 
-bool hid_is_key_pressed(enum keyboard_key key)
+bool is_hid_key_pressed(enum keyboard_key key)
 {
-    PALWindow *window = window_get_pal();
+    PALWindow *window = get_pal_window();
 
     bool pressed = false;
 
-    pal_window_is_keyboard_pressed(window, key, &pressed);
+    pal_is_keyboard_pressed(window, key, &pressed);
 
     return pressed;
 }
 
-bool hid_is_mouse_button_pressed(enum mouse_button button)
+bool is_mouse_button_pressed(enum mouse_button button)
 {
-    PALWindow *window = window_get_pal();
+    PALWindow *window = get_pal_window();
 
     bool pressed = false;
 
-    pal_window_is_mouse_button_pressed(window, button, &pressed);
+    pal_is_mouse_button_pressed(window, button, &pressed);
 
     return pressed;
 }
 
-Vec2 hid_get_mouse_position(void)
+Vec2 get_mouse_position(void)
 {
-    PALWindow *window = window_get_pal();
+    PALWindow *window = get_pal_window();
 
     Vec2 p;
     unsigned int window_width;
     unsigned int window_height;
 
-    window_get_size(&window_width, &window_height);
+    get_window_size(&window_width, &window_height);
 
-    pal_window_get_mouse_position(window, &p.x, &p.y);
+    pal_get_mouse_position(window, &p.x, &p.y);
 
     p.y = (float)window_height - p.y;
 

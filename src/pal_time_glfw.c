@@ -2,7 +2,7 @@
 #include "GLFW/glfw3.h"
 
 
-float pal_time_live(void)
+float pal_time(void)
 {
     return (float)glfwGetTime();
 }
