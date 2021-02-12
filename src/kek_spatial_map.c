@@ -4,17 +4,17 @@
 
 static MemPool pool;
 
-static uint64_t spatialmap_key(SpatialMap *map, int x, int y);
+static uint64_t get_key(SpatialMap *map, int x, int y);
 
-static void spatialmap_insert_node(SpatialNode *node, int x, int y);
-static void spatialmap_remove_node(SpatialNode *node);
+static void insert_node(SpatialNode *node, int x, int y);
+static void remove_node(SpatialNode *node);
 
-void spatialmap_init(size_t capacity)
+void init_spatial_map(size_t capacity)
 {
     mem_pool_alloc(&pool, capacity, sizeof(SpatialMap));
 }
 
-SpatialMap *spatialmap_create(SpatialNode **node_list, MemPool *node_pool, size_t xbits, size_t ybits)
+SpatialMap *create_spatial_map(SpatialNode **node_list, MemPool *node_pool, size_t xbits, size_t ybits)
 {
     //todo: assertion check on node pool size
     SpatialMap *map = mem_pool_take(&pool);
@@ -35,7 +35,7 @@ SpatialMap *spatialmap_create(SpatialNode **node_list, MemPool *node_pool, size_
 }
 
 
-SpatialNode *spatialmap_create_node(SpatialMap *map, void *data)
+SpatialNode *create_spatial_node(SpatialMap *map, void *data)
 {
     SpatialNode *node = mem_pool_take(map->node_pool);
     node->prev = NULL;
@@ -47,26 +47,26 @@ SpatialNode *spatialmap_create_node(SpatialMap *map, void *data)
     return node;
 }
 
-void spatialmap_destroy_node(SpatialNode *node)
+void destroy_spatial_node(SpatialNode *node)
 {
-    spatialmap_remove_node(node);
+    remove_node(node);
 
     mem_pool_release(node->map->node_pool, node);
 }
 
-SpatialNode *spatialmap_move_node(SpatialNode *node, int x, int y)
+SpatialNode *move_spatial_node(SpatialNode *node, int x, int y)
 {
-    spatialmap_remove_node(node);
-    spatialmap_insert_node(node, x, y);
+    remove_node(node);
+    insert_node(node, x, y);
 }
 
-void spatialmap_query(SpatialMap *spatial, int x0, int y0, int x1, int y1, SpatialMapQueryFn fn, void *ctx)
+void query_spatial_map(SpatialMap *spatial, int x0, int y0, int x1, int y1, SpatialMapQueryFn fn, void *ctx)
 {
     for(int y = y0; y <= y1; ++y)
     {
         for(int x = x0; x < x1; ++x)
         {
-            uint64_t key = spatialmap_key(spatial, x, y);
+            uint64_t key = get_key(spatial, x, y);
             SpatialNode *node = spatial->nodes[key];
 
             while(node)
@@ -78,7 +78,7 @@ void spatialmap_query(SpatialMap *spatial, int x0, int y0, int x1, int y1, Spati
     }
 }
 
-static uint64_t spatialmap_key(SpatialMap *map, int x, int y)
+static uint64_t get_key(SpatialMap *map, int x, int y)
 {
     y = (y >> map->ybits) & map->ymask;
     x = (x >> map->xbits) & map->xmask;
@@ -86,11 +86,11 @@ static uint64_t spatialmap_key(SpatialMap *map, int x, int y)
     return (y << map->ybits) | x;
 }
 
-static void spatialmap_insert_node(SpatialNode *node, int x, int y)
+static void insert_node(SpatialNode *node, int x, int y)
 {
     SpatialMap *map = node->map;
 
-    uint32_t key = spatialmap_key(map, x, y);
+    uint32_t key = get_key(map, x, y);
 
     node->key = key;
 
@@ -105,7 +105,7 @@ static void spatialmap_insert_node(SpatialNode *node, int x, int y)
     map->nodes[key] = node;
 }
 
-static void spatialmap_remove_node(SpatialNode *node)
+static void remove_node(SpatialNode *node)
 {
     SpatialNode *prev = node->prev;
     SpatialNode *next = node->next;
