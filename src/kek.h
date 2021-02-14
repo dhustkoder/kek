@@ -51,20 +51,22 @@ void *mem_pool_take(MemPool *pool);
 void *mem_pool_release(MemPool *pool, void *addr);
 void  mem_pool_free(MemPool *pool);
 
-void  mem_stack_init(size_t capacity);
-void *mem_stack_push(size_t size);
-void  mem_stack_pop(void *addr);
-void  mem_stack_free(void);
+void    mem_stack_init(size_t capacity);
+void   *mem_stack_push(size_t size);
+void    mem_stack_pop(void *addr);
+void    mem_stack_free(void);
+size_t  mem_stack_size(void);
+size_t  mem_stack_capacity(void);
 
 //**********************************************************
 // KEK SPATIAL MAP 
 //**********************************************************
-void spatialmap_init(size_t capacity);
-SpatialMap *spatialmap_create(SpatialNode **node_list, MemPool *node_pool, size_t xbits, size_t ybits);
-SpatialNode *spatialmap_create_node(SpatialMap *map, void *data);
-void spatialmap_destroy_node(SpatialNode *node);
-SpatialNode *spatialmap_move_node(SpatialNode *node, int x, int y);
-void spatialmap_query(SpatialMap *spatial, int x0, int y0, int x1, int y1, SpatialMapQueryFn fn, void *ctx);
+void         init_spatial_map(size_t capacity);
+SpatialMap  *create_spatial_map(SpatialNode **node_list, MemPool *node_pool, size_t xbits, size_t ybits);
+SpatialNode *create_spatial_node(SpatialMap *map, void *data);
+void         destroy_spatial_node(SpatialNode *node);
+SpatialNode *move_spatial_node(SpatialNode *node, int x, int y);
+void         query_spatial_map(SpatialMap *spatial, int x0, int y0, int x1, int y1, SpatialMapQueryFn fn, void *ctx);
 
 
 //**********************************************************

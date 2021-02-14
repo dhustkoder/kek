@@ -52,7 +52,7 @@ static int init_kek(int argc, char **argv)
     init_tag(
         get_configi(KEK_CFG_MEM_TAG_CAPACITY));
 
-    spatialmap_init(
+    init_spatial_map(
         get_configi(KEK_CFG_MEM_SPATIAL_MAP_CAPACITY));
 
     init_window();

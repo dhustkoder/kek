@@ -37,7 +37,7 @@ void init_entity(size_t capacity, size_t type_capacity, size_t user_data_stride)
 
 
     // create a 256x256 spatialmap  
-    smap = spatialmap_create(spatial_node_list, &pool_snode, SPATIAL_MAP_RESOLUTION_BITS, SPATIAL_MAP_RESOLUTION_BITS);
+    smap = create_spatial_map(spatial_node_list, &pool_snode, SPATIAL_MAP_RESOLUTION_BITS, SPATIAL_MAP_RESOLUTION_BITS);
 
     root_callbacks = NULL;
 }
@@ -64,16 +64,16 @@ Entity *create_entity(uint32_t type)
     inst->animation_frame_time = 0.0f;
 
     inst->position = zero_vec3();
-    inst->snode = spatialmap_create_node(smap, inst);
+    inst->snode = create_spatial_node(smap, inst);
 
-    spatialmap_move_node(inst->snode, 0, 0);
+    move_spatial_node(inst->snode, 0, 0);
 
     return inst;
 }
 
 void destroy_entity(Entity *entity)
 {
-    spatialmap_destroy_node(entity->snode);
+    destroy_spatial_node(entity->snode);
     mem_pool_release(&pool_entity, entity);
 }
 
@@ -87,7 +87,7 @@ typedef struct {
     void *ctx;
 }EntityQueryData ;
 
-void query_spatialmap_cb(SpatialNode *node, void *ctx)
+void query_spatial_cb(SpatialNode *node, void *ctx)
 {
     EntityQueryData *data = ctx;
 
@@ -101,7 +101,7 @@ void query_entity(Vec2 p0, Vec2 p1, EntityQueryFn fn, void *ctx)
     int y0 = WORLD_TO_SPATIAL_CELL(p0.y);
     int x1 = WORLD_TO_SPATIAL_CELL(p1.x);
     int y1 = WORLD_TO_SPATIAL_CELL(p1.y);
-    spatialmap_query(smap, x0, y0, x1, y1, query_spatialmap_cb, &data);
+    query_spatial_map(smap, x0, y0, x1, y1, query_spatial_cb, &data);
 }
 
 void update_entity(Entity *e)
@@ -240,7 +240,7 @@ void entity_position(Entity *e, Vec3 position)
     e->position = position;
     int x = WORLD_TO_SPATIAL_CELL(position.x);
     int y = WORLD_TO_SPATIAL_CELL(position.y);
-    spatialmap_move_node(e->snode, x, y);
+    move_spatial_node(e->snode, x, y);
 }
 
 void entity_velocity(Entity *e, Vec3 velocity)

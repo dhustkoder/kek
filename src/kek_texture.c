@@ -26,7 +26,6 @@ Texture *create_texture(void)
 
 void destroy_texture(Texture *texture)
 {
-
     gl_delete_textures(1, &texture->id);
 
     mem_pool_release(&pool, texture);

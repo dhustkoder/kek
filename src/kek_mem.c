@@ -77,14 +77,10 @@ void *mem_pool_release(MemPool *pool, void *addr)
     pool->use_count--;
 }
 
-typedef struct {
-    void *addr;
-    int32_t size;
-} StackHeader;
-
 static uint8_t *stack_buffer = NULL;
 static size_t stack_capacity = 0;
 static size_t stack_size = 0;
+
 void  mem_stack_init(size_t capacity)
 {
     stack_buffer = calloc(capacity, sizeof(uint8_t));
@@ -94,34 +90,38 @@ void  mem_stack_init(size_t capacity)
 
 void *mem_stack_push(size_t size)
 {
-    if(stack_size + size + sizeof(StackHeader)  > stack_capacity)
+    if(stack_size + size  > stack_capacity)
         return NULL;
 
     uint8_t *addr = &stack_buffer[stack_size];
 
-    StackHeader header;
-    header.addr = addr;
-    header.size = size;
-
     stack_size += size;
-    memcpy(&stack_buffer[stack_size], &header, sizeof(header));
-    stack_size += sizeof(header);
 
     return addr;
 }
 
 void mem_stack_pop(void *addr)
 {
-    assert(stack_size >= sizeof(StackHeader));
+    uint8_t *addr8 = addr;
+    assert(addr8 >= stack_buffer);
+    assert(addr8 <= &stack_buffer[stack_size]);
 
-    StackHeader *header = (StackHeader *)&stack_buffer[stack_size - sizeof(StackHeader)];
-    
-    assert(header->addr == addr);
-    stack_size -= sizeof(StackHeader) + header->size;
+
+    stack_size = addr8 - stack_buffer;
 }
 
 void mem_stack_free(void)
 {
     free(stack_buffer);
     stack_buffer = NULL;
+}
+
+size_t mem_stack_size(void)
+{
+    return stack_size;
+}
+
+size_t mem_stack_capacity(void)
+{
+    return stack_capacity;
 }
