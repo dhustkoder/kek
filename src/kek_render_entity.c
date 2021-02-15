@@ -111,7 +111,7 @@ void draw_render_entity_boxes(Render *render, Camera *camera, Entity **entities,
 
         Vec2 uv0 = {0.0f, 0.0f};
         Vec2 uv1 = {1.0f, 1.0f};
-        Vec4 colormask = entity->colormask;
+        Vec4 colormask = vec4(1,1,1,0.5);//entity->colormask;
         int texture = entity->texture;
 
         Vertex vertices[12];

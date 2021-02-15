@@ -15,12 +15,14 @@ void draw_render_spatialmap(Render *render, Camera *camera, Entity **entities, s
 
         Vec2 uv0 = {0.0f, 0.0f};
         Vec2 uv1 = {0.0f, 0.0f};
-        Vec4 colormask = vec4(1,1,1,1);
+        Vec4 colormask = vec4(1,0,0,1.0);
 
         Vertex vertices[2];
         vertices[0].position = entity->position;
+        vertices[0].colormask = colormask;
 #warning MAGIC NUMBER
         vertices[1].position = vec3(1024*entity->snode.x, 1024*entity->snode.y, 0);
+        vertices[1].colormask = colormask;
 
         append_vertex_buffer(vb, (uint8_t *)vertices, sizeof(vertices));
 
