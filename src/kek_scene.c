@@ -111,35 +111,25 @@ static uint32_t get_entity_render_key(Entity *e)
     if(frame)
         texture = frame->texture;
 
-    return (type << 16) || (texture & 0xFFFF);
+    uint32_t key = (type << 16) | (texture & 0xFFFF);
+
+    return key;
 }
 void draw_scene(Scene *scene)
 {
-    // cull all objects
-    // sort objects
-    // order by material
-    // write to vbos and keep track of each Draw
     Entity *entity = scene->entities;
 
     int window_width;
     int window_height;
+
     get_window_size(&window_width, &window_height);
 
-    size_t vertices = 0;
-
-    int maxid = 0;
-
     entity = scene->entities;
-    // layering is based on type
-    while(entity)
-    {
-        maxid = KUT_MAX(maxid, entity->type);
-        entity = entity->scene_next_entity;
-    }
 
     size_t listcount = scene->entity_count;
     Entity **sortlist = memstack_push(listcount * sizeof(Entity *));
     entity = scene->entities;
+
     for(int i = 0; i < listcount; ++i)
     {
         assert(entity);
@@ -150,12 +140,12 @@ void draw_scene(Scene *scene)
     // bubble sort, yea, yeah, i know...
     for(int i = 0; i < listcount; ++i)
     {
-        Entity *a = sortlist[i];
-        uint32_t akey = get_entity_render_key(a);
-
         for(int j = i + 1; j < listcount; ++j)
         {
+            Entity *a = sortlist[i];
             Entity *b = sortlist[j];
+
+            uint32_t akey = get_entity_render_key(a);
             uint32_t bkey = get_entity_render_key(b);
 
             if(bkey < akey)
@@ -170,6 +160,7 @@ void draw_scene(Scene *scene)
     
     memstack_pop(sortlist);
 }
+
 void query_scene_entities_aabb(Scene *scene, Vec2 pos, Vec2 size, SceneQueryEntityFn fn, void *ctx)
 {
     Entity *entity = scene->entities;

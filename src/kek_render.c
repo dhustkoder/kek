@@ -71,7 +71,6 @@ void draw_render(Render *render, Camera *camera, Entity **entities, size_t count
     render->draw_callback(render, camera, entities, count, render->ctx);
 }
 
-
 void draw_render_default(Render *render, Camera *camera, Entity **entities, size_t count, void *ctx)
 {
     size_t drawcount = 0;
