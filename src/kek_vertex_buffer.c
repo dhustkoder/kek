@@ -8,13 +8,13 @@ static int write_vertex_buffer(VertexBuffer *vb, size_t offset, uint8_t *data, s
 
 void init_vertex_buffer(size_t capacity)
 {
-    mem_pool_alloc(&pool, capacity, sizeof(VertexBuffer));
+    mempool_alloc(&pool, capacity, sizeof(VertexBuffer));
 }
 
 VertexBuffer *create_vertex_buffer(size_t capacity)
 {
     //todo: use a pool
-     VertexBuffer *inst = mem_pool_take(&pool);
+     VertexBuffer *inst = mempool_take(&pool);
 
     if(inst == NULL)
         return NULL;
@@ -40,7 +40,7 @@ void destroy_vertex_buffer(VertexBuffer *vb)
     vb->vbo = 0;
     vb->map_buffer = NULL;
 
-    mem_pool_release(&pool, vb);
+    mempool_release(&pool, vb);
 }
 
 size_t get_vertex_buffer_capacity(VertexBuffer *vb)
@@ -83,23 +83,22 @@ void vertex_buffer_attribs(VertexBuffer *vb, size_t *attribs, size_t count)
 
 int fill_vertex_buffer(VertexBuffer *vb, uint8_t *data, size_t size)
 {
-    PALReturn perr = PAL_OK;
 
-    perr = map_vertex_buffer(vb);
+    int perr = map_vertex_buffer(vb);
 
-    if(perr == PAL_OK)
+    if(perr == KEK_OK)
     {
         perr = write_vertex_buffer(vb, 0, data, size);
 
         unmap_vertex_buffer(vb);
     }
 
-    if(perr == PAL_OK)
+    if(perr == KEK_OK)
         vb->size = size;
     else
         vb->size = 0;
 
-    return (perr == PAL_OK) ? KEK_OK : KEK_ERROR;
+    return perr;
 }
 
 void bind_vertex_buffer(VertexBuffer *vb)
@@ -122,7 +121,7 @@ int map_vertex_buffer(VertexBuffer *vb)
 
     vb->map_buffer = mapped_buffer;
 
-    return PAL_OK;
+    return KEK_OK;
 }
 
 static int write_vertex_buffer(VertexBuffer *vb, size_t offset, uint8_t *data, size_t size)
@@ -137,7 +136,7 @@ static int write_vertex_buffer(VertexBuffer *vb, size_t offset, uint8_t *data, s
 
 	memcpy(&addr[offset], data, size);
 
-    return PAL_OK;
+    return KEK_OK;
 }
 
 int unmap_vertex_buffer(VertexBuffer *vb)
@@ -163,4 +162,11 @@ void draw_vertex_buffer(VertexBuffer *vb, size_t start, size_t count)
 	gl_bind_vertex_array(vb->vao);
 	gl_bind_buffer(GL_ARRAY_BUFFER, vb->vbo);
     gl_draw_arrays(GL_TRIANGLES, start, count);
+}
+
+void draw_vertex_buffer_line_strip(VertexBuffer *vb, size_t start, size_t count)
+{
+	gl_bind_vertex_array(vb->vao);
+	gl_bind_buffer(GL_ARRAY_BUFFER, vb->vbo);
+    gl_draw_arrays(GL_LINE_STRIP, start, count);
 }

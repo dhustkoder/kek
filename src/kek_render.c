@@ -11,17 +11,23 @@ typedef struct vertex {
     Vec4 colormask;
 } Vertex;
 
+typedef struct draw {
+    GLuint texture;
+    int offset;
+    int count;
+} Draw;
+
 static void fill_sprite(Vec2 position, Vec2 size, Vec3 rotation, Vec2 uv0, Vec2 uv1, Vec4 colormask, Vertex *out);
-static void draw_render_default(Render *render,  Camera *camera, Entity *entity, void *ctx);
+static void draw_render_default(Render *render,  Camera *camera, Entity **entities, size_t count, void *ctx);
 
 void init_render(size_t capacity)
 {
-    mem_pool_alloc(&pool, capacity, sizeof(Render));
+    mempool_alloc(&pool, capacity, sizeof(Render));
 }
 
 Render *create_render(void)
 {
-     Render *render = mem_pool_take(&pool);
+     Render *render = mempool_take(&pool);
 
      render->draw_callback = NULL;
      render->ctx = NULL;
@@ -47,7 +53,7 @@ Render *create_render(void)
 
 void destroy_render(Render *render)
 {
-    mem_pool_release(&pool, render);
+    mempool_release(&pool, render);
 }
 
 void render_draw_callback(Render *render, RenderFn fn, void *ctx)
@@ -56,65 +62,101 @@ void render_draw_callback(Render *render, RenderFn fn, void *ctx)
     render->ctx = ctx;
 }
 
-void draw_render(Render *render, Camera *camera, Entity *entity)
+
+void draw_render(Render *render, Camera *camera, Entity **entities, size_t count)
 {
     if(!render || !render->draw_callback)
         return;
 
-    render->draw_callback(render, camera, entity, render->ctx);
+    render->draw_callback(render, camera, entities, count, render->ctx);
 }
 
-void draw_render_default(Render *render, Camera *camera, Entity *entity, void *ctx)
+
+void draw_render_default(Render *render, Camera *camera, Entity **entities, size_t count, void *ctx)
 {
-    Vec3 size = entity->size;
-    Mat4 mvp;
+    size_t drawcount = 0;
+    size_t vertexcount = 0;
     VertexBuffer *vb = render->vb;
     GLuint shader = render->shader->shader;
 
-    size = mul_vec3_f(size, 4.f);
-    Vertex vertices[6]; 
+    Draw *draw_start = memstack_push(sizeof(Draw));
+    Draw *draw_top = draw_start;
+    draw_top->texture = 0;
+    draw_top->offset = 0;
+    draw_top->count = 0;
+    ++drawcount;
 
-    AnimationFrame *frame = get_entity_animation_frame(entity);
+    map_vertex_buffer(vb);
+    clear_vertex_buffer(vb);
 
-    if(frame)
+    for(size_t i = 0; i < count; ++i)
     {
-        Vec2 uv0 = frame->uv0;
-        Vec2 uv1 = frame->uv1;
+        Entity *entity = entities[i];
+
+        AnimationFrame *frame = get_entity_animation_frame(entity);
+        Vec2 uv0 = {0.0f, 0.0f};
+        Vec2 uv1 = {1.0f, 1.0f};
         Vec4 colormask = entity->colormask;
-        
-        fill_sprite(entity->position.xy, size.xy, entity->rotation, uv0, uv1, colormask, vertices);
-        bind_texture(frame->texture, 0);
+        int texture = entity->texture;
+
+        if(frame)
+        {
+            uv0 = frame->uv0;
+            uv1 = frame->uv1;
+            
+            texture = frame->texture;
+        }
+
+        if(frame || entity->texture >= 0)
+        {
+            Vertex vertices[6];
+            Vec3 size = mul_vec3_f(entity->size, 4.f);
+
+            fill_sprite(entity->position.xy, size.xy, entity->rotation, uv0, uv1, colormask, vertices);
+            append_vertex_buffer(vb, (uint8_t *)vertices, sizeof(vertices));
+
+            if(texture != draw_top->texture)
+            {
+                size_t offset = draw_top->offset + draw_top->count;
+
+                draw_top = memstack_push(sizeof(Draw));
+                draw_top->texture = texture;
+                draw_top->offset = offset;
+                draw_top->count = 6;
+                drawcount++;
+            }
+            else
+            {
+                draw_top->count += 6;
+            }
+        }
     }
-
-    else if(entity->texture)
-    {
-        const Vec2 uv0 = {0.0f, 0.0f};
-        const Vec2 uv1 = {1.0f, 1.0f};
-        const Vec4 colormask = entity->colormask;
-        fill_sprite(entity->position.xy, size.xy, entity->rotation, uv0, uv1, colormask, vertices);
-        bind_texture(entity->texture, 0);
-    }
-
-
-    fill_vertex_buffer(vb, (uint8_t *)vertices, sizeof(vertices));
+    unmap_vertex_buffer(vb);
 
     bind_vertex_buffer(vb);
     bind_shader(render->shader);
+    for(int i = 0; i < drawcount; ++i)
+    {
+        Draw *draw = &draw_start[i];
+        Mat4 mvp;
 
-    {
-        gl_uint uid = gl_get_uniform_location(shader, "u_texture");
-        gl_uniform1i(uid, 0);
-    }
-    {
+        bind_texture(draw->texture, 0);
+        gl_uint utexture = gl_get_uniform_location(shader, "u_texture");
+        gl_uniform1i(utexture, 0);
+
         get_camera_ortho_mvp(camera, &mvp);
-        gl_uint uid = gl_get_uniform_location(shader, "u_mvp");
-        gl_uniform_matrix4fv(uid, 1, GL_FALSE, (float *)&mvp);
+        gl_uint umvp = gl_get_uniform_location(shader, "u_mvp");
+        gl_uniform_matrix4fv(umvp, 1, GL_FALSE, (float *)&mvp);
+    
+        gl_disable(GL_DEPTH_TEST);
+        gl_enable(GL_BLEND);
+        gl_blend_func(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        
+        if(draw->count)
+            draw_vertex_buffer(vb, draw->offset, draw->count);
     }
-//
-    gl_disable(GL_DEPTH_TEST);
-    gl_enable(GL_BLEND);
-    gl_blend_func(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    draw_vertex_buffer(vb, 0, vb->size/sizeof(Vertex));
+
+    memstack_pop(draw_start);
 }
 
 static void fill_sprite(Vec2 position, Vec2 size, Vec3 rotation, Vec2 uv0, Vec2 uv1, Vec4 colormask, Vertex *out)

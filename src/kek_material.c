@@ -6,12 +6,12 @@ static MemPool pool;
 
 void material_init(size_t capacity)
 {
-    mem_pool_alloc(&pool, capacity, sizeof(Material));
+    mempool_alloc(&pool, capacity, sizeof(Material));
 }
 
 Material *material_create(void)
 {
-    Material *material = mem_pool_take(&pool);
+    Material *material = mempool_take(&pool);
 
     material->count = 0;
 }
@@ -26,6 +26,6 @@ void material_add_property(Material *material, const MaterialProperty *property)
 
 void material_destroy(void)
 {
-    mem_pool_release(&pool, material);
+    mempool_release(&pool, material);
 }
 #endif

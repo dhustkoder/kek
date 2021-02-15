@@ -5,12 +5,12 @@ static MemPool pool;
 
 void init_animation(size_t capacity)
 {
-    mem_pool_alloc(&pool, capacity, sizeof(Animation));
+    mempool_alloc(&pool, capacity, sizeof(Animation));
 }
 
 Animation *create_animation(void)
 {
-    Animation *animation = mem_pool_take(&pool);
+    Animation *animation = mempool_take(&pool);
 
     animation->frame_count = 0;
     animation->loop = 0;
@@ -21,7 +21,7 @@ Animation *create_animation(void)
 
 void destroy_animation(Animation *animation)
 {
-    mem_pool_release(&pool, animation);
+    mempool_release(&pool, animation);
 }
 
 void add_animation_frame(Animation *animation, AnimationFrame frame)
@@ -33,14 +33,15 @@ void add_animation_frame(Animation *animation, AnimationFrame frame)
     animation->frame_count++;
 }
 
-void add_animation_frame_clip(Animation *animation, Texture *texture, int x, int y, int clip_width, int clip_height, float duration)
+void add_animation_frame_clip(Animation *animation, int textureid, int x, int y, int clip_width, int clip_height, float duration)
 {
     AnimationFrame frame;
+    Texture *texture = get_texture(textureid);
 
     // flip y
     y = texture->height - y - clip_height;
     
-    frame.texture = texture;
+    frame.texture = textureid;
     frame.uv0.x = (float)x/(float)texture->width;
     frame.uv0.y = (float)y/(float)texture->height;
     frame.uv1.x = (float)(x + clip_width)/(float)texture->width;

@@ -46,7 +46,7 @@ static int init_kek(int argc, char **argv)
 
     size_t capacity;
 
-    mem_stack_init(
+    memstack_init(
         get_configi(KEK_CFG_MEM_STACK_CAPACITY));
 
     init_tag(
@@ -132,7 +132,7 @@ static int terminate(void)
     
     int ret = kek_user_exit();
 
-    mem_stack_free();
+    memstack_free();
 
     return ret;
 }

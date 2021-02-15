@@ -28,9 +28,9 @@ static EntityCallbacks *getinsert_entity_callbacks(uint32_t type);
 
 void init_entity(size_t capacity, size_t type_capacity, size_t user_data_stride)
 {
-    mem_pool_alloc(&pool_entity, capacity, sizeof(Entity) + user_data_stride);
-    mem_pool_alloc(&pool_callbacks, type_capacity, sizeof(EntityCallbacks));
-    mem_pool_alloc(&pool_snode, capacity * 2, sizeof(SpatialNode)); // *2 is just for added padding 
+    mempool_alloc(&pool_entity, capacity, sizeof(Entity) + user_data_stride);
+    mempool_alloc(&pool_callbacks, type_capacity, sizeof(EntityCallbacks));
+    mempool_alloc(&pool_snode, capacity * 2, sizeof(SpatialNode)); // *2 is just for added padding 
     size_t map_capacity = (1 << SPATIAL_MAP_RESOLUTION_BITS);
     map_capacity *= map_capacity;
     spatial_node_list = calloc(map_capacity * 2, sizeof(SpatialNode *));
@@ -44,7 +44,7 @@ void init_entity(size_t capacity, size_t type_capacity, size_t user_data_stride)
 
 Entity *create_entity(uint32_t type)
 {
-     Entity *inst = mem_pool_take(&pool_entity);
+     Entity *inst = mempool_take(&pool_entity);
 
     if(inst == NULL)
         return NULL;
@@ -57,7 +57,7 @@ Entity *create_entity(uint32_t type)
     inst->size     = vec3(128, 128, 128);
 
     inst->colormask = vec4(1,1,1,1);
-    inst->texture = NULL;
+    inst->texture = 0;
     inst->animation = NULL;
     inst->animation_frame = 0;
     inst->animation_speed = 1.0f;
@@ -74,7 +74,7 @@ Entity *create_entity(uint32_t type)
 void destroy_entity(Entity *entity)
 {
     destroy_spatial_node(entity->snode);
-    mem_pool_release(&pool_entity, entity);
+    mempool_release(&pool_entity, entity);
 }
 
 void release_entity(Entity *entity)
@@ -181,7 +181,7 @@ static EntityCallbacks *getinsert_entity_callbacks(uint32_t type)
 
     // if we reach this point, the callback does not exist make a new instance
     // and attach it to the root 
-    cb = mem_pool_take(&pool_callbacks);
+    cb = mempool_take(&pool_callbacks);
 
     cb->type = type;
     cb->terminate = NULL;
@@ -253,7 +253,7 @@ void entity_rotation(Entity *e, Vec3 rotation)
     e->rotation = rotation;
 }
 
-void entity_texture(Entity *e, Texture *texture)
+void entity_texture(Entity *e, int texture)
 {
     e->texture = texture;
 }

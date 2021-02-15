@@ -29,7 +29,7 @@ typedef void (*EntityTerminateFn)(Entity *entity, void *ctx);
 typedef void (*EntityUpdateFn)(Entity *entity, void *ctx); 
 typedef void (*EntityQueryFn)(Entity *e, void *ctx);
 typedef void (*CollisionFn)(Entity *a, Entity *b, void *ctx);
-typedef void (*RenderFn)(Render *render, Camera *camera, Entity *entity, void *ctx);
+typedef void (*RenderFn)(Render *render, Camera *camera, Entity **entities, size_t count, void *ctx);
 typedef void (*SceneQueryEntityFn)(Entity *entity, void *ctx);
 typedef void (*SpatialMapQueryFn)(SpatialNode *node, void *ctx);
 
@@ -374,7 +374,7 @@ typedef struct material {
 #endif
 
 typedef struct animation_frame {
-    Texture *texture;
+    int texture;
     Vec2 uv0;
     Vec2 uv1;
     float duration; // in seconds
@@ -394,6 +394,7 @@ typedef struct vertex_buffer {
     size_t capacity;
     size_t size;
 } VertexBuffer;
+
 
 typedef struct render {
     Shader *shader;
@@ -436,7 +437,7 @@ typedef struct entity {
     Vec3 size;
     Vec4 colormask;
 
-    Texture *texture;
+    int texture;
     Animation *animation;
     unsigned int animation_frame;
     float animation_frame_time;

@@ -13,7 +13,7 @@ static size_t binding_capacity = 0;
 
 void init_hid(size_t alias_capacity)
 {
-    bindings = mem_stack_push(alias_capacity * sizeof(KeyboardBind));
+    bindings = memstack_push(alias_capacity * sizeof(KeyboardBind));
     binding_capacity = alias_capacity;
 }
 

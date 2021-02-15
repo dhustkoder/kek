@@ -11,13 +11,13 @@ static void remove_node(SpatialNode *node);
 
 void init_spatial_map(size_t capacity)
 {
-    mem_pool_alloc(&pool, capacity, sizeof(SpatialMap));
+    mempool_alloc(&pool, capacity, sizeof(SpatialMap));
 }
 
 SpatialMap *create_spatial_map(SpatialNode **node_list, MemPool *node_pool, size_t xbits, size_t ybits)
 {
     //todo: assertion check on node pool size
-    SpatialMap *map = mem_pool_take(&pool);
+    SpatialMap *map = mempool_take(&pool);
     map->nodes = node_list;
     map->node_pool = node_pool;
     map->xbits = xbits;
@@ -37,7 +37,7 @@ SpatialMap *create_spatial_map(SpatialNode **node_list, MemPool *node_pool, size
 
 SpatialNode *create_spatial_node(SpatialMap *map, void *data)
 {
-    SpatialNode *node = mem_pool_take(map->node_pool);
+    SpatialNode *node = mempool_take(map->node_pool);
     node->prev = NULL;
     node->next = NULL;
     node->data = data;
@@ -51,7 +51,7 @@ void destroy_spatial_node(SpatialNode *node)
 {
     remove_node(node);
 
-    mem_pool_release(node->map->node_pool, node);
+    mempool_release(node->map->node_pool, node);
 }
 
 SpatialNode *move_spatial_node(SpatialNode *node, int x, int y)

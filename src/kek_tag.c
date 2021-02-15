@@ -15,13 +15,13 @@ static TagNode *root = NULL;
 
 void init_tag(size_t capacity)
 {
-    mem_pool_alloc(&pool, capacity, sizeof(TagNode));
+    mempool_alloc(&pool, capacity, sizeof(TagNode));
     root = NULL;
 }
 
 uint32_t set_tag(uint32_t tag, void *value)
 {
-     TagNode *node = mem_pool_take(&pool);
+     TagNode *node = mempool_take(&pool);
 
      node->tag = tag;
      node->data = value;
@@ -61,7 +61,7 @@ void remove_tag(uint32_t tag)
             if(node == root)
                 root = node->next;
 
-            mem_pool_release(&pool, node);
+            mempool_release(&pool, node);
         }
 
         prev = node;

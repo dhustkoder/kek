@@ -9,33 +9,42 @@
 static MemPool pool;
 void init_texture(size_t capacity)
 {
-    mem_pool_alloc(&pool, capacity, sizeof(Texture));
+    mempool_alloc(&pool, capacity, sizeof(Texture));
 }
 
-Texture *create_texture(void)
+int create_texture(void)
 {
-     Texture *inst = mem_pool_take(&pool);
+     Texture *inst = mempool_take(&pool);
      inst->width = 0;
      inst->height = 0;
      inst->loaded = false;
 
      gl_gen_textures(1, &inst->id);
 
-     return inst;
+     return mempool_get_slot(&pool, inst);
 }
 
-void destroy_texture(Texture *texture)
+Texture *get_texture(int id)
 {
+    return mempool_get_addr(&pool, id);
+}
+
+void destroy_texture(int id)
+{
+    Texture *texture = mempool_get_addr(&pool, id);
+
     gl_delete_textures(1, &texture->id);
 
-    mem_pool_release(&pool, texture);
+    mempool_release(&pool, texture);
 }
 
-int load_texture_file(Texture *texture, const char *file)
+int load_texture_file(int id, const char *file)
 {
 	int w;
 	int h;
 	int channels;
+
+    Texture *texture = mempool_get_addr(&pool, id);
 
     stbi_set_flip_vertically_on_load(1);
 	unsigned char *image = stbi_load(file, &w, &h, &channels, STBI_rgb_alpha);
@@ -60,9 +69,12 @@ int load_texture_file(Texture *texture, const char *file)
     return KEK_OK;
 }
 
-void bind_texture(Texture *texture, int slot)
+void bind_texture(int id, int slot)
 {
+    Texture *texture = mempool_get_addr(&pool, id);
+
     gl_active_texture(GL_TEXTURE0 + slot);
     gl_bind_texture(GL_TEXTURE_2D, texture->id);
+
 }
 

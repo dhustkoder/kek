@@ -1,4 +1,5 @@
 #include "kek.h"
+#include <assert.h>
 
 static MemPool pool;
 static MemPool pool_entities;
@@ -7,13 +8,13 @@ static Scene *active_scene = NULL;
 static Camera default_camera = {0,0,0.9};
 void init_scene(size_t capacity)
 {
-    mem_pool_alloc(&pool, capacity, sizeof(Scene));
-    mem_pool_alloc(&pool, capacity, sizeof(Scene));
+    mempool_alloc(&pool, capacity, sizeof(Scene));
+    mempool_alloc(&pool, capacity, sizeof(Scene));
 }
 
 Scene *create_scene(void)
 {
-     Scene *scene = mem_pool_take(&pool);
+     Scene *scene = mempool_take(&pool);
 
      scene->entities = NULL;
      scene->entity_count = 0;
@@ -30,7 +31,7 @@ void destroy_scene(Scene *scene)
     if(scene == active_scene)
         active_scene = NULL;
     
-    mem_pool_release(&pool, scene);
+    mempool_release(&pool, scene);
 }
 
 void scene_active(Scene *scene)
@@ -100,6 +101,18 @@ void garbage_collect_scene(Scene *scene)
     }
 }
 
+
+static uint32_t get_entity_render_key(Entity *e)
+{
+    uint32_t type = e->type;
+    uint32_t texture = e->texture;
+    AnimationFrame *frame = get_entity_animation_frame(e);
+
+    if(frame)
+        texture = frame->texture;
+
+    return (type << 16) || (texture & 0xFFFF);
+}
 void draw_scene(Scene *scene)
 {
     // cull all objects
@@ -117,24 +130,45 @@ void draw_scene(Scene *scene)
     int maxid = 0;
 
     entity = scene->entities;
+    // layering is based on type
     while(entity)
     {
         maxid = KUT_MAX(maxid, entity->type);
         entity = entity->scene_next_entity;
     }
 
-    // slow hack
-    for(int i = 0; i <= maxid; ++i)
+    size_t listcount = scene->entity_count;
+    Entity **sortlist = memstack_push(listcount * sizeof(Entity *));
+    entity = scene->entities;
+    for(int i = 0; i < listcount; ++i)
     {
-        entity = scene->entities;
-        while(entity)
-        {
-            if(entity->type == i)
-                draw_render(scene->render_default, scene->camera, entity);
+        assert(entity);
+        sortlist[i] = entity;
+        entity = entity->scene_next_entity;
+    }
 
-            entity = entity->scene_next_entity;
+    // bubble sort, yea, yeah, i know...
+    for(int i = 0; i < listcount; ++i)
+    {
+        Entity *a = sortlist[i];
+        uint32_t akey = get_entity_render_key(a);
+
+        for(int j = i + 1; j < listcount; ++j)
+        {
+            Entity *b = sortlist[j];
+            uint32_t bkey = get_entity_render_key(b);
+
+            if(bkey < akey)
+            {
+                sortlist[i] = b;
+                sortlist[j] = a;
+            }
         }
     }
+
+    draw_render(scene->render_default, scene->camera, sortlist, listcount);
+    
+    memstack_pop(sortlist);
 }
 void query_scene_entities_aabb(Scene *scene, Vec2 pos, Vec2 size, SceneQueryEntityFn fn, void *ctx)
 {

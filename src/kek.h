@@ -46,17 +46,19 @@ int     log_line(const char *file, int line, const char *function, const char *z
 //**********************************************************
 // KEK MEMORY 
 //**********************************************************
-void  mem_pool_alloc(MemPool *pool, size_t capacity, size_t stride);
-void *mem_pool_take(MemPool *pool);
-void *mem_pool_release(MemPool *pool, void *addr);
-void  mem_pool_free(MemPool *pool);
+void  mempool_alloc(MemPool *pool, size_t capacity, size_t stride);
+void *mempool_take(MemPool *pool);
+int   mempool_get_slot(MemPool *pool, void *addr);
+void *mempool_get_addr(MemPool *pool, int slot);
+void *mempool_release(MemPool *pool, void *addr);
+void  mempool_free(MemPool *pool);
 
-void    mem_stack_init(size_t capacity);
-void   *mem_stack_push(size_t size);
-void    mem_stack_pop(void *addr);
-void    mem_stack_free(void);
-size_t  mem_stack_size(void);
-size_t  mem_stack_capacity(void);
+void    memstack_init(size_t capacity);
+void   *memstack_push(size_t size);
+void    memstack_pop(void *addr);
+void    memstack_free(void);
+size_t  memstack_size(void);
+size_t  memstack_capacity(void);
 
 //**********************************************************
 // KEK SPATIAL MAP 
@@ -82,9 +84,10 @@ void          clear_vertex_buffer(VertexBuffer *vb);
 int           fill_vertex_buffer(VertexBuffer *vb, uint8_t *data, size_t size);
 void          bind_vertex_buffer(VertexBuffer *vb);
 void          draw_vertex_buffer(VertexBuffer *vb, size_t start, size_t count);
+void          draw_vertex_buffer_line_strip(VertexBuffer *vb, size_t start, size_t count);
 int           map_vertex_buffer(VertexBuffer *vb);
 int           unmap_vertex_buffer(VertexBuffer *vb);
-void          append_vertex_buffer_data(VertexBuffer *vb, uint8_t *data, size_t vertices);
+void          append_vertex_buffer(VertexBuffer *vb, uint8_t *data, size_t vertices);
 
 //**********************************************************
 // KEK SHADER
@@ -111,10 +114,11 @@ void material_destroy(void);
 // KEK TEXTURE 
 //**********************************************************
 void     init_texture(size_t capacity);
-Texture *create_texture(void);
-void     destroy_texture(Texture *texture);
-int      load_texture_file(Texture *texture, const char *file);
-void     bind_texture(Texture *textures, int slot);
+int      create_texture(void);
+Texture *get_texture(int texture_id);
+void     destroy_texture(int texture_id);
+int      load_texture_file(int texture_id, const char *file);
+void     bind_texture(int texture_id, int slot);
 
 //**********************************************************
 // KEK ANIMATION
@@ -123,7 +127,7 @@ void       init_animation(size_t capacity);
 Animation *create_animation(void);
 void       destroy_animation(Animation *animation);
 void       add_animation_frame(Animation *animation, AnimationFrame frame);
-void       add_animation_frame_clip(Animation *animation, Texture *texture, int x, int y, int clip_width, int clip_height, float duration);
+void       add_animation_frame_clip(Animation *animation, int textureid, int x, int y, int clip_width, int clip_height, float duration);
 void       animation_loop(Animation *animation, bool loop);
 
 //**********************************************************
@@ -140,7 +144,7 @@ void    init_render(size_t capacity);
 Render *create_render(void);
 void    destroy_render(Render *render);
 void    render_draw_callback(Render *render, RenderFn fn, void *ctx);
-void    draw_render(Render *render, Camera *camera, Entity *entity);
+void    draw_render(Render *render, Camera *camera, Entity **entities, size_t count);
 //
 //**********************************************************
 // KEK CAMERA 
@@ -187,7 +191,7 @@ Vec3            get_entity_position(Entity *e);
 void            entity_position(Entity *e, Vec3 position);
 Vec3            get_entity_velocity(Entity *e);
 void            entity_velocity(Entity *e, Vec3 velocity);
-void            entity_texture(Entity *e, Texture *texture);
+void            entity_texture(Entity *e, int texture);
 void            entity_animation(Entity *e, Animation *animation);
 void            entity_rotation(Entity *e, Vec3 rotation);
 void            entity_rotation_z(Entity *e, float rotation);

@@ -4,12 +4,12 @@ static MemPool pool;
 
 void init_camera(size_t capacity)
 {
-    mem_pool_alloc(&pool, capacity, sizeof(Camera));
+    mempool_alloc(&pool, capacity, sizeof(Camera));
 }
 
 Camera *create_camera(void)
 {
-    Camera *camera = mem_pool_take(&pool);
+    Camera *camera = mempool_take(&pool);
     camera->zoom = 1.0f;
     camera->position = zero_vec3();
 
@@ -18,7 +18,7 @@ Camera *create_camera(void)
 
 void destroy_camera(Camera *camera)
 {
-    mem_pool_release(&pool, camera);
+    mempool_release(&pool, camera);
 }
 
 void camera_ortho_zoom(Camera *camera, float zoom)

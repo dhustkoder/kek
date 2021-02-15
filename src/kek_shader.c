@@ -9,12 +9,12 @@ static int compile_shader(GLuint shader, const char *code, char *error_buffer, s
 
 void init_shader(size_t capacity)
 {
-    mem_pool_alloc(&pool, capacity, sizeof(Shader));
+    mempool_alloc(&pool, capacity, sizeof(Shader));
 }
 
 Shader *create_shader(void)
 {
-     Shader *inst = mem_pool_take(&pool);
+     Shader *inst = mempool_take(&pool);
 
     if(inst == NULL)
         return NULL;
@@ -29,7 +29,7 @@ void destroy_shader(Shader *shader)
     gl_delete_program(shader->shader);
     shader->shader = 0;
 
-    mem_pool_release(&pool, shader);
+    mempool_release(&pool, shader);
 }
 
 int load_shader_files(Shader *shader, const char *vert_file, const char *frag_file)
@@ -44,8 +44,8 @@ int load_shader_files(Shader *shader, const char *vert_file, const char *frag_fi
     pal_file_get_size(vert_file, &vert_size);
     pal_file_get_size(frag_file, &frag_size);
     
-    vert_buffer  = mem_stack_push(vert_size + 1); 
-    frag_buffer  = mem_stack_push(frag_size + 1); 
+    vert_buffer  = memstack_push(vert_size + 1); 
+    frag_buffer  = memstack_push(frag_size + 1); 
 
     pal_file_to_buffer(vert_file, (uint8_t *)vert_buffer, &vert_size, vert_size);
     pal_file_to_buffer(frag_file, (uint8_t *)frag_buffer, &frag_size, frag_size);
@@ -54,8 +54,8 @@ int load_shader_files(Shader *shader, const char *vert_file, const char *frag_fi
 
     result = load_shader_buffer(shader, vert_buffer, frag_buffer);
 
-    mem_stack_pop(frag_buffer);
-    mem_stack_pop(vert_buffer);
+    memstack_pop(frag_buffer);
+    memstack_pop(vert_buffer);
 
     return result;
 }
@@ -71,7 +71,7 @@ int load_shader_buffer(Shader *shader, const char *vert_buffer, const char *frag
     PALReturn vert_result;
     PALReturn frag_result;
 
-    error_buffer = mem_stack_push(ERROR_BUFFER_CAPACITY); 
+    error_buffer = memstack_push(ERROR_BUFFER_CAPACITY); 
 
     vert_shader = gl_create_shader(GL_VERTEX_SHADER);
     frag_shader = gl_create_shader(GL_FRAGMENT_SHADER);
@@ -89,7 +89,7 @@ int load_shader_buffer(Shader *shader, const char *vert_buffer, const char *frag
     gl_delete_shader(vert_shader);
     gl_delete_shader(frag_shader);
 
-    mem_stack_pop(error_buffer);
+    memstack_pop(error_buffer);
 
     return KEK_OK;
 }
