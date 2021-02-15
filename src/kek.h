@@ -64,11 +64,10 @@ size_t  memstack_capacity(void);
 // KEK SPATIAL MAP 
 //**********************************************************
 void         init_spatial_map(size_t capacity);
-SpatialMap  *create_spatial_map(SpatialNode **node_list, MemPool *node_pool, size_t xbits, size_t ybits);
-SpatialNode *create_spatial_node(SpatialMap *map, void *data);
-void         destroy_spatial_node(SpatialNode *node);
-SpatialNode *move_spatial_node(SpatialNode *node, int x, int y);
-void         query_spatial_map(SpatialMap *spatial, int x0, int y0, int x1, int y1, SpatialMapQueryFn fn, void *ctx);
+void         move_spatial_map_node(SpatialNode *node, int x, int y);
+void         remove_spatial_map_node(SpatialNode *node);
+void         add_spatial_map_node(SpatialNode *node, int x, int y);
+void         query_spatial_map(int x0, int y0, int x1, int y1, SpatialMapQueryFn fn, void *ctx);
 
 
 //**********************************************************
@@ -85,6 +84,7 @@ int           fill_vertex_buffer(VertexBuffer *vb, uint8_t *data, size_t size);
 void          bind_vertex_buffer(VertexBuffer *vb);
 void          draw_vertex_buffer(VertexBuffer *vb, size_t start, size_t count);
 void          draw_vertex_buffer_line_strip(VertexBuffer *vb, size_t start, size_t count);
+void          draw_vertex_buffer_lines(VertexBuffer *vb, size_t start, size_t count);
 int           map_vertex_buffer(VertexBuffer *vb);
 int           unmap_vertex_buffer(VertexBuffer *vb);
 void          append_vertex_buffer(VertexBuffer *vb, uint8_t *data, size_t vertices);
@@ -141,10 +141,13 @@ void submit_event(int id, void *data);
 // KEK RENDER
 //**********************************************************
 void    init_render(size_t capacity);
-Render *create_render(void);
+Render *create_entity_render(void);
+Render *create_entity_box_render(void);
 void    destroy_render(Render *render);
-void    render_draw_callback(Render *render, RenderFn fn, void *ctx);
-void    draw_render(Render *render, Camera *camera, Entity **entities, size_t count);
+void    draw_render_lines_default(Render *render, Camera *camera, Vec3 *points, size_t count, void *ctx);
+void    draw_render_entities(Render *render, Camera *camera, Entity **entities, size_t count, void *ctx);
+void    draw_render_entity_boxes(Render *render, Camera *camera, Entity **entities, size_t count, void *ctx);
+void    draw_render_spatialmap(Render *render, Camera *camera, Entity **entities, size_t count);
 //
 //**********************************************************
 // KEK CAMERA 

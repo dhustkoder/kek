@@ -164,6 +164,13 @@ void draw_vertex_buffer(VertexBuffer *vb, size_t start, size_t count)
     gl_draw_arrays(GL_TRIANGLES, start, count);
 }
 
+void draw_vertex_buffer_lines(VertexBuffer *vb, size_t start, size_t count)
+{
+	gl_bind_vertex_array(vb->vao);
+	gl_bind_buffer(GL_ARRAY_BUFFER, vb->vbo);
+    gl_draw_arrays(GL_LINES, start, count);
+}
+
 void draw_vertex_buffer_line_strip(VertexBuffer *vb, size_t start, size_t count)
 {
 	gl_bind_vertex_array(vb->vao);

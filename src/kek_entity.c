@@ -1,8 +1,7 @@
 #include "kek.h"
 #include <stdlib.h>
 
-#define SPATIAL_MAP_RESOLUTION_BITS 8 
-#define WORLD_TO_SPATIAL_CELL(x) (x / 128)
+#define WORLD_TO_SPATIAL_CELL(x) (x / 1024)
 // each cell is 128 physical units long
 // there are 2^8 cells wide and 2^8 cells high
 // 2^8 * 128 = 32768 is the maximum position allowed on each axis
@@ -19,10 +18,7 @@ typedef struct entity_callbacks {
 
 static MemPool pool_entity;
 static MemPool pool_callbacks;
-static MemPool pool_snode;
-static SpatialMap *smap = NULL;
 static EntityCallbacks *root_callbacks = NULL;
-static SpatialNode **spatial_node_list = NULL;
 
 static EntityCallbacks *getinsert_entity_callbacks(uint32_t type);
 
@@ -30,14 +26,6 @@ void init_entity(size_t capacity, size_t type_capacity, size_t user_data_stride)
 {
     mempool_alloc(&pool_entity, capacity, sizeof(Entity) + user_data_stride);
     mempool_alloc(&pool_callbacks, type_capacity, sizeof(EntityCallbacks));
-    mempool_alloc(&pool_snode, capacity * 2, sizeof(SpatialNode)); // *2 is just for added padding 
-    size_t map_capacity = (1 << SPATIAL_MAP_RESOLUTION_BITS);
-    map_capacity *= map_capacity;
-    spatial_node_list = calloc(map_capacity * 2, sizeof(SpatialNode *));
-
-
-    // create a 256x256 spatialmap  
-    smap = create_spatial_map(spatial_node_list, &pool_snode, SPATIAL_MAP_RESOLUTION_BITS, SPATIAL_MAP_RESOLUTION_BITS);
 
     root_callbacks = NULL;
 }
@@ -62,18 +50,20 @@ Entity *create_entity(uint32_t type)
     inst->animation_frame = 0;
     inst->animation_speed = 1.0f;
     inst->animation_frame_time = 0.0f;
+    inst->snode.data = inst;
 
     inst->position = zero_vec3();
-    inst->snode = create_spatial_node(smap, inst);
 
-    move_spatial_node(inst->snode, 0, 0);
+    int x = WORLD_TO_SPATIAL_CELL(inst->position.x);
+    int y = WORLD_TO_SPATIAL_CELL(inst->position.y);
+    add_spatial_map_node(&inst->snode, x, y);
 
     return inst;
 }
 
 void destroy_entity(Entity *entity)
 {
-    destroy_spatial_node(entity->snode);
+    remove_spatial_map_node(&entity->snode);
     mempool_release(&pool_entity, entity);
 }
 
@@ -101,7 +91,7 @@ void query_entity(Vec2 p0, Vec2 p1, EntityQueryFn fn, void *ctx)
     int y0 = WORLD_TO_SPATIAL_CELL(p0.y);
     int x1 = WORLD_TO_SPATIAL_CELL(p1.x);
     int y1 = WORLD_TO_SPATIAL_CELL(p1.y);
-    query_spatial_map(smap, x0, y0, x1, y1, query_spatial_cb, &data);
+    query_spatial_map(x0, y0, x1, y1, query_spatial_cb, &data);
 }
 
 void update_entity(Entity *e)
@@ -240,7 +230,7 @@ void entity_position(Entity *e, Vec3 position)
     e->position = position;
     int x = WORLD_TO_SPATIAL_CELL(position.x);
     int y = WORLD_TO_SPATIAL_CELL(position.y);
-    move_spatial_node(e->snode, x, y);
+    move_spatial_map_node(&e->snode, x, y);
 }
 
 void entity_velocity(Entity *e, Vec3 velocity)

@@ -9,7 +9,6 @@ static Camera default_camera = {0,0,0.9};
 void init_scene(size_t capacity)
 {
     mempool_alloc(&pool, capacity, sizeof(Scene));
-    mempool_alloc(&pool, capacity, sizeof(Scene));
 }
 
 Scene *create_scene(void)
@@ -18,7 +17,9 @@ Scene *create_scene(void)
 
      scene->entities = NULL;
      scene->entity_count = 0;
-     scene->render_default = create_render();
+     scene->render_entity = create_entity_render();
+     scene->render_entity_box = create_entity_box_render();
+     scene->render_spatialmap = create_entity_box_render();
      scene->camera = &default_camera;
 
      return scene;
@@ -26,7 +27,8 @@ Scene *create_scene(void)
 
 void destroy_scene(Scene *scene)
 {
-    destroy_render(scene->render_default);
+    destroy_render(scene->render_entity);
+    destroy_render(scene->render_entity_box);
 
     if(scene == active_scene)
         active_scene = NULL;
@@ -85,6 +87,8 @@ void garbage_collect_scene(Scene *scene)
 
         if(entity->destroy)
         {
+            assert(scene->entity_count > 0);
+            scene->entity_count--;
             if(prev)
                 prev->scene_next_entity = next;
             else
@@ -115,6 +119,7 @@ static uint32_t get_entity_render_key(Entity *e)
 
     return key;
 }
+
 void draw_scene(Scene *scene)
 {
     Entity *entity = scene->entities;
@@ -156,7 +161,9 @@ void draw_scene(Scene *scene)
         }
     }
 
-    draw_render(scene->render_default, scene->camera, sortlist, listcount);
+    draw_render_entities(scene->render_entity, scene->camera, sortlist, listcount, NULL);
+    draw_render_entity_boxes(scene->render_entity_box, scene->camera, sortlist, listcount, NULL);
+    draw_render_spatialmap(scene->render_spatialmap, scene->camera, sortlist, listcount);
     
     memstack_pop(sortlist);
 }

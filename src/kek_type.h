@@ -22,6 +22,7 @@ typedef struct render Render;
 typedef struct shader Shader;
 typedef struct event Event;
 typedef struct spatial_node SpatialNode;
+typedef union vec3 Vec3;
 
 
 typedef void (*EventCallback)(Event *event, void *ctx);
@@ -29,7 +30,8 @@ typedef void (*EntityTerminateFn)(Entity *entity, void *ctx);
 typedef void (*EntityUpdateFn)(Entity *entity, void *ctx); 
 typedef void (*EntityQueryFn)(Entity *e, void *ctx);
 typedef void (*CollisionFn)(Entity *a, Entity *b, void *ctx);
-typedef void (*RenderFn)(Render *render, Camera *camera, Entity **entities, size_t count, void *ctx);
+typedef void (*RenderEntitiesFn)(Render *render, Camera *camera, Entity **entities, size_t count, void *ctx);
+typedef void (*RenderLinesFn)(Render *render, Camera *camera, Vec3 *points, size_t count, void *ctx);
 typedef void (*SceneQueryEntityFn)(Entity *entity, void *ctx);
 typedef void (*SpatialMapQueryFn)(SpatialNode *node, void *ctx);
 
@@ -338,6 +340,13 @@ typedef struct texture {
     bool loaded;
 } Texture;
 
+typedef struct vertex {
+    Vec3 position;
+    Vec3 normal;
+    Vec2 uv;
+    Vec4 colormask;
+} Vertex;
+
 #if 0
 typedef enum material_property_type{
     MATERIAL_PROPERTY_VEC2,
@@ -399,7 +408,6 @@ typedef struct vertex_buffer {
 typedef struct render {
     Shader *shader;
     VertexBuffer *vb;
-    RenderFn draw_callback;
     void *ctx;
 } Render;
 
@@ -409,23 +417,21 @@ typedef struct shader {
 } Shader;
 
 typedef struct spatial_map SpatialMap;
-typedef struct spatial_node SpatialNode;
+
+#define SPATIAL_NODE_XSPAN 16
+#define SPATIAL_NODE_YSPAN 16
 
 typedef struct spatial_node {
-    SpatialNode *prev;
-    SpatialNode *next;
+    int x;
+    int y;
     void *data;
-    SpatialMap *map;
-    uint64_t key;
+    SpatialNode *next;
 } SpatialNode;
 
 typedef struct spatial_map {
-    SpatialNode **nodes;
-    MemPool *node_pool;
-    uint64_t xmask;
-    uint64_t ymask;
-    size_t xbits;
-    size_t ybits;
+    SpatialNode *nodes[SPATIAL_NODE_YSPAN][SPATIAL_NODE_XSPAN];
+    int basex;
+    int basey;
 } SpatialMap;
 
 typedef struct entity {
@@ -443,13 +449,15 @@ typedef struct entity {
     float animation_frame_time;
     float animation_speed;
 
-    SpatialNode *snode;
+    SpatialNode snode;
     Entity *scene_next_entity;
 } Entity;
 
 typedef struct scene {
     Entity *entities;
-    Render *render_default;
+    Render *render_entity;
+    Render *render_entity_box;
+    Render *render_spatialmap;
     Camera *camera;
     size_t entity_count;
 } Scene;

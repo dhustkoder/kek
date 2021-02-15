@@ -1,129 +1,163 @@
 #include "kek.h"
 #include <assert.h>
 #include <limits.h>
+#include <stdlib.h>
+static SpatialMap *maps;
+static size_t mapcount = 0;
+static size_t capacity = 0;
 
-static MemPool pool;
 
-static uint64_t get_key(SpatialMap *map, int x, int y);
+static SpatialMap *find_spatial_map(int basex, int basey);
+static SpatialMap *create_spatial_map(int basex, int basey);
+static void get_relative_coords(int x, int y, int *basex, int *basey, int *relx, int *rely);
 
-static void insert_node(SpatialNode *node, int x, int y);
-static void remove_node(SpatialNode *node);
-
-void init_spatial_map(size_t capacity)
+void init_spatial_map(size_t cap)
 {
-    mempool_alloc(&pool, capacity, sizeof(SpatialMap));
+    mapcount = 0;
+    capacity = cap;
+    maps = calloc(capacity, sizeof(SpatialMap));
 }
 
-SpatialMap *create_spatial_map(SpatialNode **node_list, MemPool *node_pool, size_t xbits, size_t ybits)
+void move_spatial_map_node(SpatialNode *node, int x, int y)
 {
-    //todo: assertion check on node pool size
-    SpatialMap *map = mempool_take(&pool);
-    map->nodes = node_list;
-    map->node_pool = node_pool;
-    map->xbits = xbits;
-    map->ybits = ybits;
-    map->xmask = 0;
-    map->ymask = 0;
-    
-    for(size_t i = 0; i < xbits; ++i)
-        map->xmask |= 1 << i;
+    remove_spatial_map_node(node);
+    add_spatial_map_node(node, x, y);
+}
 
-    for(size_t i = 0; i < ybits; ++i)
-        map->ymask |= 1 << i;
+void add_spatial_map_node(SpatialNode *node, int x, int y)
+{
+    node->x = x;
+    node->y = y;
 
-    return map;
+    int basex = 0;
+    int basey = 0;
+    int relx = 0;
+    int rely = 0;
+
+    get_relative_coords(x, y, &basex, &basey, &relx, &rely);
+    SpatialMap *map = find_spatial_map(basex, basey);
+
+    if(!map)
+        map = create_spatial_map(basex, basey);
+
+    node->next = map->nodes[rely][relx];
+
+    map->nodes[rely][relx] = node;
+
+}
+
+void remove_spatial_map_node(SpatialNode *node)
+{
+    int basex = 0;
+    int basey = 0;
+    int relx = 0;
+    int rely = 0;
+
+    get_relative_coords(node->x, node->y, &basex, &basey, &relx, &rely);
+
+    SpatialMap *map = find_spatial_map(basex, basey);
+
+    assert(map);
+
+    SpatialNode *iter = map->nodes[rely][relx];
+
+    // root node
+    if(map->nodes[rely][relx] == node)
+    {
+        map->nodes[rely][relx] = node->next;
+    }
+    else
+    {
+        while(iter)
+        {
+            if(iter->next == node)
+            {
+                iter->next = node->next;
+                break;
+            }
+            iter = iter->next;
+        }
+    }
 }
 
 
-SpatialNode *create_spatial_node(SpatialMap *map, void *data)
-{
-    SpatialNode *node = mempool_take(map->node_pool);
-    node->prev = NULL;
-    node->next = NULL;
-    node->data = data;
-    node->map  = map;
-    node->key = ~0;
-
-    return node;
-}
-
-void destroy_spatial_node(SpatialNode *node)
-{
-    remove_node(node);
-
-    mempool_release(node->map->node_pool, node);
-}
-
-SpatialNode *move_spatial_node(SpatialNode *node, int x, int y)
-{
-    remove_node(node);
-    insert_node(node, x, y);
-}
-
-void query_spatial_map(SpatialMap *spatial, int x0, int y0, int x1, int y1, SpatialMapQueryFn fn, void *ctx)
+void query_spatial_map(int x0, int y0, int x1, int y1, SpatialMapQueryFn fn, void *ctx)
 {
     for(int y = y0; y <= y1; ++y)
     {
-        for(int x = x0; x < x1; ++x)
+        for(int x = x0; x <= x1; ++x)
         {
-            uint64_t key = get_key(spatial, x, y);
-            SpatialNode *node = spatial->nodes[key];
+            int basex = 0;
+            int basey = 0;
+            int relx = 0;
+            int rely = 0;
 
-            while(node)
+            get_relative_coords(x, y, &basex, &basey, &relx, &rely);
+
+            SpatialMap *map = find_spatial_map(basex, basey);
+
+            if(map)
             {
-                fn(node, ctx);
-                node = node->next;
+                SpatialNode *node = map->nodes[rely][relx];
+
+                while(node)
+                {
+                    fn(node, ctx);
+                    node = node->next;
+                }
             }
         }
     }
 }
 
-static uint64_t get_key(SpatialMap *map, int x, int y)
+static SpatialMap *create_spatial_map(int basex, int basey)
 {
-    y = (y >> map->ybits) & map->ymask;
-    x = (x >> map->xbits) & map->xmask;
+    assert(mapcount < capacity);
+    SpatialMap *map = &maps[mapcount];
+    ++mapcount;
 
-    return (y << map->ybits) | x;
+    map->basex = basex;
+    map->basey = basey;
+
+    for(int y = 0; y < SPATIAL_NODE_YSPAN; ++y)
+    {
+        for(int x = 0; x < SPATIAL_NODE_XSPAN; ++x)
+        {
+            map->nodes[y][x] = NULL;
+        }
+    }
+    
+    return map;
 }
 
-static void insert_node(SpatialNode *node, int x, int y)
+static SpatialMap *find_spatial_map(int basex, int basey)
 {
-    SpatialMap *map = node->map;
-
-    uint32_t key = get_key(map, x, y);
-
-    node->key = key;
-
-    node->prev = NULL;
-    node->next = map->nodes[key];
+    for(int i = 0; i < mapcount; ++i)
+    {
+        if(maps[i].basex == basex && maps[i].basey == basey)
+            return &maps[i];
+    }
     
-    SpatialNode *root = map->nodes[key];
-
-    if(root)
-        root->prev = node;
-
-    map->nodes[key] = node;
+    return NULL;
 }
 
-static void remove_node(SpatialNode *node)
+static void get_relative_coords(int x, int y, int *basex, int *basey, int *relx, int *rely)
 {
-    SpatialNode *prev = node->prev;
-    SpatialNode *next = node->next;
-    SpatialMap *map = node->map;
-    uint64_t key = node->key;
-    
-    if(!node->prev && !node->next)
-        return;
+    *basex = x / SPATIAL_NODE_XSPAN;
+    *basey = y / SPATIAL_NODE_YSPAN;
 
-    if(prev)
-        prev->next = next;
+    if(x < 0)
+        *basex -= SPATIAL_NODE_XSPAN;
+    if(y < 0)
+        *basey -= SPATIAL_NODE_YSPAN;
 
-    if(next)
-        next->prev = prev;
+    *relx = abs(x) % SPATIAL_NODE_XSPAN;
+    *rely = abs(y) % SPATIAL_NODE_YSPAN;
 
-    if(map->nodes[key] == node)
-        map->nodes[key] = node->next;
+    if(x < 0)
+        *relx = SPATIAL_NODE_XSPAN - 1 - *relx;
+    if(y < 0)
+        *rely = SPATIAL_NODE_YSPAN - 1 - *rely;
 
-    node->prev = NULL;
-    node->next = NULL;
+
 }
