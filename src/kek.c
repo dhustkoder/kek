@@ -111,7 +111,7 @@ static int run_kek(void)
         frame_time = pal_time();
         clearscreen();
         kek_user_update();
-        Scene *scene = get_active_scene();
+        int scene = get_active_scene();
 
         update_scene(scene);
 

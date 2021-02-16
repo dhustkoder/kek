@@ -12,28 +12,37 @@ void init_shader(size_t capacity)
     mempool_alloc(&pool, capacity, sizeof(Shader));
 }
 
-Shader *create_shader(void)
+Shader *get_shader(int shaderid)
+{
+    return mempool_get_addr(&pool, shaderid);
+}
+
+int create_shader(void)
 {
      Shader *inst = mempool_take(&pool);
 
     if(inst == NULL)
-        return NULL;
+        return -1;
 
+    inst->id = mempool_get_slot(&pool, inst);
     inst->shader = gl_create_program();
 
-    return inst;
+    return inst->id;
 }
 
-void destroy_shader(Shader *shader)
+void destroy_shader(int shaderid)
 {
+    Shader *shader = get_shader(shaderid);
+
     gl_delete_program(shader->shader);
     shader->shader = 0;
 
     mempool_release(&pool, shader);
 }
 
-int load_shader_files(Shader *shader, const char *vert_file, const char *frag_file)
+int load_shader_files(int shaderid, const char *vert_file, const char *frag_file)
 {
+    Shader *shader = get_shader(shaderid);
     size_t vert_size = 0;
     size_t frag_size = 0;
     char *vert_buffer;
@@ -52,7 +61,7 @@ int load_shader_files(Shader *shader, const char *vert_file, const char *frag_fi
     vert_buffer[vert_size] = '\0';
     frag_buffer[frag_size] = '\0';
 
-    result = load_shader_buffer(shader, vert_buffer, frag_buffer);
+    result = load_shader_buffer(shaderid, vert_buffer, frag_buffer);
 
     memstack_pop(frag_buffer);
     memstack_pop(vert_buffer);
@@ -60,8 +69,9 @@ int load_shader_files(Shader *shader, const char *vert_file, const char *frag_fi
     return result;
 }
 
-int load_shader_buffer(Shader *shader, const char *vert_buffer, const char *frag_buffer)
+int load_shader_buffer(int shaderid, const char *vert_buffer, const char *frag_buffer)
 {
+    Shader *shader = get_shader(shaderid);
     static const size_t ERROR_BUFFER_CAPACITY = 2048;
     char *error_buffer;
 
@@ -94,8 +104,9 @@ int load_shader_buffer(Shader *shader, const char *vert_buffer, const char *frag
     return KEK_OK;
 }
 
-int bind_shader(Shader *shader)
+int bind_shader(int shaderid)
 {
+    Shader *shader = get_shader(shaderid);
     gl_use_program(shader->shader);
 }
 

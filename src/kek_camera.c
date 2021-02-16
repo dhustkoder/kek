@@ -7,32 +7,48 @@ void init_camera(size_t capacity)
     mempool_alloc(&pool, capacity, sizeof(Camera));
 }
 
-Camera *create_camera(void)
+int create_camera(void)
 {
     Camera *camera = mempool_take(&pool);
+    camera->id = mempool_get_slot(&pool, camera);
     camera->zoom = 1.0f;
     camera->position = zero_vec3();
 
-    return camera;
+    return camera->id;
 }
 
-void destroy_camera(Camera *camera)
+Camera *get_camera(int cameraid)
 {
+    return mempool_get_addr(&pool, cameraid);
+}
+
+void destroy_camera(int cameraid)
+{
+    Camera *camera = get_camera(cameraid);
     mempool_release(&pool, camera);
 }
 
-void camera_ortho_zoom(Camera *camera, float zoom)
+void camera_ortho_zoom(int cameraid, float zoom)
 {
+    Camera *camera = get_camera(cameraid);
     camera->zoom = zoom;
 }
 
-void camera_position(Camera *camera, Vec3 position)
+void camera_position(int cameraid, Vec3 position)
 {
+    Camera *camera = get_camera(cameraid);
     camera->position = position;
 }
 
-void get_camera_ortho_mvp(Camera *camera, Mat4 *mvp)
+Vec3 get_camera_position(int cameraid)
 {
+    Camera *camera = get_camera(cameraid);
+    return camera->position;
+}
+
+void get_camera_ortho_mvp(int cameraid, Mat4 *mvp)
+{
+    Camera *camera = get_camera(cameraid);
     Vec3 position = camera->position;
     float zoom = camera->zoom;
 
@@ -56,8 +72,9 @@ void get_camera_ortho_mvp(Camera *camera, Mat4 *mvp)
 	*mvp = mul_mat4(*mvp, model);
 }
 
-Vec2 get_camera_mouse_position(Camera *camera)
+Vec2 get_camera_mouse_position(int cameraid)
 {
+    Camera *camera = get_camera(cameraid);
     Vec2 mousepos = get_mouse_position();
     Vec2 pos = camera->position.xy;
 

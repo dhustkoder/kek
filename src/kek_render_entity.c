@@ -9,12 +9,13 @@ typedef struct draw {
 static void fill_sprite(Vec2 position, Vec2 size, Vec3 rotation, Vec2 uv0, Vec2 uv1, Vec4 colormask, Vertex *out);
 static void fill_sprite_box(Vec2 position, Vec2 size, Vec3 rotation, Vec2 uv0, Vec2 uv1, Vec4 colormask, Vertex *out);
 
-void draw_render_entities(Render *render, Camera *camera, int *entities, size_t count, void *ctx)
+void draw_render_entities(Render *render, int camera, int *entities, size_t count, void *ctx)
 {
     size_t drawcount = 0;
     size_t vertexcount = 0;
-    VertexBuffer *vb = render->vb;
-    GLuint shader = render->shader->shader;
+    int vb = render->vb;
+    Shader *shader = get_shader(render->shader);
+    GLuint program = shader->shader;
 
     Draw *draw_start = memstack_push(sizeof(Draw));
     Draw *draw_top = draw_start;
@@ -79,11 +80,11 @@ void draw_render_entities(Render *render, Camera *camera, int *entities, size_t 
         Mat4 mvp;
 
         bind_texture(draw->texture, 0);
-        gl_uint utexture = gl_get_uniform_location(shader, "u_texture");
+        gl_uint utexture = gl_get_uniform_location(program, "u_texture");
         gl_uniform1i(utexture, 0);
 
         get_camera_ortho_mvp(camera, &mvp);
-        gl_uint umvp = gl_get_uniform_location(shader, "u_mvp");
+        gl_uint umvp = gl_get_uniform_location(program, "u_mvp");
         gl_uniform_matrix4fv(umvp, 1, GL_FALSE, (float *)&mvp);
     
         gl_disable(GL_DEPTH_TEST);
@@ -97,11 +98,12 @@ void draw_render_entities(Render *render, Camera *camera, int *entities, size_t 
     memstack_pop(draw_start);
 }
 
-void draw_render_entity_boxes(Render *render, Camera *camera, int *entities, size_t count, void *ctx)
+void draw_render_entity_boxes(Render *render, int camera, int *entities, size_t count, void *ctx)
 {
     size_t vertexcount = 0;
-    VertexBuffer *vb = render->vb;
-    GLuint shader = render->shader->shader;
+    int vb = render->vb;
+    Shader *shader = get_shader(render->shader);
+    GLuint program = shader->shader;
 
     map_vertex_buffer(vb);
     clear_vertex_buffer(vb);
@@ -133,7 +135,7 @@ void draw_render_entity_boxes(Render *render, Camera *camera, int *entities, siz
     Mat4 mvp;
 
    get_camera_ortho_mvp(camera, &mvp);
-   gl_uint umvp = gl_get_uniform_location(shader, "u_mvp");
+   gl_uint umvp = gl_get_uniform_location(program, "u_mvp");
    gl_uniform_matrix4fv(umvp, 1, GL_FALSE, (float *)&mvp);
     
    gl_disable(GL_DEPTH_TEST);

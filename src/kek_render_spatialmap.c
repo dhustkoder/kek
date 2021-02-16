@@ -1,10 +1,11 @@
 #include "kek.h"
 
-void draw_render_spatialmap(Render *render, Camera *camera, int *entities, size_t count)
+void draw_render_spatialmap(Render *render, int camera, int *entities, size_t count)
 {
     size_t vertexcount = 0;
-    VertexBuffer *vb = render->vb;
-    GLuint shader = render->shader->shader;
+    int vb = render->vb;
+    Shader *shader = get_shader(render->shader);
+    GLuint program = shader->shader;
 
     map_vertex_buffer(vb);
     clear_vertex_buffer(vb);
@@ -38,7 +39,7 @@ void draw_render_spatialmap(Render *render, Camera *camera, int *entities, size_
     Mat4 mvp;
 
    get_camera_ortho_mvp(camera, &mvp);
-   gl_uint umvp = gl_get_uniform_location(shader, "u_mvp");
+   gl_uint umvp = gl_get_uniform_location(program, "u_mvp");
    gl_uniform_matrix4fv(umvp, 1, GL_FALSE, (float *)&mvp);
     
    gl_disable(GL_DEPTH_TEST);

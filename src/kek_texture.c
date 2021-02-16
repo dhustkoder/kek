@@ -15,13 +15,14 @@ void init_texture(size_t capacity)
 int create_texture(void)
 {
      Texture *inst = mempool_take(&pool);
+     inst->id = mempool_get_slot(&pool, inst);
      inst->width = 0;
      inst->height = 0;
      inst->loaded = false;
 
-     gl_gen_textures(1, &inst->id);
+     gl_gen_textures(1, &inst->glid);
 
-     return mempool_get_slot(&pool, inst);
+     return inst->id;
 }
 
 Texture *get_texture(int id)
@@ -33,7 +34,7 @@ void destroy_texture(int id)
 {
     Texture *texture = mempool_get_addr(&pool, id);
 
-    gl_delete_textures(1, &texture->id);
+    gl_delete_textures(1, &texture->glid);
 
     mempool_release(&pool, texture);
 }
@@ -52,7 +53,7 @@ int load_texture_file(int id, const char *file)
 	if (!image)
 		return KEK_ERROR;
 
-	gl_bind_texture(GL_TEXTURE_2D, texture->id);
+	gl_bind_texture(GL_TEXTURE_2D, texture->glid);
 	//gl_tex_parameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	//gl_tex_parameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	gl_tex_parameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -74,7 +75,7 @@ void bind_texture(int id, int slot)
     Texture *texture = mempool_get_addr(&pool, id);
 
     gl_active_texture(GL_TEXTURE0 + slot);
-    gl_bind_texture(GL_TEXTURE_2D, texture->id);
+    gl_bind_texture(GL_TEXTURE_2D, texture->glid);
 
 }
 

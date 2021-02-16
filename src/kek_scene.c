@@ -4,69 +4,84 @@
 static MemPool pool;
 static MemPool pool_entities;
 
-static Scene *active_scene = NULL;
-static Camera default_camera = {0,0,0.9};
+static int active_scene = -1;
+static int default_camera = -1;
 void init_scene(size_t capacity)
 {
     mempool_alloc(&pool, capacity, sizeof(Scene));
 }
 
-Scene *create_scene(void)
+int create_scene(void)
 {
      Scene *scene = mempool_take(&pool);
 
+     scene->id = mempool_get_slot(&pool, scene);
      scene->entities = NULL;
      scene->entity_count = 0;
      scene->render_entity = create_entity_render();
      scene->render_entity_box = create_entity_box_render();
      scene->render_spatialmap = create_entity_box_render();
-     scene->camera = &default_camera;
+    
+     if(default_camera == -1)
+        default_camera = create_camera();
 
-     return scene;
+     scene->camera = default_camera;
+
+     return scene->id;
 }
 
-void destroy_scene(Scene *scene)
+Scene *get_scene(int sceneid)
 {
+    return mempool_get_addr(&pool, sceneid);
+}
+
+void destroy_scene(int sceneid)
+{
+    Scene *scene = get_scene(sceneid);
     destroy_render(scene->render_entity);
     destroy_render(scene->render_entity_box);
 
-    if(scene == active_scene)
-        active_scene = NULL;
+    if(sceneid == active_scene)
+        active_scene = -1;
     
     mempool_release(&pool, scene);
 }
 
-void scene_active(Scene *scene)
+void scene_active(int sceneid)
 {
-    active_scene = scene;
+    active_scene = sceneid;
 }
 
-Scene *get_active_scene(void)
+int get_active_scene(void)
 {
     return active_scene;
 }
 
 
-void scene_camera(Scene *scene, Camera *camera)
+void scene_camera(int sceneid, int camera)
 {
+    Scene *scene = get_scene(sceneid);
     scene->camera = camera;
 }
 
-Camera *get_scene_camera(Scene *scene)
+int get_scene_camera(int sceneid)
 {
+    Scene *scene = get_scene(sceneid);
     return scene->camera;
 }
 
-void add_scene_entity(Scene *scene, int entityid)
+void add_scene_entity(int sceneid, int entityid)
 {
+    Scene *scene = get_scene(sceneid);
     Entity *entity = get_entity(entityid);
     entity->scene_next_entity = scene->entities;
     scene->entities = entity;
     scene->entity_count++;
 }
 
-void update_scene(Scene *scene)
+void update_scene(int sceneid)
 {
+    Scene *scene = get_scene(sceneid);
     Entity *entity = scene->entities;
 
     while(entity)
@@ -77,8 +92,9 @@ void update_scene(Scene *scene)
     }
 }
 
-void garbage_collect_scene(Scene *scene)
+void garbage_collect_scene(int sceneid)
 {
+    Scene *scene = get_scene(sceneid);
     Entity *entity = scene->entities;
     Entity *prev = NULL;
 
@@ -107,8 +123,9 @@ void garbage_collect_scene(Scene *scene)
 }
 
 
-void draw_scene(Scene *scene)
+void draw_scene(int sceneid)
 {
+    Scene *scene = get_scene(sceneid);
     Entity *entity = scene->entities;
 
     int window_width;
@@ -156,8 +173,9 @@ void draw_scene(Scene *scene)
     memstack_pop(sortlist);
 }
 
-void query_scene_entities_aabb(Scene *scene, Vec2 pos, Vec2 size, SceneQueryEntityFn fn, void *ctx)
+void query_scene_entities_aabb(int sceneid, Vec2 pos, Vec2 size, SceneQueryEntityFn fn, void *ctx)
 {
+    Scene *scene = get_scene(sceneid);
     Entity *entity = scene->entities;
 
     while(entity)

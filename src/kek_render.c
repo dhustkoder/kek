@@ -1,8 +1,8 @@
 #include "kek.h"
 
 static MemPool pool;
-static Shader *shader = NULL;
-static Shader *box_shader = NULL;
+static int shader = -1;
+static int box_shader = -1;
 #define KEK_VERTEX_BUFFER_CAPACITY (1024*1024)
 
 
@@ -25,7 +25,7 @@ Render *create_entity_render(void)
 
     // use a default shader
     // todo: clean this up and create afunction
-    if(shader == NULL) 
+    if(shader == -1) 
     {
         shader = create_shader();
         load_shader_files(shader, "res/shader/default.vs", "res/shader/default.fs");
@@ -49,7 +49,7 @@ Render *create_entity_box_render(void)
 
     // use a default shader
     // todo: clean this up and create afunction
-    if(box_shader == NULL) 
+    if(box_shader == -1) 
     {
         box_shader = create_shader();
         load_shader_files(box_shader, "res/shader/entity_box.vs", "res/shader/entity_box.fs");

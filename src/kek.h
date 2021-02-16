@@ -74,30 +74,32 @@ void         query_spatial_map(int x0, int y0, int x1, int y1, SpatialMapQueryFn
 // KEK VERTEX BUFFER
 //**********************************************************
 void          init_vertex_buffer(size_t capacity);
-VertexBuffer *create_vertex_buffer(size_t capacity);
-void          destroy_vertex_buffer(VertexBuffer *vb);
-void          vertex_buffer_attribs(VertexBuffer *vb, size_t *attribs, size_t count);
-size_t        get_vertex_buffer_capacity(VertexBuffer *vb);
-size_t        get_vertex_buffer_size(VertexBuffer *vb);
-void          clear_vertex_buffer(VertexBuffer *vb);
-int           fill_vertex_buffer(VertexBuffer *vb, uint8_t *data, size_t size);
-void          bind_vertex_buffer(VertexBuffer *vb);
-void          draw_vertex_buffer(VertexBuffer *vb, size_t start, size_t count);
-void          draw_vertex_buffer_line_strip(VertexBuffer *vb, size_t start, size_t count);
-void          draw_vertex_buffer_lines(VertexBuffer *vb, size_t start, size_t count);
-int           map_vertex_buffer(VertexBuffer *vb);
-int           unmap_vertex_buffer(VertexBuffer *vb);
-void          append_vertex_buffer(VertexBuffer *vb, uint8_t *data, size_t vertices);
+int           create_vertex_buffer(size_t capacity);
+VertexBuffer *get_vertex_buffer(int vid);
+void          destroy_vertex_buffer(int vbid);
+void          vertex_buffer_attribs(int vbid, size_t *attribs, size_t count);
+size_t        get_vertex_buffer_capacity(int vbid);
+size_t        get_vertex_buffer_size(int vbid);
+void          clear_vertex_buffer(int vbid);
+int           fill_vertex_buffer(int vbid, uint8_t *data, size_t size);
+void          bind_vertex_buffer(int vbid);
+void          draw_vertex_buffer(int vbid, size_t start, size_t count);
+void          draw_vertex_buffer_line_strip(int vbid, size_t start, size_t count);
+void          draw_vertex_buffer_lines(int vbid, size_t start, size_t count);
+int           map_vertex_buffer(int vbid);
+int           unmap_vertex_buffer(int vbid);
+void          append_vertex_buffer(int vbid, uint8_t *data, size_t vertices);
 
 //**********************************************************
 // KEK SHADER
 //**********************************************************
 void    init_shader(size_t capacity);
-Shader *create_shader(void);
-void    destroy_shder(Shader *shader);
-int     load_shader_files(Shader *shader, const char *vert_file, const char *frag_file);
-int     load_shader_buffer(Shader *shader, const char *vert_buffer, const char *frag_buffer);
-int     bind_shader(Shader *shader);
+int     create_shader(void);
+Shader *get_shader(int shaderid);
+void    destroy_shder(int shaderid);
+int     load_shader_files(int shaderid, const char *vert_file, const char *frag_file);
+int     load_shader_buffer(int shaderid, const char *vert_buffer, const char *frag_buffer);
+int     bind_shader(int shaderid);
 
 #if 0
 //**********************************************************
@@ -144,37 +146,40 @@ void    init_render(size_t capacity);
 Render *create_entity_render(void);
 Render *create_entity_box_render(void);
 void    destroy_render(Render *render);
-void    draw_render_lines_default(Render *render, Camera *camera, Vec3 *points, size_t count, void *ctx);
-void    draw_render_entities(Render *render, Camera *camera, int *entities, size_t count, void *ctx);
-void    draw_render_entity_boxes(Render *render, Camera *camera, int *entities, size_t count, void *ctx);
-void    draw_render_spatialmap(Render *render, Camera *camera, int *entities, size_t count);
+void    draw_render_lines_default(Render *render, int camera, Vec3 *points, size_t count, void *ctx);
+void    draw_render_entities(Render *render, int camera, int *entities, size_t count, void *ctx);
+void    draw_render_entity_boxes(Render *render, int camera, int *entities, size_t count, void *ctx);
+void    draw_render_spatialmap(Render *render, int camera, int *entities, size_t count);
 //
 //**********************************************************
 // KEK CAMERA 
 //**********************************************************
 void    init_camera(size_t capacity);
-Camera *create_camera(void);
-void    destroy_camera(Camera *camera);
-void    get_camera_ortho_mvp(Camera *camera, Mat4 *mvp);
-Vec2    get_camera_mouse_position(Camera *camera);
-void    camera_ortho_zoom(Camera *camera, float zoom);
-void    camera_position(Camera *camera, Vec3 position);
+Camera *get_camera(int cameraid);
+int     create_camera(void);
+void    destroy_camera(int cameraid);
+void    get_camera_ortho_mvp(int cameraid, Mat4 *mvp);
+Vec2    get_camera_mouse_position(int cameraid);
+Vec3    get_camera_position(int cameraid);
+void    camera_ortho_zoom(int cameraid, float zoom);
+void    camera_position(int cameraid, Vec3 position);
 
 //**********************************************************
 // KEK SCENE 
 //**********************************************************
 void    init_scene(size_t capacity);
-Scene  *create_scene(void);
-void    destroy_scene(Scene *scene);
-void    scene_camera(Scene *scene, Camera *camera);
-Camera *get_scene_camera(Scene *scene);
-void    scene_active(Scene *scene);
-Scene  *get_active_scene(void);
-void    update_scene(Scene *scene);
-void    draw_scene(Scene *scene);
-void    add_scene_entity(Scene *scene, int entityid);
-void    garbage_collect_scene(Scene *scene);
-void    query_scene_entities(Scene *scene, Vec2 pos, Vec2 size, SceneQueryEntityFn fn, void *ctx);
+int     create_scene(void);
+Scene  *get_scene(int sceneid);
+void    destroy_scene(int sceneid);
+void    scene_camera(int sceneid, int camera);
+int     get_scene_camera(int sceneid);
+void    scene_active(int sceneid);
+int     get_active_scene(void);
+void    update_scene(int sceneid);
+void    draw_scene(int sceneid);
+void    add_scene_entity(int sceneid, int entityid);
+void    garbage_collect_scene(int sceneid);
+void    query_scene_entities(int sceneid, Vec2 pos, Vec2 size, SceneQueryEntityFn fn, void *ctx);
 
 //**********************************************************
 // KEK ENTITY

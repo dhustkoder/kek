@@ -329,12 +329,14 @@ typedef struct mem_pool {
 } MemPool;
 
 typedef struct camera {
+    int id;
     Vec3 position;
     float zoom;
 } Camera;
 
 typedef struct texture {
-    GLuint id;
+    int id;
+    GLuint glid;
     unsigned int height;
     unsigned int width;
     bool loaded;
@@ -397,6 +399,7 @@ typedef struct animation {
 } Animation;
 
 typedef struct vertex_buffer {
+    int id;
     GLuint vao;
     GLuint vbo;
     void *map_buffer;
@@ -406,13 +409,14 @@ typedef struct vertex_buffer {
 
 
 typedef struct render {
-    Shader *shader;
-    VertexBuffer *vb;
+    int shader;
+    int vb; // vertex buffer
     void *ctx;
 } Render;
 
 
 typedef struct shader {
+    int id;
     GLuint shader;
 } Shader;
 
@@ -455,11 +459,12 @@ typedef struct entity {
 } Entity;
 
 typedef struct scene {
+    int id;
     Entity *entities;
     Render *render_entity;
     Render *render_entity_box;
     Render *render_spatialmap;
-    Camera *camera;
+    int camera;
     size_t entity_count;
 } Scene;
 
