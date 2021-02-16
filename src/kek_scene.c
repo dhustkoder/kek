@@ -107,20 +107,6 @@ void garbage_collect_scene(Scene *scene)
 }
 
 
-static uint32_t get_entity_render_key(Entity *e)
-{
-    uint32_t type = e->type;
-    uint32_t texture = e->texture;
-    AnimationFrame *frame = get_entity_animation_frame(e->id);
-
-    if(frame)
-        texture = frame->texture;
-
-    uint32_t key = (type << 16) | (texture & 0xFFFF);
-
-    return key;
-}
-
 void draw_scene(Scene *scene)
 {
     Entity *entity = scene->entities;
@@ -135,12 +121,11 @@ void draw_scene(Scene *scene)
     size_t listcount = scene->entity_count;
     int *sortlist = memstack_push(listcount * sizeof(Entity *));
     entity = scene->entities;
-#error: sort list needs to be created as int
 
     for(int i = 0; i < listcount; ++i)
     {
         assert(entity);
-        sortlist[i] = entity;
+        sortlist[i] = entity->id;
         entity = entity->scene_next_entity;
     }
 
@@ -149,8 +134,8 @@ void draw_scene(Scene *scene)
     {
         for(int j = i + 1; j < listcount; ++j)
         {
-            Entity *a = sortlist[i];
-            Entity *b = sortlist[j];
+            int a = sortlist[i];
+            int b = sortlist[j];
 
             //todo make public in kek.h
             uint32_t akey = get_entity_render_key(a);
@@ -178,7 +163,7 @@ void query_scene_entities_aabb(Scene *scene, Vec2 pos, Vec2 size, SceneQueryEnti
     while(entity)
     {
         if(aabb(pos, size, entity->position.xy, entity->size.xy))
-            fn(entity, ctx);
+            fn(entity->id, ctx);
 
         entity = entity->scene_next_entity;
     }

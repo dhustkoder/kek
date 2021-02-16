@@ -26,13 +26,13 @@ typedef union vec3 Vec3;
 
 
 typedef void (*EventCallback)(Event *event, void *ctx);
-typedef void (*EntityTerminateFn)(Entity *entity, void *ctx); 
-typedef void (*EntityUpdateFn)(Entity *entity, void *ctx); 
-typedef void (*EntityQueryFn)(Entity *e, void *ctx);
-typedef void (*CollisionFn)(Entity *a, Entity *b, void *ctx);
-typedef void (*RenderEntitiesFn)(Render *render, Camera *camera, Entity **entities, size_t count, void *ctx);
+typedef void (*EntityTerminateFn)(int entityid, void *ctx); 
+typedef void (*EntityUpdateFn)(int entityid, void *ctx); 
+typedef void (*EntityQueryFn)(int id, void *ctx);
+typedef void (*CollisionFn)(int entityid_a, int entityid_b, void *ctx);
+typedef void (*RenderEntitiesFn)(Render *render, Camera *camera, int *entities, size_t count, void *ctx);
 typedef void (*RenderLinesFn)(Render *render, Camera *camera, Vec3 *points, size_t count, void *ctx);
-typedef void (*SceneQueryEntityFn)(Entity *entity, void *ctx);
+typedef void (*SceneQueryEntityFn)(int entityid, void *ctx);
 typedef void (*SpatialMapQueryFn)(SpatialNode *node, void *ctx);
 
 

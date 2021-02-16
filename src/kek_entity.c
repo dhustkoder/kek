@@ -85,8 +85,9 @@ typedef struct {
 void query_spatial_cb(SpatialNode *node, void *ctx)
 {
     EntityQueryData *data = ctx;
+    Entity *entity = node->data;
 
-    data->fn(node->data, data->ctx);
+    data->fn(entity->id, data->ctx);
 }
 
 void query_entity(Vec2 p0, Vec2 p1, EntityQueryFn fn, void *ctx)
@@ -97,6 +98,22 @@ void query_entity(Vec2 p0, Vec2 p1, EntityQueryFn fn, void *ctx)
     int x1 = WORLD_TO_SPATIAL_CELL(p1.x);
     int y1 = WORLD_TO_SPATIAL_CELL(p1.y);
     query_spatial_map(x0, y0, x1, y1, query_spatial_cb, &data);
+}
+
+uint32_t get_entity_render_key(int entityid)
+{
+    Entity *e = get_entity(entityid);
+
+    uint32_t type = e->type;
+    uint32_t texture = e->texture;
+    AnimationFrame *frame = get_entity_animation_frame(e->id);
+
+    if(frame)
+        texture = frame->texture;
+
+    uint32_t key = (type << 16) | (texture & 0xFFFF);
+
+    return key;
 }
 
 void update_entity(int entityid)
@@ -133,7 +150,7 @@ void update_entity(int entityid)
             e->animation_frame_time += get_target_frame_interval() * e->animation_speed;
         }
 
-        cb->update(e, cb->ctx);
+        cb->update(e->id, cb->ctx);
     }
 }
 
@@ -259,6 +276,19 @@ Vec4 get_entity_colormask(int entityid)
     Entity *e = get_entity(entityid);
     return e->colormask;
 }
+
+int get_entity_texture(int entityid)
+{
+    Entity *e = get_entity(entityid);
+    return e->texture;
+}
+
+Animation *get_entity_animation(int entityid)
+{
+    Entity *e = get_entity(entityid);
+    return e->animation;
+}
+
 void entity_position(int entityid, Vec3 position)
 {
     Entity *e = get_entity(entityid);
@@ -303,6 +333,7 @@ void entity_rotation_z(int entityid, float rotation)
     Entity *e = get_entity(entityid);
     e->rotation.z = rotation;
 }
+
 float get_entity_rotation_z(int entityid)
 {
     Entity *e = get_entity(entityid);

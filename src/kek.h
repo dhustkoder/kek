@@ -186,6 +186,7 @@ void            release_entity(int entityid);
 void            entity_update_callback(uint32_t type, EntityUpdateFn callback);
 void            entity_terminate_callback(uint32_t type, EntityTerminateFn callback);
 void            entity_callback_context(uint32_t type, void *ctx);
+uint32_t        get_entity_render_key(int entityid);
 Entity         *get_entity(int entityid);
 void           *get_entity_user_data(int entityid);
 void            update_entity(int entityid);
@@ -199,11 +200,14 @@ Vec3            get_entity_velocity(int entityid);
 void            entity_velocity(int entityid, Vec3 velocity);
 Vec4            get_entity_colormask(int entityid);
 void            entity_colormask(int entityid, Vec4 velocity);
+int             get_entity_texture(int entityid);
 void            entity_texture(int entityid, int texture);
+Animation      *get_entity_animation(int entityid);
 void            entity_animation(int entityid, Animation *animation);
+Vec3            get_entity_rotation(int entityid);
 void            entity_rotation(int entityid, Vec3 rotation);
-void            entity_rotation_z(int entityid, float rotation);
 float           get_entity_rotation_z(int entityid);
+void            entity_rotation_z(int entityid, float rotation);
 void            reset_entity_animation(int entityid);
 void            set_entity_animation_speed(int entityid, float speed);
 AnimationFrame *get_entity_animation_frame(int entityid);
@@ -220,8 +224,10 @@ Vec2               get_physics_body(PhysicsBody *e);
 // KEK KEY 
 //**********************************************************
 void     init_tag(size_t capacity);
-uint32_t set_tag(uint32_t tag, void *value);
+void     set_tag(uint32_t tag, void *value);
+void     set_tagi(uint32_t tag, int value);
 void    *get_tag(uint32_t tag);
+int      get_tagi(uint32_t tag);
 void     remove_tag(uint32_t tag);
 
 //**********************************************************
