@@ -145,9 +145,9 @@ Render *create_entity_render(void);
 Render *create_entity_box_render(void);
 void    destroy_render(Render *render);
 void    draw_render_lines_default(Render *render, Camera *camera, Vec3 *points, size_t count, void *ctx);
-void    draw_render_entities(Render *render, Camera *camera, Entity **entities, size_t count, void *ctx);
-void    draw_render_entity_boxes(Render *render, Camera *camera, Entity **entities, size_t count, void *ctx);
-void    draw_render_spatialmap(Render *render, Camera *camera, Entity **entities, size_t count);
+void    draw_render_entities(Render *render, Camera *camera, int *entities, size_t count, void *ctx);
+void    draw_render_entity_boxes(Render *render, Camera *camera, int *entities, size_t count, void *ctx);
+void    draw_render_spatialmap(Render *render, Camera *camera, int *entities, size_t count);
 //
 //**********************************************************
 // KEK CAMERA 
@@ -172,7 +172,7 @@ void    scene_active(Scene *scene);
 Scene  *get_active_scene(void);
 void    update_scene(Scene *scene);
 void    draw_scene(Scene *scene);
-void    add_scene_entity(Scene *scene, Entity *entity);
+void    add_scene_entity(Scene *scene, int entityid);
 void    garbage_collect_scene(Scene *scene);
 void    query_scene_entities(Scene *scene, Vec2 pos, Vec2 size, SceneQueryEntityFn fn, void *ctx);
 
@@ -180,27 +180,33 @@ void    query_scene_entities(Scene *scene, Vec2 pos, Vec2 size, SceneQueryEntity
 // KEK ENTITY
 //**********************************************************
 void            init_entity(size_t capacity, size_t type_capacity, size_t user_data_stride);
-Entity         *create_entity(uint32_t type);
-void            destroy_entity(Entity *entity);
-void            release_entity(Entity *entity);
+int             create_entity(uint32_t type);
+void            destroy_entity(int entityid);
+void            release_entity(int entityid);
 void            entity_update_callback(uint32_t type, EntityUpdateFn callback);
 void            entity_terminate_callback(uint32_t type, EntityTerminateFn callback);
 void            entity_callback_context(uint32_t type, void *ctx);
-void           *get_entity_user_data(Entity *entity);
-void            update_entity(Entity *e);
-Vec3            get_entity_size(Entity *e);
-void            entity_size(Entity *e, Vec3 size);
-Vec3            get_entity_position(Entity *e);
-void            entity_position(Entity *e, Vec3 position);
-Vec3            get_entity_velocity(Entity *e);
-void            entity_velocity(Entity *e, Vec3 velocity);
-void            entity_texture(Entity *e, int texture);
-void            entity_animation(Entity *e, Animation *animation);
-void            entity_rotation(Entity *e, Vec3 rotation);
-void            entity_rotation_z(Entity *e, float rotation);
-void            reset_entity_animation(Entity *e);
-void            set_entity_animation_speed(Entity *e, float speed);
-AnimationFrame *get_entity_animation_frame(Entity *e);
+Entity         *get_entity(int entityid);
+void           *get_entity_user_data(int entityid);
+void            update_entity(int entityid);
+int             get_entity_type(int entityid);
+void            entity_type(int entityid, int type);
+Vec3            get_entity_size(int entityid);
+void            entity_size(int entityid, Vec3 size);
+Vec3            get_entity_position(int entityid);
+void            entity_position(int entityid, Vec3 position);
+Vec3            get_entity_velocity(int entityid);
+void            entity_velocity(int entityid, Vec3 velocity);
+Vec4            get_entity_colormask(int entityid);
+void            entity_colormask(int entityid, Vec4 velocity);
+void            entity_texture(int entityid, int texture);
+void            entity_animation(int entityid, Animation *animation);
+void            entity_rotation(int entityid, Vec3 rotation);
+void            entity_rotation_z(int entityid, float rotation);
+float           get_entity_rotation_z(int entityid);
+void            reset_entity_animation(int entityid);
+void            set_entity_animation_speed(int entityid, float speed);
+AnimationFrame *get_entity_animation_frame(int entityid);
 void            query_entity(Vec2 p0, Vec2 p1, EntityQueryFn fn, void *ctx);
 
 void               init_physics(void);

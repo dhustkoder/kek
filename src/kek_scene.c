@@ -57,8 +57,9 @@ Camera *get_scene_camera(Scene *scene)
     return scene->camera;
 }
 
-void add_scene_entity(Scene *scene, Entity *entity)
+void add_scene_entity(Scene *scene, int entityid)
 {
+    Entity *entity = get_entity(entityid);
     entity->scene_next_entity = scene->entities;
     scene->entities = entity;
     scene->entity_count++;
@@ -70,7 +71,7 @@ void update_scene(Scene *scene)
 
     while(entity)
     {
-        update_entity(entity);
+        update_entity(entity->id);
 
         entity = entity->scene_next_entity;
     }
@@ -94,7 +95,7 @@ void garbage_collect_scene(Scene *scene)
             else
                 scene->entities = next;
 
-            destroy_entity(entity);
+            destroy_entity(entity->id);
         }
         else
         {
@@ -110,7 +111,7 @@ static uint32_t get_entity_render_key(Entity *e)
 {
     uint32_t type = e->type;
     uint32_t texture = e->texture;
-    AnimationFrame *frame = get_entity_animation_frame(e);
+    AnimationFrame *frame = get_entity_animation_frame(e->id);
 
     if(frame)
         texture = frame->texture;
@@ -132,8 +133,9 @@ void draw_scene(Scene *scene)
     entity = scene->entities;
 
     size_t listcount = scene->entity_count;
-    Entity **sortlist = memstack_push(listcount * sizeof(Entity *));
+    int *sortlist = memstack_push(listcount * sizeof(Entity *));
     entity = scene->entities;
+#error: sort list needs to be created as int
 
     for(int i = 0; i < listcount; ++i)
     {
@@ -150,6 +152,7 @@ void draw_scene(Scene *scene)
             Entity *a = sortlist[i];
             Entity *b = sortlist[j];
 
+            //todo make public in kek.h
             uint32_t akey = get_entity_render_key(a);
             uint32_t bkey = get_entity_render_key(b);
 

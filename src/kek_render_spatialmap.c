@@ -1,6 +1,6 @@
 #include "kek.h"
 
-void draw_render_spatialmap(Render *render, Camera *camera, Entity **entities, size_t count)
+void draw_render_spatialmap(Render *render, Camera *camera, int *entities, size_t count)
 {
     size_t vertexcount = 0;
     VertexBuffer *vb = render->vb;
@@ -11,7 +11,8 @@ void draw_render_spatialmap(Render *render, Camera *camera, Entity **entities, s
 
     for(size_t i = 0; i < count; ++i)
     {
-        Entity *entity = entities[i];
+        int entityid = entities[i];
+        Entity *entity = get_entity(entityid);
 
         Vec2 uv0 = {0.0f, 0.0f};
         Vec2 uv1 = {0.0f, 0.0f};

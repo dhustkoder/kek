@@ -435,6 +435,7 @@ typedef struct spatial_map {
 } SpatialMap;
 
 typedef struct entity {
+    int id;
     bool destroy;
     uint32_t type;
     Vec3 position;

@@ -30,13 +30,16 @@ void init_entity(size_t capacity, size_t type_capacity, size_t user_data_stride)
     root_callbacks = NULL;
 }
 
-Entity *create_entity(uint32_t type)
+Entity *get_entity(int entityid)
 {
-     Entity *inst = mempool_take(&pool_entity);
+    return mempool_get_addr(&pool_entity, entityid);
+}
 
-    if(inst == NULL)
-        return NULL;
+int create_entity(uint32_t type)
+{
+    Entity *inst = mempool_take(&pool_entity);
 
+    inst->id = mempool_get_slot(&pool_entity, inst);
     inst->destroy = false;
     inst->type = type;
     inst->scene_next_entity = NULL;
@@ -58,17 +61,19 @@ Entity *create_entity(uint32_t type)
     int y = WORLD_TO_SPATIAL_CELL(inst->position.y);
     add_spatial_map_node(&inst->snode, x, y);
 
-    return inst;
+    return inst->id;
 }
 
-void destroy_entity(Entity *entity)
+void destroy_entity(int entityid)
 {
+    Entity *entity = get_entity(entityid);
     remove_spatial_map_node(&entity->snode);
     mempool_release(&pool_entity, entity);
 }
 
-void release_entity(Entity *entity)
+void release_entity(int entityid)
 {
+    Entity *entity = get_entity(entityid);
     entity->destroy = true;
 }
 
@@ -94,8 +99,10 @@ void query_entity(Vec2 p0, Vec2 p1, EntityQueryFn fn, void *ctx)
     query_spatial_map(x0, y0, x1, y1, query_spatial_cb, &data);
 }
 
-void update_entity(Entity *e)
+void update_entity(int entityid)
 {
+    Entity *e = get_entity(entityid);
+
     EntityCallbacks *cb = getinsert_entity_callbacks(e->type);
     if(cb && cb->update)
     {
@@ -148,8 +155,9 @@ void entity_callback_context(uint32_t type, void *ctx)
     cb->ctx = ctx;
 }
 
-void *get_entity_user_data(Entity *entity)
+void *get_entity_user_data(int entityid)
 {
+    Entity *entity = get_entity(entityid);
     uint8_t *addr = (uint8_t *)entity;
 
     addr += sizeof(Entity);
@@ -184,8 +192,10 @@ static EntityCallbacks *getinsert_entity_callbacks(uint32_t type)
     return cb;
 }
 
-AnimationFrame *get_entity_animation_frame(Entity *e)
+AnimationFrame *get_entity_animation_frame(int entityid)
 {
+    Entity *e = get_entity(entityid);
+
     if(!e->animation)
         return NULL;
 
@@ -198,68 +208,117 @@ AnimationFrame *get_entity_animation_frame(Entity *e)
     return &e->animation->frames[e->animation_frame];
 }
 
-void entity_animation(Entity *e, Animation *animation)
+void entity_animation(int entityid, Animation *animation)
 {
+    Entity *e = get_entity(entityid);
     e->animation = animation;
 
-    reset_entity_animation(e);
+    reset_entity_animation(entityid);
 }
 
-Vec3 get_entity_size(Entity *e)
+int get_entity_type(int entityid)
 {
+    Entity *e = get_entity(entityid);
+
+    return e->type;
+}
+
+void entity_type(int entityid, int type)
+{
+    Entity *e = get_entity(entityid);
+    e->type = type;
+}
+
+Vec3 get_entity_size(int entityid)
+{
+    Entity *e = get_entity(entityid);
+
     return e->size;
 }
 
-void entity_size(Entity *e, Vec3 size)
+void entity_size(int entityid, Vec3 size)
 {
+    Entity *e = get_entity(entityid);
     e->size = size;
 }
 
-Vec3 get_entity_position(Entity *e)
+Vec3 get_entity_position(int entityid)
 {
+    Entity *e = get_entity(entityid);
     return e->position;
 }
 
-Vec3 get_entity_velocity(Entity *e)
+Vec3 get_entity_velocity(int entityid)
 {
+    Entity *e = get_entity(entityid);
     return e->velocity;
 }
 
-void entity_position(Entity *e, Vec3 position)
+Vec4 get_entity_colormask(int entityid)
 {
+    Entity *e = get_entity(entityid);
+    return e->colormask;
+}
+void entity_position(int entityid, Vec3 position)
+{
+    Entity *e = get_entity(entityid);
     e->position = position;
     int x = WORLD_TO_SPATIAL_CELL(position.x);
     int y = WORLD_TO_SPATIAL_CELL(position.y);
     move_spatial_map_node(&e->snode, x, y);
 }
 
-void entity_velocity(Entity *e, Vec3 velocity)
+void entity_velocity(int entityid, Vec3 velocity)
 {
+    Entity *e = get_entity(entityid);
     e->velocity = velocity;
 }
 
-void entity_rotation(Entity *e, Vec3 rotation)
+void entity_colormask(int entityid, Vec4 colormask)
 {
+    Entity *e = get_entity(entityid);
+    e->colormask = colormask;
+}
+
+void entity_rotation(int entityid, Vec3 rotation)
+{
+    Entity *e = get_entity(entityid);
     e->rotation = rotation;
 }
 
-void entity_texture(Entity *e, int texture)
+Vec3 get_entity_rotation(int entityid)
 {
+    Entity *e = get_entity(entityid);
+
+    return e->rotation;
+}
+void entity_texture(int entityid, int texture)
+{
+    Entity *e = get_entity(entityid);
     e->texture = texture;
 }
 
-void entity_rotation_z(Entity *e, float rotation)
+void entity_rotation_z(int entityid, float rotation)
 {
+    Entity *e = get_entity(entityid);
     e->rotation.z = rotation;
 }
-
-void reset_entity_animation(Entity *e)
+float get_entity_rotation_z(int entityid)
 {
+    Entity *e = get_entity(entityid);
+
+    return e->rotation.z;
+}
+
+void reset_entity_animation(int entityid)
+{
+    Entity *e = get_entity(entityid);
     e->animation_frame = 0;
     e->animation_frame_time = 0.0f;
 }
 
-void entity_animation_speed(Entity *e, float speed)
+void entity_animation_speed(int entityid, float speed)
 {
+    Entity *e = get_entity(entityid);
     e->animation_speed = speed;
 }

@@ -9,7 +9,7 @@ typedef struct draw {
 static void fill_sprite(Vec2 position, Vec2 size, Vec3 rotation, Vec2 uv0, Vec2 uv1, Vec4 colormask, Vertex *out);
 static void fill_sprite_box(Vec2 position, Vec2 size, Vec3 rotation, Vec2 uv0, Vec2 uv1, Vec4 colormask, Vertex *out);
 
-void draw_render_entities(Render *render, Camera *camera, Entity **entities, size_t count, void *ctx)
+void draw_render_entities(Render *render, Camera *camera, int *entities, size_t count, void *ctx)
 {
     size_t drawcount = 0;
     size_t vertexcount = 0;
@@ -28,9 +28,10 @@ void draw_render_entities(Render *render, Camera *camera, Entity **entities, siz
 
     for(size_t i = 0; i < count; ++i)
     {
-        Entity *entity = entities[i];
+        int entityid = entities[i];
 
-        AnimationFrame *frame = get_entity_animation_frame(entity);
+        AnimationFrame *frame = get_entity_animation_frame(entityid);
+        Entity *entity = get_entity(entityid);
         Vec2 uv0 = {0.0f, 0.0f};
         Vec2 uv1 = {1.0f, 1.0f};
         Vec4 colormask = entity->colormask;
@@ -96,7 +97,7 @@ void draw_render_entities(Render *render, Camera *camera, Entity **entities, siz
     memstack_pop(draw_start);
 }
 
-void draw_render_entity_boxes(Render *render, Camera *camera, Entity **entities, size_t count, void *ctx)
+void draw_render_entity_boxes(Render *render, Camera *camera, int *entities, size_t count, void *ctx)
 {
     size_t vertexcount = 0;
     VertexBuffer *vb = render->vb;
@@ -107,7 +108,8 @@ void draw_render_entity_boxes(Render *render, Camera *camera, Entity **entities,
 
     for(size_t i = 0; i < count; ++i)
     {
-        Entity *entity = entities[i];
+        int entityid = entities[i];
+        Entity *entity = get_entity(entityid);
 
         Vec2 uv0 = {0.0f, 0.0f};
         Vec2 uv1 = {1.0f, 1.0f};
