@@ -126,11 +126,12 @@ void     bind_texture(int texture_id, int slot);
 // KEK ANIMATION
 //**********************************************************
 void       init_animation(size_t capacity);
-Animation *create_animation(void);
-void       destroy_animation(Animation *animation);
-void       add_animation_frame(Animation *animation, AnimationFrame frame);
-void       add_animation_frame_clip(Animation *animation, int textureid, int x, int y, int clip_width, int clip_height, float duration);
-void       animation_loop(Animation *animation, bool loop);
+int        create_animation(void);
+Animation  *get_animation(int animationid);
+void       destroy_animation(int animationid);
+void       add_animation_frame(int animationid, AnimationFrame frame);
+void       add_animation_frame_clip(int animationid, int textureid, int x, int y, int clip_width, int clip_height, float duration);
+void       animation_loop(int animationid, bool loop);
 
 //**********************************************************
 // KEK EVENT 
@@ -207,8 +208,8 @@ Vec4            get_entity_colormask(int entityid);
 void            entity_colormask(int entityid, Vec4 velocity);
 int             get_entity_texture(int entityid);
 void            entity_texture(int entityid, int texture);
-Animation      *get_entity_animation(int entityid);
-void            entity_animation(int entityid, Animation *animation);
+int             get_entity_animation(int entityid);
+void            entity_animation(int entityid, int animationid);
 Vec3            get_entity_rotation(int entityid);
 void            entity_rotation(int entityid, Vec3 rotation);
 float           get_entity_rotation_z(int entityid);

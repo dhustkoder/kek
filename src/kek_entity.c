@@ -225,8 +225,9 @@ AnimationFrame *get_entity_animation_frame(int entityid)
     return &e->animation->frames[e->animation_frame];
 }
 
-void entity_animation(int entityid, Animation *animation)
+void entity_animation(int entityid, int animationid)
 {
+    Animation *animation = get_animation(animationid);
     Entity *e = get_entity(entityid);
     e->animation = animation;
 
@@ -283,10 +284,14 @@ int get_entity_texture(int entityid)
     return e->texture;
 }
 
-Animation *get_entity_animation(int entityid)
+int get_entity_animation(int entityid)
 {
     Entity *e = get_entity(entityid);
-    return e->animation;
+
+    if(!e->animation)
+        return -1;
+
+    return e->animation->id;
 }
 
 void entity_position(int entityid, Vec3 position)

@@ -393,6 +393,7 @@ typedef struct animation_frame {
 
 #define MAX_ANIMATION_FRAMES 16
 typedef struct animation {
+    int id;
     AnimationFrame frames[MAX_ANIMATION_FRAMES];
     size_t frame_count;
     bool loop;

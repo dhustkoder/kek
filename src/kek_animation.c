@@ -8,24 +8,31 @@ void init_animation(size_t capacity)
     mempool_alloc(&pool, capacity, sizeof(Animation));
 }
 
-Animation *create_animation(void)
+int create_animation(void)
 {
     Animation *animation = mempool_take(&pool);
 
+    animation->id = mempool_get_slot(&pool, animation);
     animation->frame_count = 0;
     animation->loop = 0;
 
-    return animation;
-
+    return animation->id;
 }
 
-void destroy_animation(Animation *animation)
+Animation *get_animation(int animationid)
 {
+    return mempool_get_addr(&pool, animationid);
+}
+
+void destroy_animation(int animationid)
+{
+    Animation *animation = get_animation(animationid);
     mempool_release(&pool, animation);
 }
 
-void add_animation_frame(Animation *animation, AnimationFrame frame)
+void add_animation_frame(int animationid, AnimationFrame frame)
 {
+    Animation *animation = get_animation(animationid);
     assert(animation->frame_count < MAX_ANIMATION_FRAMES);
 
     animation->frames[animation->frame_count] = frame;
@@ -33,8 +40,10 @@ void add_animation_frame(Animation *animation, AnimationFrame frame)
     animation->frame_count++;
 }
 
-void add_animation_frame_clip(Animation *animation, int textureid, int x, int y, int clip_width, int clip_height, float duration)
+void add_animation_frame_clip(int animationid, int textureid, int x, int y, int clip_width, int clip_height, float duration)
 {
+    Animation *animation = get_animation(animationid);
+
     AnimationFrame frame;
     Texture *texture = get_texture(textureid);
 
@@ -48,11 +57,12 @@ void add_animation_frame_clip(Animation *animation, int textureid, int x, int y,
     frame.uv1.y = (float)(y + clip_height)/(float)texture->height;
     frame.duration = duration;
 
-    add_animation_frame(animation, frame);
+    add_animation_frame(animationid, frame);
 }
 
-void animation_loop(Animation *animation, bool loop)
+void animation_loop(int animationid, bool loop)
 {
+    Animation *animation = get_animation(animationid);
     animation->loop = loop;
 }
 
