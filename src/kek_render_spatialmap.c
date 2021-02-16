@@ -22,8 +22,10 @@ void draw_render_spatialmap(Render *render, int camera, int *entities, size_t co
         Vertex vertices[2];
         vertices[0].position = entity->position;
         vertices[0].colormask = colormask;
-#warning MAGIC NUMBER
-        vertices[1].position = vec3(1024*entity->snode.x, 1024*entity->snode.y, 0);
+         //todo: change this magic number
+        vertices[1].position.x = SPATIAL_CELL_TO_WORLD((float)entity->snode.x);
+        vertices[1].position.y = SPATIAL_CELL_TO_WORLD((float)entity->snode.y);
+        vertices[1].position.z = 0;
         vertices[1].colormask = colormask;
 
         append_vertex_buffer(vb, (uint8_t *)vertices, sizeof(vertices));

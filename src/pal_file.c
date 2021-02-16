@@ -2,11 +2,11 @@
 #include <string.h>
 #include <stdio.h>
 
-PALReturn pal_file_to_buffer(const char *file, uint8_t *buffer, size_t *size_bytes, int capacity)
+PALReturn pal_file_to_buffer(const char *file, uint8_t *buffer, size_t *size_bytes, size_t capacity)
 {
 	int filesize = 0;
-	int copysize = 0;
-	ssize_t bytesread = 0;
+	size_t copysize = 0;
+	size_t bytesread = 0;
 
 	if(size_bytes)
 		*size_bytes = 0;

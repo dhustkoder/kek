@@ -2,8 +2,8 @@
 
 typedef struct draw {
     GLuint texture;
-    int offset;
-    int count;
+    size_t offset;
+    size_t count;
 } Draw;
 
 static void fill_sprite(Vec2 position, Vec2 size, Vec3 rotation, Vec2 uv0, Vec2 uv1, Vec4 colormask, Vertex *out);
@@ -60,7 +60,7 @@ void draw_render_entities(Render *render, int camera, int *entities, size_t coun
 
                 draw_top = memstack_push(sizeof(Draw));
                 draw_top->texture = texture;
-                draw_top->offset = offset;
+                draw_top->offset = (int)offset;
                 draw_top->count = 6;
                 drawcount++;
             }
@@ -149,8 +149,6 @@ void draw_render_entity_boxes(Render *render, int camera, int *entities, size_t 
 
 static void fill_sprite(Vec2 position, Vec2 size, Vec3 rotation, Vec2 uv0, Vec2 uv1, Vec4 colormask, Vertex *out)
 {
-    Vec2 p0 = position;
-    Vec2 p1 = add_vec2(p0, size);
     Vec2 hs = mul_vec2_f(size, 0.5f);
 
 	const float x0 = -hs.x;
@@ -193,8 +191,6 @@ static void fill_sprite(Vec2 position, Vec2 size, Vec3 rotation, Vec2 uv0, Vec2 
 
 static void fill_sprite_box(Vec2 position, Vec2 size, Vec3 rotation, Vec2 uv0, Vec2 uv1, Vec4 colormask, Vertex *out)
 {
-    Vec2 p0 = position;
-    Vec2 p1 = add_vec2(p0, size);
     Vec2 hs = mul_vec2_f(size, 0.5f);
 
 	const float x0 = -hs.x;

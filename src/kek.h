@@ -37,7 +37,7 @@ void       clearscreen_color(Vec4 color);
 // KEK LOG 
 //**********************************************************
 #define LOG_FILENAME (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
-int     log_line(const char *file, int line, const char *function, const char *zone, const char *format, ...);
+void     log_line(const char *file, int line, const char *function, const char *zone, const char *format, ...);
 #define log(...) log_line(LOG_FILENAME,  __LINE__, __FUNCTION__, "INFO", __VA_ARGS__)
 #define logd(...) log_line(LOG_FILENAME, __LINE__, __FUNCTION__, "DEBUG", __VA_ARGS__)
 #define logw(...) log_line(LOG_FILENAME, __LINE__, __FUNCTION__, "WARN", __VA_ARGS__)
@@ -50,7 +50,7 @@ void  mempool_alloc(MemPool *pool, size_t capacity, size_t stride);
 void *mempool_take(MemPool *pool);
 int   mempool_get_slot(MemPool *pool, void *addr);
 void *mempool_get_addr(MemPool *pool, int slot);
-void *mempool_release(MemPool *pool, void *addr);
+void  mempool_release(MemPool *pool, void *addr);
 void  mempool_free(MemPool *pool);
 
 void    memstack_init(size_t capacity);
@@ -63,6 +63,8 @@ size_t  memstack_capacity(void);
 //**********************************************************
 // KEK SPATIAL MAP 
 //**********************************************************
+#define WORLD_TO_SPATIAL_CELL(x) ((x) / 1024)
+#define SPATIAL_CELL_TO_WORLD(x) ((x) * 1024)
 void         init_spatial_map(size_t capacity);
 void         move_spatial_map_node(SpatialNode *node, int x, int y);
 void         remove_spatial_map_node(SpatialNode *node);

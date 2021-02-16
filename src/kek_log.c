@@ -1,7 +1,7 @@
 #include "kek.h"
 #include <stdio.h>
 
-int log_line(const char *file, int line, const char *function, 
+void log_line(const char *file, int line, const char *function, 
                     const char *zone, const char *format, ...)
 {
 	char buffer[256];
@@ -16,5 +16,4 @@ int log_line(const char *file, int line, const char *function,
 	printf("\n");
 
 	va_end(argptr);
-
 }

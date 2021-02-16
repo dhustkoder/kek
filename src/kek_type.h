@@ -5,15 +5,16 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
+#define _USE_MATH_DEFINES
 #include <math.h>
 
-#define KUT_ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
-#define KUT_STRUCT_ATTRIB_SIZE(type, member) sizeof(((type *)0)->member)
+#define KEK_ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
+#define KEK_STRUCT_ATTRIB_SIZE(type, member) sizeof(((type *)0)->member)
 
-#define KUT_PI M_PI
-#define KUT_PI_2 (PJ_PI * 0.5f)
-#define KUT_MIN(a, b) (((a) < (b)) ? (a) : (b)) 
-#define KUT_MAX(a, b) (((a) > (b)) ? (a) : (b)) 
+#define KEK_PI M_PI
+#define KEK_PI_2 (PJ_PI * 0.5f)
+#define KEK_MIN(a, b) (((a) < (b)) ? (a) : (b)) 
+#define KEK_MAX(a, b) (((a) > (b)) ? (a) : (b)) 
 
 // forward declarations
 typedef struct entity Entity;

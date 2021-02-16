@@ -36,15 +36,11 @@ float get_target_frame_interval(void)
 
 static int init_kek(int argc, char **argv)
 {
-    PALReturn pal_ret;
-
     framerate_fps = 60;
     log("initializing...");
 
     init_config();
     kek_user_pre_init(argc, argv);
-
-    size_t capacity;
 
     memstack_init(
         get_configi(KEK_CFG_MEM_STACK_CAPACITY));
