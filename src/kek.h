@@ -63,32 +63,54 @@ size_t  memstack_capacity(void);
 //**********************************************************
 // KEK SPATIAL MAP 
 //**********************************************************
-void         init_spatial_map(size_t capacity);
-void         move_spatial_map_node(SpatialNode *node, int x, int y);
-void         remove_spatial_map_node(SpatialNode *node);
-void         add_spatial_map_node(SpatialNode *node, int x, int y);
-void         query_spatial_map(int x0, int y0, int x1, int y1, SpatialMapQueryFn fn, void *ctx);
+void         init_spatialmap(size_t capacity);
+size_t       get_spatialmap_count(void);
+SpatialMap  *get_spatialmap(size_t index);
+void         move_spatialmap_node(SpatialNode *node, int x, int y);
+void         remove_spatialmap_node(SpatialNode *node);
+void         add_spatialmap_node(SpatialNode *node, int x, int y);
+void         query_spatialmap(int x0, int y0, int x1, int y1, SpatialMapQueryFn fn, void *ctx);
 
 
+//**********************************************************
+// KEK SOUND 
+//**********************************************************
+void  init_sound(void);
+int   create_sound_buffer(void);
+bool  load_wav_file_to_sound_buffer(int buffer, const char *file);
+int   create_sound(int buffer);
+int   play_sound(int buffer);
+void  destroy_sound(int sound);
+void  pause_sound(int sound);
+void  stop_sound(int sound);
+void  sound_loop(int sound, bool loop);
+void  sound_priority(int sound, int priority);
+void  sound_pitch(int sound, float value);
+void  sound_gain(int sound, float value);
+float get_sound_pitch(int sound);
+float get_sound_gain(int sound);
+bool  get_sound_loop(int sound);
+void  is_sound_playing(int sound);
+void  update_sounds(void);
 //**********************************************************
 // KEK VERTEX BUFFER
 //**********************************************************
-void          init_vertex_buffer(size_t capacity);
-int           create_vertex_buffer(size_t capacity);
-VertexBuffer *get_vertex_buffer(int vid);
-void          destroy_vertex_buffer(int vbid);
-void          vertex_buffer_attribs(int vbid, size_t *attribs, size_t count);
-size_t        get_vertex_buffer_capacity(int vbid);
-size_t        get_vertex_buffer_size(int vbid);
-void          clear_vertex_buffer(int vbid);
-int           fill_vertex_buffer(int vbid, uint8_t *data, size_t size);
-void          bind_vertex_buffer(int vbid);
-void          draw_vertex_buffer(int vbid, size_t start, size_t count);
-void          draw_vertex_buffer_line_strip(int vbid, size_t start, size_t count);
-void          draw_vertex_buffer_lines(int vbid, size_t start, size_t count);
-int           map_vertex_buffer(int vbid);
-int           unmap_vertex_buffer(int vbid);
-void          append_vertex_buffer(int vbid, uint8_t *data, size_t vertices);
+void          init_vertexbuffer(size_t capacity);
+int           create_vertexbuffer(size_t capacity);
+VertexBuffer *get_vertexbuffer(int vid);
+void          destroy_vertexbuffer(int vbid);
+void          vertexbuffer_attribs(int vbid, size_t *attribs, size_t count);
+size_t        get_vertexbuffer_capacity(int vbid);
+size_t        get_vertexbuffer_size(int vbid);
+void          clear_vertexbuffer(int vbid);
+int           fill_vertexbuffer(int vbid, uint8_t *data, size_t size);
+void          bind_vertexbuffer(int vbid);
+void          draw_vertexbuffer(int vbid, size_t start, size_t count);
+void          draw_vertexbuffer_line_strip(int vbid, size_t start, size_t count);
+void          draw_vertexbuffer_lines(int vbid, size_t start, size_t count);
+int           map_vertexbuffer(int vbid);
+int           unmap_vertexbuffer(int vbid);
+void          append_vertexbuffer(int vbid, uint8_t *data, size_t vertices);
 
 //**********************************************************
 // KEK SHADER
@@ -218,13 +240,14 @@ void            reset_entity_animation(int entityid);
 void            set_entity_animation_speed(int entityid, float speed);
 AnimationFrame *get_entity_animation_frame(int entityid);
 void            query_entity(Vec2 p0, Vec2 p1, EntityQueryFn fn, void *ctx);
+void            entity_circle_collider(int entityid, float radius);
+void            entity_collider_mask(int entityid, uint32_t mask);
 
+//**********************************************************
+// KEK PHYSICS 
+//**********************************************************
 void               init_physics(void);
-void               simulate_physics(void);              
-PhysicsBody       *create_physics_circle_body(Vec3 position, float radius, uint32_t type);
-void               destroy_physics_body(PhysicsBody *body);
-void               physics_body_position(PhysicsBody *e, Vec2 pos);
-Vec2               get_physics_body(PhysicsBody *e);
+void               simulate_physics(int scene);
 
 //**********************************************************
 // KEK KEY 

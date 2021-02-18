@@ -17,11 +17,11 @@ Render *create_entity_render(void)
 
      render->ctx = NULL;
 
-     render->vb = create_vertex_buffer(KEK_VERTEX_BUFFER_CAPACITY);
+     render->vb = create_vertexbuffer(KEK_VERTEX_BUFFER_CAPACITY);
     
     size_t attribs[] = {3,3,2,4};
 
-    vertex_buffer_attribs(render->vb, attribs, 4); 
+    vertexbuffer_attribs(render->vb, attribs, 4); 
 
     // use a default shader
     // todo: clean this up and create afunction
@@ -41,11 +41,11 @@ Render *create_entity_box_render(void)
 
      render->ctx = NULL;
 
-     render->vb = create_vertex_buffer(KEK_VERTEX_BUFFER_CAPACITY);
+     render->vb = create_vertexbuffer(KEK_VERTEX_BUFFER_CAPACITY);
     
     size_t attribs[] = {3,3,2,4};
 
-    vertex_buffer_attribs(render->vb, attribs, 4); 
+    vertexbuffer_attribs(render->vb, attribs, 4); 
 
     // use a default shader
     // todo: clean this up and create afunction

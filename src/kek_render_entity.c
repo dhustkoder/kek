@@ -24,8 +24,8 @@ void draw_render_entities(Render *render, int camera, int *entities, size_t coun
     draw_top->count = 0;
     ++drawcount;
 
-    map_vertex_buffer(vb);
-    clear_vertex_buffer(vb);
+    map_vertexbuffer(vb);
+    clear_vertexbuffer(vb);
 
     for(size_t i = 0; i < count; ++i)
     {
@@ -52,7 +52,7 @@ void draw_render_entities(Render *render, int camera, int *entities, size_t coun
             Vec3 size = mul_vec3_f(entity->size, 4.f);
 
             fill_sprite(entity->position.xy, size.xy, entity->rotation, uv0, uv1, colormask, vertices);
-            append_vertex_buffer(vb, (uint8_t *)vertices, sizeof(vertices));
+            append_vertexbuffer(vb, (uint8_t *)vertices, sizeof(vertices));
 
             if(texture != draw_top->texture)
             {
@@ -70,9 +70,9 @@ void draw_render_entities(Render *render, int camera, int *entities, size_t coun
             }
         }
     }
-    unmap_vertex_buffer(vb);
+    unmap_vertexbuffer(vb);
 
-    bind_vertex_buffer(vb);
+    bind_vertexbuffer(vb);
     bind_shader(render->shader);
     for(int i = 0; i < drawcount; ++i)
     {
@@ -92,7 +92,7 @@ void draw_render_entities(Render *render, int camera, int *entities, size_t coun
         gl_blend_func(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         
         if(draw->count)
-            draw_vertex_buffer(vb, draw->offset, draw->count);
+            draw_vertexbuffer(vb, draw->offset, draw->count);
     }
 
     memstack_pop(draw_start);
@@ -105,8 +105,8 @@ void draw_render_entity_boxes(Render *render, int camera, int *entities, size_t 
     Shader *shader = get_shader(render->shader);
     GLuint program = shader->shader;
 
-    map_vertex_buffer(vb);
-    clear_vertex_buffer(vb);
+    map_vertexbuffer(vb);
+    clear_vertexbuffer(vb);
 
     for(size_t i = 0; i < count; ++i)
     {
@@ -122,14 +122,14 @@ void draw_render_entity_boxes(Render *render, int camera, int *entities, size_t 
         Vec3 size = mul_vec3_f(entity->size, 4.f);
 
         fill_sprite_box(entity->position.xy, size.xy, entity->rotation, uv0, uv1, colormask, vertices);
-        append_vertex_buffer(vb, (uint8_t *)vertices, sizeof(vertices));
+        append_vertexbuffer(vb, (uint8_t *)vertices, sizeof(vertices));
 
         vertexcount += 12;
     }
 
-    unmap_vertex_buffer(vb);
+    unmap_vertexbuffer(vb);
 
-    bind_vertex_buffer(vb);
+    bind_vertexbuffer(vb);
     bind_shader(render->shader);
 
     Mat4 mvp;
@@ -143,7 +143,7 @@ void draw_render_entity_boxes(Render *render, int camera, int *entities, size_t 
    gl_blend_func(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         
    if(vertexcount > 0)
-       draw_vertex_buffer_lines(vb, 0, vertexcount);
+       draw_vertexbuffer_lines(vb, 0, vertexcount);
 
 }
 

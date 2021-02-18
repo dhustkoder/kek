@@ -84,6 +84,8 @@ void update_scene(int sceneid)
     Scene *scene = get_scene(sceneid);
     Entity *entity = scene->entities;
 
+    simulate_physics(sceneid);
+
     while(entity)
     {
         update_entity(entity->id);

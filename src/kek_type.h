@@ -399,7 +399,7 @@ typedef struct animation {
     bool loop;
 } Animation;
 
-typedef struct vertex_buffer {
+typedef struct vertexbuffer {
     int id;
     GLuint vao;
     GLuint vbo;
@@ -421,7 +421,7 @@ typedef struct shader {
     GLuint shader;
 } Shader;
 
-typedef struct spatial_map SpatialMap;
+typedef struct spatialmap SpatialMap;
 
 #define SPATIAL_NODE_XSPAN 16
 #define SPATIAL_NODE_YSPAN 16
@@ -433,11 +433,24 @@ typedef struct spatial_node {
     SpatialNode *next;
 } SpatialNode;
 
-typedef struct spatial_map {
+typedef struct spatialmap {
     SpatialNode *nodes[SPATIAL_NODE_YSPAN][SPATIAL_NODE_XSPAN];
     int basex;
     int basey;
 } SpatialMap;
+
+
+enum {
+    COLLIDER_NONE,
+    COLLIDER_CIRCLE,
+    COLLIDER_RECT,
+};
+typedef struct collider {
+    int type;
+    union {
+        float radius;
+    };
+} Collider;
 
 typedef struct entity {
     int id;
@@ -448,6 +461,7 @@ typedef struct entity {
     Vec3 rotation;
     Vec3 size;
     Vec4 colormask;
+    Collider collider;
 
     int texture;
     Animation *animation;

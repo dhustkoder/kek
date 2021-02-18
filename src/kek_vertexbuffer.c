@@ -4,19 +4,19 @@
 #include <stdlib.h>
 
 static MemPool pool;
-static int write_vertex_buffer(VertexBuffer *vb, size_t offset, uint8_t *data, size_t size);
+static int write_vertexbuffer(VertexBuffer *vb, size_t offset, uint8_t *data, size_t size);
 
-void init_vertex_buffer(size_t capacity)
+void init_vertexbuffer(size_t capacity)
 {
     mempool_alloc(&pool, capacity, sizeof(VertexBuffer));
 }
 
-VertexBuffer *get_vertex_buffer(int id)
+VertexBuffer *get_vertexbuffer(int id)
 {
     return mempool_get_addr(&pool, id);
 }
 
-int create_vertex_buffer(size_t capacity)
+int create_vertexbuffer(size_t capacity)
 {
     //todo: use a pool
      VertexBuffer *inst = mempool_take(&pool);
@@ -37,9 +37,9 @@ int create_vertex_buffer(size_t capacity)
     return inst->id;
 }
 
-void destroy_vertex_buffer(int vbid)
+void destroy_vertexbuffer(int vbid)
 {
-    VertexBuffer *vb = get_vertex_buffer(vbid);
+    VertexBuffer *vb = get_vertexbuffer(vbid);
     gl_delete_buffers(1, &vb->vbo);
     gl_delete_vertex_arrays(1, &vb->vao);
 
@@ -50,27 +50,27 @@ void destroy_vertex_buffer(int vbid)
     mempool_release(&pool, vb);
 }
 
-size_t get_vertex_buffer_capacity(int vbid)
+size_t get_vertexbuffer_capacity(int vbid)
 {
-    VertexBuffer *vb = get_vertex_buffer(vbid);
+    VertexBuffer *vb = get_vertexbuffer(vbid);
     return vb->capacity;
 }
 
-size_t get_vertex_buffer_size(int vbid)
+size_t get_vertexbuffer_size(int vbid)
 {
-    VertexBuffer *vb = get_vertex_buffer(vbid);
+    VertexBuffer *vb = get_vertexbuffer(vbid);
     return vb->size;
 }
 
-void clear_vertex_buffer(int vbid)
+void clear_vertexbuffer(int vbid)
 {
-    VertexBuffer *vb = get_vertex_buffer(vbid);
+    VertexBuffer *vb = get_vertexbuffer(vbid);
     vb->size = 0;
 }
 
-void vertex_buffer_attribs(int vbid, size_t *attribs, size_t count)
+void vertexbuffer_attribs(int vbid, size_t *attribs, size_t count)
 {
-    VertexBuffer *vb = get_vertex_buffer(vbid);
+    VertexBuffer *vb = get_vertexbuffer(vbid);
 	gl_bind_vertex_array(vb->vao);
 	gl_bind_buffer(GL_ARRAY_BUFFER, vb->vbo);
 
@@ -92,17 +92,17 @@ void vertex_buffer_attribs(int vbid, size_t *attribs, size_t count)
 	}
 }
 
-int fill_vertex_buffer(int vbid, uint8_t *data, size_t size)
+int fill_vertexbuffer(int vbid, uint8_t *data, size_t size)
 {
-    VertexBuffer *vb = get_vertex_buffer(vbid);
+    VertexBuffer *vb = get_vertexbuffer(vbid);
 
-    int perr = map_vertex_buffer(vbid);
+    int perr = map_vertexbuffer(vbid);
 
     if(perr == KEK_OK)
     {
-        perr = write_vertex_buffer(vb, 0, data, size);
+        perr = write_vertexbuffer(vb, 0, data, size);
 
-        unmap_vertex_buffer(vbid);
+        unmap_vertexbuffer(vbid);
     }
 
     if(perr == KEK_OK)
@@ -113,16 +113,16 @@ int fill_vertex_buffer(int vbid, uint8_t *data, size_t size)
     return perr;
 }
 
-void bind_vertex_buffer(int vbid)
+void bind_vertexbuffer(int vbid)
 {
-    VertexBuffer *vb = get_vertex_buffer(vbid);
+    VertexBuffer *vb = get_vertexbuffer(vbid);
 	gl_bind_buffer(GL_ARRAY_BUFFER, vb->vbo);
 }
 
 static void *mapped_buffer = false;
-int map_vertex_buffer(int vbid)
+int map_vertexbuffer(int vbid)
 {
-    VertexBuffer *vb = get_vertex_buffer(vbid);
+    VertexBuffer *vb = get_vertexbuffer(vbid);
     if(mapped_buffer != NULL)
         return KEK_ERROR;
 
@@ -138,7 +138,7 @@ int map_vertex_buffer(int vbid)
     return KEK_OK;
 }
 
-static int write_vertex_buffer(VertexBuffer *vb, size_t offset, uint8_t *data, size_t size)
+static int write_vertexbuffer(VertexBuffer *vb, size_t offset, uint8_t *data, size_t size)
 {
     if(vb->map_buffer == NULL)
         return KEK_ERROR;
@@ -153,9 +153,9 @@ static int write_vertex_buffer(VertexBuffer *vb, size_t offset, uint8_t *data, s
     return KEK_OK;
 }
 
-int unmap_vertex_buffer(int vbid)
+int unmap_vertexbuffer(int vbid)
 {
-    VertexBuffer *vb = get_vertex_buffer(vbid);
+    VertexBuffer *vb = get_vertexbuffer(vbid);
     if(mapped_buffer != vb->map_buffer)
         return KEK_ERROR;
 
@@ -166,32 +166,32 @@ int unmap_vertex_buffer(int vbid)
     return KEK_OK;
 }
 
-void append_vertex_buffer(int vbid, uint8_t *data, size_t size_bytes)
+void append_vertexbuffer(int vbid, uint8_t *data, size_t size_bytes)
 {
-    VertexBuffer *vb = get_vertex_buffer(vbid);
-    write_vertex_buffer(vb, vb->size, data, size_bytes);
+    VertexBuffer *vb = get_vertexbuffer(vbid);
+    write_vertexbuffer(vb, vb->size, data, size_bytes);
     vb->size += size_bytes;
 }
 
-void draw_vertex_buffer(int vbid, size_t start, size_t count)
+void draw_vertexbuffer(int vbid, size_t start, size_t count)
 {
-    VertexBuffer *vb = get_vertex_buffer(vbid);
+    VertexBuffer *vb = get_vertexbuffer(vbid);
 	gl_bind_vertex_array(vb->vao);
 	gl_bind_buffer(GL_ARRAY_BUFFER, vb->vbo);
     gl_draw_arrays(GL_TRIANGLES, start, count);
 }
 
-void draw_vertex_buffer_lines(int vbid, size_t start, size_t count)
+void draw_vertexbuffer_lines(int vbid, size_t start, size_t count)
 {
-    VertexBuffer *vb = get_vertex_buffer(vbid);
+    VertexBuffer *vb = get_vertexbuffer(vbid);
 	gl_bind_vertex_array(vb->vao);
 	gl_bind_buffer(GL_ARRAY_BUFFER, vb->vbo);
     gl_draw_arrays(GL_LINES, start, count);
 }
 
-void draw_vertex_buffer_line_strip(int vbid, size_t start, size_t count)
+void draw_vertexbuffer_line_strip(int vbid, size_t start, size_t count)
 {
-    VertexBuffer *vb = get_vertex_buffer(vbid);
+    VertexBuffer *vb = get_vertexbuffer(vbid);
 	gl_bind_vertex_array(vb->vao);
 	gl_bind_buffer(GL_ARRAY_BUFFER, vb->vbo);
     gl_draw_arrays(GL_LINE_STRIP, start, count);

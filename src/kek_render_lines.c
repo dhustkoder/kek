@@ -8,8 +8,8 @@ void draw_render_lines_default(Render *render, int camera, Vec3 *points, size_t 
     Shader *shader = get_shader(render->shader);
     GLuint program = shader->shader;
 
-    map_vertex_buffer(vb);
-    clear_vertex_buffer(vb);
+    map_vertexbuffer(vb);
+    clear_vertexbuffer(vb);
     for(int i = 0; i < count; i += 2)
     {
         Vec4 colormask = {1,1,1,1};
@@ -23,12 +23,12 @@ void draw_render_lines_default(Render *render, int camera, Vec3 *points, size_t 
         vertices[0].normal = vec3(0,0,1);
         vertices[1].normal = vec3(0,0,1);
 
-        append_vertex_buffer(vb, (uint8_t *)vertices, sizeof(vertices));
+        append_vertexbuffer(vb, (uint8_t *)vertices, sizeof(vertices));
     }
 
-    unmap_vertex_buffer(vb);
+    unmap_vertexbuffer(vb);
 
-    bind_vertex_buffer(vb);
+    bind_vertexbuffer(vb);
     bind_shader(render->shader);
     for(int i = 0; i < drawcount; ++i)
     {
@@ -43,7 +43,7 @@ void draw_render_lines_default(Render *render, int camera, Vec3 *points, size_t 
         gl_blend_func(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     }
 
-    draw_vertex_buffer_line_strip(vb, 0, count);
+    draw_vertexbuffer_line_strip(vb, 0, count);
 
 }
 

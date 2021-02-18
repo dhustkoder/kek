@@ -47,6 +47,8 @@ int create_entity(uint32_t type)
     inst->rotation = zero_vec3();
     inst->size     = vec3(128, 128, 128);
 
+    inst->collider.type = COLLIDER_NONE;
+
     inst->colormask = vec4(1,1,1,1);
     inst->texture = 0;
     inst->animation = NULL;
@@ -59,7 +61,7 @@ int create_entity(uint32_t type)
 
     int x = WORLD_TO_SPATIAL_CELL(inst->position.x);
     int y = WORLD_TO_SPATIAL_CELL(inst->position.y);
-    add_spatial_map_node(&inst->snode, x, y);
+    add_spatialmap_node(&inst->snode, x, y);
 
     return inst->id;
 }
@@ -67,7 +69,7 @@ int create_entity(uint32_t type)
 void destroy_entity(int entityid)
 {
     Entity *entity = get_entity(entityid);
-    remove_spatial_map_node(&entity->snode);
+    remove_spatialmap_node(&entity->snode);
     mempool_release(&pool_entity, entity);
 }
 
@@ -93,11 +95,11 @@ void query_spatial_cb(SpatialNode *node, void *ctx)
 void query_entity(Vec2 p0, Vec2 p1, EntityQueryFn fn, void *ctx)
 {
     EntityQueryData data = {fn, ctx};
-    int x0 = WORLD_TO_SPATIAL_CELL(p0.x);
-    int y0 = WORLD_TO_SPATIAL_CELL(p0.y);
-    int x1 = WORLD_TO_SPATIAL_CELL(p1.x);
-    int y1 = WORLD_TO_SPATIAL_CELL(p1.y);
-    query_spatial_map(x0, y0, x1, y1, query_spatial_cb, &data);
+    int x0 = WORLD_TO_SPATIAL_CELL(p0.x) - 1;
+    int y0 = WORLD_TO_SPATIAL_CELL(p0.y) - 1;
+    int x1 = WORLD_TO_SPATIAL_CELL(p1.x) + 1;
+    int y1 = WORLD_TO_SPATIAL_CELL(p1.y) + 1;
+    query_spatialmap(x0, y0, x1, y1, query_spatial_cb, &data);
 }
 
 uint32_t get_entity_render_key(int entityid)
@@ -300,7 +302,7 @@ void entity_position(int entityid, Vec3 position)
     e->position = position;
     int x = WORLD_TO_SPATIAL_CELL(position.x);
     int y = WORLD_TO_SPATIAL_CELL(position.y);
-    move_spatial_map_node(&e->snode, x, y);
+    move_spatialmap_node(&e->snode, x, y);
 }
 
 void entity_velocity(int entityid, Vec3 velocity)

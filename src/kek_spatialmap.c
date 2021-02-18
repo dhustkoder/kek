@@ -7,24 +7,35 @@ static size_t mapcount = 0;
 static size_t capacity = 0;
 
 
-static SpatialMap *find_spatial_map(int basex, int basey);
-static SpatialMap *create_spatial_map(int basex, int basey);
+static SpatialMap *find_spatialmap(int basex, int basey);
+static SpatialMap *create_spatialmap(int basex, int basey);
 static void get_relative_coords(int x, int y, int *basex, int *basey, int *relx, int *rely);
 
-void init_spatial_map(size_t cap)
+void init_spatialmap(size_t cap)
 {
     mapcount = 0;
     capacity = cap;
     maps = calloc(capacity, sizeof(SpatialMap));
 }
 
-void move_spatial_map_node(SpatialNode *node, int x, int y)
+size_t get_spatialmap_count(void)
 {
-    remove_spatial_map_node(node);
-    add_spatial_map_node(node, x, y);
+    return mapcount;
 }
 
-void add_spatial_map_node(SpatialNode *node, int x, int y)
+SpatialMap *get_spatialmap(size_t index)
+{
+    assert(index < mapcount);
+    return &maps[index];
+}
+
+void move_spatialmap_node(SpatialNode *node, int x, int y)
+{
+    remove_spatialmap_node(node);
+    add_spatialmap_node(node, x, y);
+}
+
+void add_spatialmap_node(SpatialNode *node, int x, int y)
 {
     node->x = x;
     node->y = y;
@@ -35,10 +46,10 @@ void add_spatial_map_node(SpatialNode *node, int x, int y)
     int rely = 0;
 
     get_relative_coords(x, y, &basex, &basey, &relx, &rely);
-    SpatialMap *map = find_spatial_map(basex, basey);
+    SpatialMap *map = find_spatialmap(basex, basey);
 
     if(!map)
-        map = create_spatial_map(basex, basey);
+        map = create_spatialmap(basex, basey);
 
     node->next = map->nodes[rely][relx];
 
@@ -46,7 +57,7 @@ void add_spatial_map_node(SpatialNode *node, int x, int y)
 
 }
 
-void remove_spatial_map_node(SpatialNode *node)
+void remove_spatialmap_node(SpatialNode *node)
 {
     int basex = 0;
     int basey = 0;
@@ -55,7 +66,7 @@ void remove_spatial_map_node(SpatialNode *node)
 
     get_relative_coords(node->x, node->y, &basex, &basey, &relx, &rely);
 
-    SpatialMap *map = find_spatial_map(basex, basey);
+    SpatialMap *map = find_spatialmap(basex, basey);
 
     assert(map);
 
@@ -81,7 +92,7 @@ void remove_spatial_map_node(SpatialNode *node)
 }
 
 
-void query_spatial_map(int x0, int y0, int x1, int y1, SpatialMapQueryFn fn, void *ctx)
+void query_spatialmap(int x0, int y0, int x1, int y1, SpatialMapQueryFn fn, void *ctx)
 {
     for(int y = y0; y <= y1; ++y)
     {
@@ -94,7 +105,7 @@ void query_spatial_map(int x0, int y0, int x1, int y1, SpatialMapQueryFn fn, voi
 
             get_relative_coords(x, y, &basex, &basey, &relx, &rely);
 
-            SpatialMap *map = find_spatial_map(basex, basey);
+            SpatialMap *map = find_spatialmap(basex, basey);
 
             if(map)
             {
@@ -110,7 +121,7 @@ void query_spatial_map(int x0, int y0, int x1, int y1, SpatialMapQueryFn fn, voi
     }
 }
 
-static SpatialMap *create_spatial_map(int basex, int basey)
+static SpatialMap *create_spatialmap(int basex, int basey)
 {
     assert(mapcount < capacity);
     SpatialMap *map = &maps[mapcount];
@@ -130,7 +141,7 @@ static SpatialMap *create_spatial_map(int basex, int basey)
     return map;
 }
 
-static SpatialMap *find_spatial_map(int basex, int basey)
+static SpatialMap *find_spatialmap(int basex, int basey)
 {
     for(int i = 0; i < mapcount; ++i)
     {

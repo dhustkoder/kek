@@ -52,7 +52,7 @@ static int init_kek(int argc, char **argv)
     init_tag(
         get_configi(KEK_CFG_MEM_TAG_CAPACITY));
 
-    init_spatial_map(
+    init_spatialmap(
         get_configi(KEK_CFG_MEM_SPATIAL_MAP_CAPACITY));
 
     init_window();
@@ -63,7 +63,7 @@ static int init_kek(int argc, char **argv)
     init_camera(
         get_configi(KEK_CFG_MEM_CAMERA_CAPACITY));
 
-    init_vertex_buffer(
+    init_vertexbuffer(
         get_configi(KEK_CFG_MEM_VERTEX_BUFFER_CAPACITY));
 
     init_shader(
