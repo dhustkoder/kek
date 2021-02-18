@@ -1,7 +1,6 @@
 #include "kek.h"
 #include <stdlib.h>
 
-#define WORLD_TO_SPATIAL_CELL(x) (x / 1024)
 // each cell is 128 physical units long
 // there are 2^8 cells wide and 2^8 cells high
 // 2^8 * 128 = 32768 is the maximum position allowed on each axis
@@ -59,8 +58,8 @@ int create_entity(uint32_t type)
 
     inst->position = zero_vec3();
 
-    int x = WORLD_TO_SPATIAL_CELL(inst->position.x);
-    int y = WORLD_TO_SPATIAL_CELL(inst->position.y);
+    int x = WORLD_TO_SPATIAL_CELL((int)inst->position.x);
+    int y = WORLD_TO_SPATIAL_CELL((int)inst->position.y);
     add_spatialmap_node(&inst->snode, x, y);
 
     return inst->id;
@@ -95,10 +94,10 @@ void query_spatial_cb(SpatialNode *node, void *ctx)
 void query_entity(Vec2 p0, Vec2 p1, EntityQueryFn fn, void *ctx)
 {
     EntityQueryData data = {fn, ctx};
-    int x0 = WORLD_TO_SPATIAL_CELL(p0.x) - 1;
-    int y0 = WORLD_TO_SPATIAL_CELL(p0.y) - 1;
-    int x1 = WORLD_TO_SPATIAL_CELL(p1.x) + 1;
-    int y1 = WORLD_TO_SPATIAL_CELL(p1.y) + 1;
+    int x0 = WORLD_TO_SPATIAL_CELL((int)p0.x) - 1;
+    int y0 = WORLD_TO_SPATIAL_CELL((int)p0.y) - 1;
+    int x1 = WORLD_TO_SPATIAL_CELL((int)p1.x) + 1;
+    int y1 = WORLD_TO_SPATIAL_CELL((int)p1.y) + 1;
     query_spatialmap(x0, y0, x1, y1, query_spatial_cb, &data);
 }
 
@@ -300,8 +299,8 @@ void entity_position(int entityid, Vec3 position)
 {
     Entity *e = get_entity(entityid);
     e->position = position;
-    int x = WORLD_TO_SPATIAL_CELL(position.x);
-    int y = WORLD_TO_SPATIAL_CELL(position.y);
+    int x = WORLD_TO_SPATIAL_CELL((int)position.x);
+    int y = WORLD_TO_SPATIAL_CELL((int)position.y);
     move_spatialmap_node(&e->snode, x, y);
 }
 

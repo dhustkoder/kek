@@ -16,6 +16,7 @@ set(GLFW_INSTALL OFF)
 set(GLFW_VULKAN_STATIC OFF)
 
 #3rd party files
+add_subdirectory(deps/openal-soft)
 add_subdirectory(deps/Chipmunk2D)
 add_subdirectory(deps/glfw)
 add_library(glad STATIC deps/glfw/deps/glad_gl.c)
@@ -38,7 +39,7 @@ file(GLOB PAL_SOURCE src/pal*)
 file(GLOB KUT_SOURCE src/kut*)
 
 #pal libraies
-set(PAL_LIBRARIES glad glfw chipmunk_static)
+set(PAL_LIBRARIES glad glfw chipmunk_static OpenAL)
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     set(PAL_LIBRARIES ${PAL_LIBRARIES} dl m pthread X11 GL glfw glad)

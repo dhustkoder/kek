@@ -23,8 +23,6 @@ PALReturn pal_init_window(void)
 
 PALReturn pal_open_window(PALWindow *window, const char *title, unsigned int width, unsigned int height)
 {
-    GLFWwindow *gw;
-
     glfwDefaultWindowHints();
     glfwWindowHint(GLFW_SAMPLES, 1);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -76,9 +74,6 @@ PALReturn pal_window_title(PALWindow *window, const char *title)
 
 PALReturn pal_window_size(PALWindow *window, unsigned int width, unsigned int height)
 {
-    int fbwidth;
-    int fbheight; 
-
     glfwSetWindowSize(window->glfw, (int)width, (int)height);
 
     return pal_glfw_has_error(window);

@@ -83,10 +83,10 @@ void vertexbuffer_attribs(int vbid, size_t *attribs, size_t count)
 
 	for (size_t i = 0; i < count; ++i) {
 		
-		int float_size = attribs[i];
+		size_t float_size = attribs[i];
 
-		gl_enable_vertex_attrib_array(i);
-		gl_vertex_attrib_pointer(i, float_size, GL_FLOAT, GL_FALSE, stride, (void *)byte_offset);
+		gl_enable_vertex_attrib_array((GLuint)i);
+		gl_vertex_attrib_pointer((GLuint)i, (GLint)float_size, GL_FLOAT, GL_FALSE, (GLsizei)stride, (void *)byte_offset);
 
 		byte_offset += sizeof(float) * float_size;
 	}
@@ -178,7 +178,7 @@ void draw_vertexbuffer(int vbid, size_t start, size_t count)
     VertexBuffer *vb = get_vertexbuffer(vbid);
 	gl_bind_vertex_array(vb->vao);
 	gl_bind_buffer(GL_ARRAY_BUFFER, vb->vbo);
-    gl_draw_arrays(GL_TRIANGLES, start, count);
+    gl_draw_arrays(GL_TRIANGLES, (GLint)start, (GLsizei)count);
 }
 
 void draw_vertexbuffer_lines(int vbid, size_t start, size_t count)
@@ -186,7 +186,7 @@ void draw_vertexbuffer_lines(int vbid, size_t start, size_t count)
     VertexBuffer *vb = get_vertexbuffer(vbid);
 	gl_bind_vertex_array(vb->vao);
 	gl_bind_buffer(GL_ARRAY_BUFFER, vb->vbo);
-    gl_draw_arrays(GL_LINES, start, count);
+    gl_draw_arrays(GL_LINES, (GLint)start, (GLsizei)count);
 }
 
 void draw_vertexbuffer_line_strip(int vbid, size_t start, size_t count)
@@ -194,5 +194,5 @@ void draw_vertexbuffer_line_strip(int vbid, size_t start, size_t count)
     VertexBuffer *vb = get_vertexbuffer(vbid);
 	gl_bind_vertex_array(vb->vao);
 	gl_bind_buffer(GL_ARRAY_BUFFER, vb->vbo);
-    gl_draw_arrays(GL_LINE_STRIP, start, count);
+   gl_draw_arrays(GL_LINE_STRIP, (GLint)start, (GLsizei)count);
 }

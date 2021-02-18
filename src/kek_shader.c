@@ -108,6 +108,8 @@ int bind_shader(int shaderid)
 {
     Shader *shader = get_shader(shaderid);
     gl_use_program(shader->shader);
+
+    return KEK_OK;
 }
 
 static int compile_shader(GLuint shader, const char *code, char *error_buffer, size_t error_buffer_capacity)
@@ -126,7 +128,7 @@ static int compile_shader(GLuint shader, const char *code, char *error_buffer, s
 		if (error_buffer && error_buffer_capacity > 0) 
         {
 			gl_get_shaderiv(shader, GL_INFO_LOG_LENGTH, &log_size);
-			gl_get_shader_info_log(shader, error_buffer_capacity, 0, error_buffer);
+			gl_get_shader_info_log(shader, (GLsizei)error_buffer_capacity, 0, error_buffer);
 
             error_buffer[error_buffer_capacity - 1] = '\0';
 

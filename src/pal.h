@@ -39,6 +39,6 @@ PALReturn pal_get_mouse_position(PALWindow *window, float *x, float *y);
 float pal_time(void);
 
 // File management
-PALReturn pal_file_to_buffer(const char *file, uint8_t *buffer, size_t *size_bytes, int capacity);
+PALReturn pal_file_to_buffer(const char *file, uint8_t *buffer, size_t *size_bytes, size_t capacity);
 PALReturn pal_file_get_size(const char *file, size_t *size);
 

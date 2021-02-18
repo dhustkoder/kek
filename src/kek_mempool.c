@@ -47,7 +47,7 @@ void mempool_alloc(MemPool *pool, size_t capacity, size_t stride)
     for(size_t i = 0; i < capacity; ++i)
     {
         uint32_t *addr = (uint32_t *)index_to_addr(pool, i);
-        *addr = i + 1;
+        *addr = (uint32_t)i + 1;
     }
 }
 void mempool_free(MemPool *pool)
@@ -76,7 +76,7 @@ void *mempool_take(MemPool *pool)
 }
 
 
-void *mempool_release(MemPool *pool, void *addr)
+void mempool_release(MemPool *pool, void *addr)
 {
    size_t *head = (size_t *)addr;
    *head = pool->free_head;
@@ -85,53 +85,4 @@ void *mempool_release(MemPool *pool, void *addr)
 
     pool->free_count++; 
     pool->use_count--;
-}
-
-static uint8_t *stack_buffer = NULL;
-static size_t stack_capacity = 0;
-static size_t stack_size = 0;
-
-void  memstack_init(size_t capacity)
-{
-    stack_buffer = calloc(capacity, sizeof(uint8_t));
-    stack_capacity = capacity;
-    stack_size = 0;
-}
-
-void *memstack_push(size_t size)
-{
-    if(stack_size + size  > stack_capacity)
-        return NULL;
-
-    uint8_t *addr = &stack_buffer[stack_size];
-
-    stack_size += size;
-
-    return addr;
-}
-
-void memstack_pop(void *addr)
-{
-    uint8_t *addr8 = addr;
-    assert(addr8 >= stack_buffer);
-    assert(addr8 <= &stack_buffer[stack_size]);
-
-
-    stack_size = addr8 - stack_buffer;
-}
-
-void memstack_free(void)
-{
-    free(stack_buffer);
-    stack_buffer = NULL;
-}
-
-size_t memstack_size(void)
-{
-    return stack_size;
-}
-
-size_t memstack_capacity(void)
-{
-    return stack_capacity;
 }

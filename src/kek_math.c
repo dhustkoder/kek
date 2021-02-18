@@ -254,11 +254,11 @@ Vec4 abs_vec4(Vec4 v)
 Vec2 clamp_vec2(Vec2 v, Vec2 min, Vec2 max)
 {
 	Vec2 value;
-	value.x = KUT_MAX(v.x, min.x);
-	value.x = KUT_MIN(v.x, max.x);
+	value.x = KEK_MAX(v.x, min.x);
+	value.x = KEK_MIN(v.x, max.x);
 
-	value.y = KUT_MAX(v.y, min.y);
-	value.y = KUT_MIN(v.y, max.y);
+	value.y = KEK_MAX(v.y, min.y);
+	value.y = KEK_MIN(v.y, max.y);
 
 	return value;
 }
@@ -266,14 +266,14 @@ Vec2 clamp_vec2(Vec2 v, Vec2 min, Vec2 max)
 Vec3 clamp_vec3(Vec3 v, Vec3 min, Vec3 max)
 {
 	Vec3 value;
-	value.x = KUT_MAX(v.x, min.x);
-	value.x = KUT_MIN(v.x, max.x);
+	value.x = KEK_MAX(v.x, min.x);
+	value.x = KEK_MIN(v.x, max.x);
 
-	value.y = KUT_MAX(v.y, min.y);
-	value.y = KUT_MIN(v.y, max.y);
+	value.y = KEK_MAX(v.y, min.y);
+	value.y = KEK_MIN(v.y, max.y);
 
-	value.z = KUT_MAX(v.z, min.z);
-	value.z = KUT_MIN(v.z, max.z);
+	value.z = KEK_MAX(v.z, min.z);
+	value.z = KEK_MIN(v.z, max.z);
 
 	return value;
 }
@@ -281,17 +281,17 @@ Vec3 clamp_vec3(Vec3 v, Vec3 min, Vec3 max)
 Vec4 clamp_vec4(Vec4 v, Vec4 min, Vec4 max)
 {
 	Vec4 value;
-	value.x = KUT_MAX(v.x, min.x);
-	value.x = KUT_MIN(v.x, max.x);
+	value.x = KEK_MAX(v.x, min.x);
+	value.x = KEK_MIN(v.x, max.x);
 
-	value.y = KUT_MAX(v.y, min.y);
-	value.y = KUT_MIN(v.y, max.y);
+	value.y = KEK_MAX(v.y, min.y);
+	value.y = KEK_MIN(v.y, max.y);
 
-	value.z = KUT_MAX(v.z, min.z);
-	value.z = KUT_MIN(v.z, max.z);
+	value.z = KEK_MAX(v.z, min.z);
+	value.z = KEK_MIN(v.z, max.z);
 
-	value.w = KUT_MAX(v.w, min.w);
-	value.w = KUT_MIN(v.w, max.w);
+	value.w = KEK_MAX(v.w, min.w);
+	value.w = KEK_MIN(v.w, max.w);
 
 	return value;
 }
@@ -626,14 +626,14 @@ int line_intersect(Vec3 p0, Vec3 v0, Vec3 p1, Vec3 v1, Vec3 *c)
 	}
 
 	// range test
-	float r0xl = KUT_MIN(p0.x, q0.x);
-	float r0xh = KUT_MAX(p0.x, q0.x);
-	float r0yl = KUT_MIN(p0.y, q0.y);
-	float r0yh = KUT_MAX(p0.y, q0.y);
-	float r1xl = KUT_MIN(p1.x, q1.x);
-	float r1xh = KUT_MAX(p1.x, q1.x);
-	float r1yl = KUT_MIN(p1.y, q1.y);
-	float r1yh = KUT_MAX(p1.y, q1.y);
+	float r0xl = KEK_MIN(p0.x, q0.x);
+	float r0xh = KEK_MAX(p0.x, q0.x);
+	float r0yl = KEK_MIN(p0.y, q0.y);
+	float r0yh = KEK_MAX(p0.y, q0.y);
+	float r1xl = KEK_MIN(p1.x, q1.x);
+	float r1xh = KEK_MAX(p1.x, q1.x);
+	float r1yl = KEK_MIN(p1.y, q1.y);
+	float r1yh = KEK_MAX(p1.y, q1.y);
 
 	if (r0xl <= x && x <= r0xh && r0yl <= y && y <= r0yh && r1xl <= x &&
 	    x <= r1xh && r1yl <= y && y <= r1yh) {
@@ -648,20 +648,20 @@ int line_intersect(Vec3 p0, Vec3 v0, Vec3 p1, Vec3 v1, Vec3 *c)
 
 float clampf(float value, float min, float max)
 {
-	value = KUT_MAX(value, min);
-	value = KUT_MIN(value, max);
+	value = KEK_MAX(value, min);
+	value = KEK_MIN(value, max);
 
 	return value;
 }
 
 float deg_to_rad(float deg)
 {
-	return (deg / 360.f) * 2.f * KUT_PI;
+	return (deg / 360.f) * 2.f * (float)KEK_PI;
 }
 
 float rad_to_deg(float rad)
 {
-	return (rad / (2.f * KUT_PI)) * 360.f;
+	return (rad / (2.f * (float)KEK_PI)) * 360.f;
 }
 
 Mat4 translate_mat4(const Vec3 v)
@@ -983,13 +983,13 @@ void minmax_vec3(Vec3 *p0, Vec3 *p1)
 	Vec3 t0 = *p0;
 	Vec3 t1 = *p1;
 	
-	p0->x = KUT_MIN(t0.x, t1.x);
-	p0->y = KUT_MIN(t0.y, t1.y);
-	p0->z = KUT_MIN(t0.z, t1.z);
+	p0->x = KEK_MIN(t0.x, t1.x);
+	p0->y = KEK_MIN(t0.y, t1.y);
+	p0->z = KEK_MIN(t0.z, t1.z);
 
-	p1->x = KUT_MAX(t0.x, t1.x);
-	p1->y = KUT_MAX(t0.y, t1.y);
-	p1->z = KUT_MAX(t0.z, t1.z);
+	p1->x = KEK_MAX(t0.x, t1.x);
+	p1->y = KEK_MAX(t0.y, t1.y);
+	p1->z = KEK_MAX(t0.z, t1.z);
 }
 
 void order_vec3(Vec3 *p0, Vec3 *p1)
@@ -997,13 +997,13 @@ void order_vec3(Vec3 *p0, Vec3 *p1)
 	Vec3 t0 = *p0;
 	Vec3 t1 = *p1;
 	
-	p0->x = KUT_MIN(t0.x, t1.x);
-	p0->y = KUT_MIN(t0.y, t1.y);
-	p0->z = KUT_MIN(t0.z, t1.z);
+	p0->x = KEK_MIN(t0.x, t1.x);
+	p0->y = KEK_MIN(t0.y, t1.y);
+	p0->z = KEK_MIN(t0.z, t1.z);
 
-	p1->x = KUT_MAX(t0.x, t1.x);
-	p1->y = KUT_MAX(t0.y, t1.y);
-	p1->z = KUT_MAX(t0.z, t1.z);
+	p1->x = KEK_MAX(t0.x, t1.x);
+	p1->y = KEK_MAX(t0.y, t1.y);
+	p1->z = KEK_MAX(t0.z, t1.z);
 }
 
 Vec2 line_line_intersect_point(Vec2 p0, Vec2 p1, Vec2 q0, Vec2 q1)
@@ -1047,7 +1047,7 @@ bool circle_circle_intersect(Vec2 p0, float r0, Vec2 p1, float r1)
 	float dy = p1.y - p0.y;
 
 	float d2 = dx * dx + dy * dy;
-	float r2 = (r1 + r2) * (r1 + r2);
+	float r2 = (r0 + r1) * (r0 + r1);
 
 	return (d2 <= r2) ? true : false;
 }
@@ -1107,8 +1107,6 @@ bool point_line_bounce(Vec2 c0, Vec2 vel, Vec2 p0, Vec2 p1, Vec2 *p_intersect, V
   Vec2 p = sub_vec2(p1, p0);
   Vec2 p_unit = normal_vec2(p);
   Vec2 c1 = add_vec2(c0, vel);
-  Vec2 c = sub_vec2(c1, c0);
-  Vec2 c_unit = normal_vec2(c);
 
   // find b points in y = mx + b
   // b = y - mx
@@ -1139,14 +1137,14 @@ bool point_line_bounce(Vec2 c0, Vec2 vel, Vec2 p0, Vec2 p1, Vec2 *p_intersect, V
   Vec2 pmin;
   Vec2 pmax;
 
-  cmin.x = KUT_MIN(c0.x, c1.x);
-  cmax.x = KUT_MAX(c0.x, c1.x);
-  cmin.y = KUT_MIN(c0.y, c1.y);
-  cmax.y = KUT_MAX(c0.y, c1.y);
-  pmin.x = KUT_MIN(p0.x, p1.x);
-  pmax.x = KUT_MAX(p0.x, p1.x);
-  pmin.y = KUT_MIN(p0.y, p1.y);
-  pmax.y = KUT_MAX(p0.y, p1.y);
+  cmin.x = KEK_MIN(c0.x, c1.x);
+  cmax.x = KEK_MAX(c0.x, c1.x);
+  cmin.y = KEK_MIN(c0.y, c1.y);
+  cmax.y = KEK_MAX(c0.y, c1.y);
+  pmin.x = KEK_MIN(p0.x, p1.x);
+  pmax.x = KEK_MAX(p0.x, p1.x);
+  pmin.y = KEK_MIN(p0.y, p1.y);
+  pmax.y = KEK_MAX(p0.y, p1.y);
 
   *c_out = c1;
   *dir = normal_vec2(vel); //todo: normalize
