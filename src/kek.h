@@ -75,23 +75,23 @@ void         query_spatialmap(int x0, int y0, int x1, int y1, SpatialMapQueryFn 
 //**********************************************************
 // KEK SOUND 
 //**********************************************************
-void  init_sound(void);
+int init_sound(size_t num_sources, size_t buffer_capacity, size_t sound_capacity);
+void  update_sounds(void);
 int   create_sound_buffer(void);
 bool  load_wav_file_to_sound_buffer(int buffer, const char *file);
 int   create_sound(int buffer);
-int   play_sound(int buffer);
+void  play_sound(int sound);
 void  destroy_sound(int sound);
 void  pause_sound(int sound);
 void  stop_sound(int sound);
 void  sound_loop(int sound, bool loop);
-void  sound_priority(int sound, int priority);
 void  sound_pitch(int sound, float value);
 void  sound_gain(int sound, float value);
 float get_sound_pitch(int sound);
 float get_sound_gain(int sound);
 bool  get_sound_loop(int sound);
-void  is_sound_playing(int sound);
-void  update_sounds(void);
+bool  is_sound_playing(int sound);
+
 //**********************************************************
 // KEK VERTEX BUFFER
 //**********************************************************
@@ -149,7 +149,7 @@ void     bind_texture(int texture_id, int slot);
 //**********************************************************
 void       init_animation(size_t capacity);
 int        create_animation(void);
-Animation  *get_animation(int animationid);
+Animation *get_animation(int animationid);
 void       destroy_animation(int animationid);
 void       add_animation_frame(int animationid, AnimationFrame frame);
 void       add_animation_frame_clip(int animationid, int textureid, int x, int y, int clip_width, int clip_height, float duration);

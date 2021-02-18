@@ -57,6 +57,11 @@ static int init_kek(int argc, char **argv)
 
     init_window();
 
+    init_sound(
+        get_configi(KEK_CFG_SOUND_SOURCE_CAPACITY),
+        get_configi(KEK_CFG_SOUND_BUFFER_CAPACITY),
+        get_configi(KEK_CFG_SOUND_CAPACITY));
+
     init_hid(
         get_configi(KEK_CFG_MEM_KEY_BIND_ALIAS_CAPACITY));
 
