@@ -169,8 +169,8 @@ void draw_scene(int sceneid)
     }
 
     draw_render_entities(scene->render_entity, scene->camera, sortlist, listcount, NULL);
-    draw_render_entity_boxes(scene->render_entity_box, scene->camera, sortlist, listcount, NULL);
-    draw_render_spatialmap(scene->render_spatialmap, scene->camera, sortlist, listcount);
+    //draw_render_entity_boxes(scene->render_entity_box, scene->camera, sortlist, listcount, NULL);
+    //draw_render_spatialmap(scene->render_spatialmap, scene->camera, sortlist, listcount);
     
     memstack_pop(sortlist);
 }
