@@ -243,12 +243,25 @@ void destroy_sound(int soundid)
 
 void pause_sound(int soundid)
 {
-    Sound *sound = get_sound(soundid);
+	 Sound* sound = get_sound(soundid);
+
+	 if (sound->source)
+	 {
+		 ALuint alsrc = sound->source->source;
+		 alSourcePause(alsrc);
+	 }
 }
 
 void stop_sound(int soundid)
 {
-    Sound *sound = get_sound(soundid);
+	Sound* sound = get_sound(soundid);
+	if (sound->source)
+	{
+		ALuint alsrc = sound->source->source;
+		alSourceStop(alsrc);
+		release_source(sound->source);
+		sound->source = NULL;
+	}
 }
 
 void sound_loop(int soundid, bool loop)
