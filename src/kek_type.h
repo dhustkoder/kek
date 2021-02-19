@@ -35,6 +35,7 @@ typedef void (*RenderEntitiesFn)(Render *render, Camera *camera, int *entities, 
 typedef void (*RenderLinesFn)(Render *render, Camera *camera, Vec3 *points, size_t count, void *ctx);
 typedef void (*SceneQueryEntityFn)(int entityid, void *ctx);
 typedef void (*SpatialMapQueryFn)(SpatialNode *node, void *ctx);
+typedef void (*CameraUpdateFn)(int cameraid, void *ctx);
 
 
 enum {
@@ -335,7 +336,10 @@ typedef struct mem_pool {
 typedef struct camera {
     int id;
     Vec3 position;
+    Vec3 offset;
     float zoom;
+    CameraUpdateFn update_cb;
+    void *update_ctx;
 } Camera;
 
 typedef struct texture {

@@ -13,6 +13,9 @@ int create_camera(void)
     camera->id = mempool_get_slot(&pool, camera);
     camera->zoom = 1.0f;
     camera->position = zero_vec3();
+    camera->offset = zero_vec3();
+    camera->update_cb = NULL;
+    camera->update_ctx = NULL;
 
     return camera->id;
 }
@@ -34,6 +37,26 @@ void camera_ortho_zoom(int cameraid, float zoom)
     camera->zoom = zoom;
 }
 
+void camera_offset(int cameraid, Vec3 offset)
+{
+    Camera *camera = get_camera(cameraid);
+    camera->offset = offset;
+}
+
+void update_camera(int cameraid)
+{
+    Camera *camera = get_camera(cameraid);
+    if(camera->update_cb)
+        camera->update_cb(cameraid, camera->update_ctx);
+}
+
+void camera_update_cb(int cameraid, CameraUpdateFn update_cb, void *ctx)
+{
+    Camera *camera = get_camera(cameraid);
+    camera->update_cb = update_cb;
+    camera->update_ctx = ctx;
+}
+
 void camera_position(int cameraid, Vec3 position)
 {
     Camera *camera = get_camera(cameraid);
@@ -49,7 +72,7 @@ Vec3 get_camera_position(int cameraid)
 void get_camera_ortho_mvp(int cameraid, Mat4 *mvp)
 {
     Camera *camera = get_camera(cameraid);
-    Vec3 position = camera->position;
+    Vec3 position = add_vec3(camera->position, camera->offset);
     float zoom = camera->zoom;
 
     unsigned int window_width = 0;

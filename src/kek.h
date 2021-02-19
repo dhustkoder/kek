@@ -191,8 +191,11 @@ void    destroy_camera(int cameraid);
 void    get_camera_ortho_mvp(int cameraid, Mat4 *mvp);
 Vec2    get_camera_mouse_position(int cameraid);
 Vec3    get_camera_position(int cameraid);
+void    update_camera(int cameraid);
+void    camera_offset(int cameraid, Vec3 offset);
 void    camera_ortho_zoom(int cameraid, float zoom);
 void    camera_position(int cameraid, Vec3 position);
+void    camera_update_cb(int cameraid, CameraUpdateFn update_cb, void *ctx);
 
 //**********************************************************
 // KEK SCENE 

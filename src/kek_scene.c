@@ -92,6 +92,8 @@ void update_scene(int sceneid)
 
         entity = entity->scene_next_entity;
     }
+
+    update_camera(scene->camera);
 }
 
 void garbage_collect_scene(int sceneid)
