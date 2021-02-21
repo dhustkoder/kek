@@ -121,7 +121,7 @@ static int compile_shader(GLuint shader, const char *code, char *error_buffer, s
 
     gl_get_shaderiv(shader, GL_COMPILE_STATUS, &result);
 
-    if(result == GL_TRUE)
+    if(result != GL_TRUE)
     {
         GLint log_size = 0;
 

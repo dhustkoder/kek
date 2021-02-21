@@ -19,8 +19,10 @@ int create_scene(void)
      scene->entities = NULL;
      scene->entity_count = 0;
      scene->render_entity = create_entity_render();
-     scene->render_entity_box = create_entity_box_render();
      scene->render_spatialmap = create_entity_box_render();
+     scene->render_entity_box = create_entity_box_render();
+     scene->render_rect = create_rect_render();
+     scene->render_circle = create_circle_render();
     
      if(default_camera == -1)
         default_camera = create_camera();
@@ -172,7 +174,9 @@ void draw_scene(int sceneid)
 
     draw_render_entities(scene->render_entity, scene->camera, sortlist, listcount, NULL);
     //draw_render_entity_boxes(scene->render_entity_box, scene->camera, sortlist, listcount, NULL);
-    //draw_render_spatialmap(scene->render_spatialmap, scene->camera, sortlist, listcount);
+    draw_render_collision_boxes(scene->render_rect, scene->camera, sortlist, listcount, NULL);
+    draw_render_collision_circles(scene->render_circle, scene->camera, sortlist, listcount, NULL);
+    draw_render_spatialmap(scene->render_spatialmap, scene->camera, sortlist, listcount);
     
     memstack_pop(sortlist);
 }

@@ -313,7 +313,7 @@ typedef union vec4 {
 typedef struct rect2 {
 	Vec2 position;
 	Vec2 size;
-} Rect2;
+} Rect;
 
 typedef struct cube {
 	Vec3 position;
@@ -357,6 +357,12 @@ typedef struct vertex {
     Vec4 colormask;
 } Vertex;
 
+typedef struct circle_vertex {
+    Vec3 position;
+    Vec3 center;
+    float radius;
+    Vec4 colormask;
+} CircleVertex;
 #if 0
 typedef enum material_property_type{
     MATERIAL_PROPERTY_VEC2,
@@ -457,6 +463,7 @@ typedef struct collider {
     int type;
     union {
         float radius;
+        Vec2 rect;
     };
 } Collider;
 
@@ -486,6 +493,8 @@ typedef struct scene {
     Entity *entities;
     Render *render_entity;
     Render *render_entity_box;
+    Render *render_rect;
+    Render *render_circle;
     Render *render_spatialmap;
     int camera;
     size_t entity_count;

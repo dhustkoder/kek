@@ -261,6 +261,13 @@ void entity_size(int entityid, Vec3 size)
     e->size = size;
 }
 
+Collider *get_entity_collider(int entityid)
+{
+    Entity *e = get_entity(entityid);
+
+    return &e->collider;
+}
+
 Vec3 get_entity_position(int entityid)
 {
     Entity *e = get_entity(entityid);

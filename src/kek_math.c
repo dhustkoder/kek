@@ -468,7 +468,7 @@ Mat4 mul_mat4_f(Mat4 m, float v)
 #define COLLISION_LEFT  0x04
 #define COLLISION_RIGHT 0x08
 // collision masks are relative to "a"
-unsigned int aabb2(Rect2 a, Rect2 b)
+unsigned int aabb2(Rect a, Rect b)
 {
 	float ax0 = a.position.x - a.size.x / 2;
 	float ax1 = a.position.x + a.size.x / 2;
@@ -502,11 +502,11 @@ unsigned int aabb2(Rect2 a, Rect2 b)
 }
 unsigned int aabb(Vec2 p0, Vec2 s0, Vec2 p1, Vec2 s1)
 {
-    Rect2 a;
+    Rect a;
     a.position = p0;
     a.size = s0;
 
-    Rect2 b;
+    Rect b;
     b.position = p1;
     b.size = s1;
 

@@ -175,10 +175,14 @@ void submit_event(int id, void *data);
 void    init_render(size_t capacity);
 Render *create_entity_render(void);
 Render *create_entity_box_render(void);
+Render *create_circle_render(void);
+Render *create_rect_render(void);
 void    destroy_render(Render *render);
 void    draw_render_lines_default(Render *render, int camera, Vec3 *points, size_t count, void *ctx);
 void    draw_render_entities(Render *render, int camera, int *entities, size_t count, void *ctx);
 void    draw_render_entity_boxes(Render *render, int camera, int *entities, size_t count, void *ctx);
+void    draw_render_collision_boxes(Render *render, int camera, int *entities, size_t count, void *ctx);
+void    draw_render_collision_circles(Render *render, int camera, int *entities, size_t count, void *ctx);
 void    draw_render_spatialmap(Render *render, int camera, int *entities, size_t count);
 //
 //**********************************************************
@@ -226,6 +230,7 @@ void            entity_terminate_callback(uint32_t type, EntityTerminateFn callb
 void            entity_callback_context(uint32_t type, void *ctx);
 uint32_t        get_entity_render_key(int entityid);
 Entity         *get_entity(int entityid);
+Collider       *get_entity_collider(int entityid);
 void           *get_entity_user_data(int entityid);
 void            update_entity(int entityid);
 int             get_entity_type(int entityid);
@@ -296,11 +301,8 @@ Vec4         get_random_range_v4(Vec4 min, Vec4 max);
 // KEK MATH 
 //**********************************************************
 
-//**********************************************************
-// KEK MATH 
-//**********************************************************
 unsigned int aabb(Vec2 p0, Vec2 s0, Vec2 p1, Vec2 s1);
-unsigned int aabb2(Rect2 a, Rect2 b);
+unsigned int aabb2(Rect a, Rect b);
 unsigned int aabb3(Cube a, Cube b);
 Vec2 add_vec2(Vec2 a, Vec2 b);
 Vec2 sub_vec2(Vec2 a, Vec2 b);

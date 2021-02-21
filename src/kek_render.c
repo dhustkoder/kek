@@ -3,6 +3,7 @@
 static MemPool pool;
 static int shader = -1;
 static int box_shader = -1;
+static int circle_shader = -1;
 #define KEK_VERTEX_BUFFER_CAPACITY (1024*1024)
 
 
@@ -58,6 +59,57 @@ Render *create_entity_box_render(void)
 
     return render;
 }
+
+Render *create_rect_render(void)
+{
+     Render *render = mempool_take(&pool);
+
+     render->ctx = NULL;
+
+     render->vb = create_vertexbuffer(KEK_VERTEX_BUFFER_CAPACITY);
+    
+    size_t attribs[] = {3,3,2,4};
+
+    vertexbuffer_attribs(render->vb, attribs, 4); 
+
+    // use a default shader
+    // todo: clean this up and create afunction
+    if(box_shader == -1) 
+    {
+        box_shader = create_shader();
+        load_shader_files(box_shader, "res/shader/rect.vs", "res/shader/rect.fs");
+    }
+    render->shader = box_shader;
+
+    return render;
+}
+
+
+Render *create_circle_render(void)
+{
+     Render *render = mempool_take(&pool);
+
+     render->ctx = NULL;
+
+     render->vb = create_vertexbuffer(KEK_VERTEX_BUFFER_CAPACITY);
+    
+    size_t attribs[] = {3,3,1,4};
+
+    vertexbuffer_attribs(render->vb, attribs, 4); 
+
+    // use a default shader
+    // todo: clean this up and create afunction
+    if(circle_shader == -1) 
+    {
+        circle_shader = create_shader();
+        load_shader_files(circle_shader, "res/shader/circle.vs", "res/shader/circle.fs");
+    }
+    render->shader = circle_shader;
+
+    return render;
+}
+
+
 
 void destroy_render(Render *render)
 {
