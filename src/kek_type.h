@@ -461,6 +461,10 @@ enum {
 };
 typedef struct collider {
     int type;
+    uint32_t mask;      // i collide with
+    uint32_t category; // i am a
+    CollisionFn collision_fn;
+    void *ctx;
     union {
         float radius;
         Vec2 rect;

@@ -47,6 +47,10 @@ int create_entity(uint32_t type)
     inst->size     = vec3(128, 128, 128);
 
     inst->collider.type = COLLIDER_NONE;
+    inst->collider.mask = 0;
+    inst->collider.category = 0;
+    inst->collider.collision_fn = NULL;
+    inst->collider.ctx = NULL;
 
     inst->colormask = vec4(1,1,1,1);
     inst->texture = 0;

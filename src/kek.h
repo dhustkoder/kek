@@ -82,10 +82,11 @@ void         query_spatial_map(int x0, int y0, int x1, int y1, SpatialMapQueryFn
 //**********************************************************
 // KEK SOUND 
 //**********************************************************
-int init_sound(size_t num_sources, size_t buffer_capacity, size_t sound_capacity);
+int   init_sound(size_t num_sources, size_t buffer_capacity, size_t sound_capacity);
 void  update_sounds(void);
 int   create_sound_buffer(void);
 bool  load_wav_file_to_sound_buffer(int buffer, const char *file);
+int   master_volume(float vol);
 int   create_sound(int buffer);
 void  play_sound(int sound);
 void  destroy_sound(int sound);

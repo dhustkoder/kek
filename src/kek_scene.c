@@ -142,7 +142,7 @@ void draw_scene(int sceneid)
     entity = scene->entities;
 
     size_t listcount = scene->entity_count;
-    int *sortlist = memstack_push(listcount * sizeof(Entity *));
+    int *sortlist = memstack_push(listcount * sizeof(int));
     entity = scene->entities;
 
     for(int i = 0; i < listcount; ++i)
@@ -172,11 +172,14 @@ void draw_scene(int sceneid)
         }
     }
 
-    draw_render_entities(scene->render_entity, scene->camera, sortlist, listcount, NULL);
-    //draw_render_entity_boxes(scene->render_entity_box, scene->camera, sortlist, listcount, NULL);
-    draw_render_collision_boxes(scene->render_rect, scene->camera, sortlist, listcount, NULL);
-    draw_render_collision_circles(scene->render_circle, scene->camera, sortlist, listcount, NULL);
-    draw_render_spatialmap(scene->render_spatialmap, scene->camera, sortlist, listcount);
+    if(listcount > 0)
+    {
+        draw_render_entities(scene->render_entity, scene->camera, sortlist, listcount, NULL);
+        //draw_render_entity_boxes(scene->render_entity_box, scene->camera, sortlist, listcount, NULL);
+        draw_render_collision_boxes(scene->render_rect, scene->camera, sortlist, listcount, NULL);
+        draw_render_collision_circles(scene->render_circle, scene->camera, sortlist, listcount, NULL);
+        draw_render_spatialmap(scene->render_spatialmap, scene->camera, sortlist, listcount);
+    }
     
     memstack_pop(sortlist);
 }

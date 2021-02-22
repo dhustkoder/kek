@@ -17,9 +17,11 @@ void  memstack_init(size_t capacity)
 
 void *memstack_push(size_t size)
 {
+    assert(stack_size + size  > stack_capacity);
+
     if(stack_size + size  > stack_capacity)
         return NULL;
-
+         
     uint8_t *addr = &stack_buffer[stack_size];
 
     stack_size += size;
@@ -32,7 +34,6 @@ void memstack_pop(void *addr)
     uint8_t *addr8 = addr;
     assert(addr8 >= stack_buffer);
     assert(addr8 <= &stack_buffer[stack_size]);
-
 
     stack_size = addr8 - stack_buffer;
 }

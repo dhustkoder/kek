@@ -7,7 +7,7 @@ void init_config(void)
     for(size_t i = 0; i < KEK_CFG_NUM_TYPES; ++i)
         config[i] = 0;
 
-    config[KEK_CFG_MEM_STACK_CAPACITY]                 = 1024 * 1024;
+    config[KEK_CFG_MEM_STACK_CAPACITY]                 = 1024 * 1024*32;
     config[KEK_CFG_MEM_TAG_CAPACITY]                   = 1024;
     config[KEK_CFG_MEM_CAMERA_CAPACITY]                = 1024;
     config[KEK_CFG_MEM_VERTEX_BUFFER_CAPACITY]         = 1024;
