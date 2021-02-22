@@ -1055,30 +1055,27 @@ bool circle_circle_intersect(Vec2 p0, float r0, Vec2 p1, float r1)
 
 bool line_circle_collision(Vec2 p0, Vec2 p1, Vec2 c, float r, Vec2 *intersect)
 {
-    Vec2 a = sub_vec2(c, p0);
-    Vec2 b = sub_vec2(p1, p0);
-    float a_dot_b = dot_product_vec2(a, b);
-    float b_dot_b = dot_product_vec2(b, b); // b^2
+    Vec2 va = sub_vec2(p1, p0);
+    Vec2 vb = sub_vec2(c, p0);
 
-    // intersection point = P0 + B(A dot B)/ |B|^2
-    Vec2 i = mul_vec2_f(b, a_dot_b);
-    i = div_vec2_f(i, b_dot_b);
-    i = add_vec2(p0, i);
+    Vec2 proj = project_vec2(vb, va);
 
-    Vec2 dd = sub_vec2(c, i);
+    if(signf(proj.x) != signf(va.x))
+        return false;
+    if(signf(proj.y) != signf(va.y))
+        return false;
+    
 
-    float d2 = dot_product_vec2(dd, dd);
+    float valen2 = length2_vec2(va);
+    float vprojlen2 = length2_vec2(proj);
+    if(vprojlen2 >= valen2)
+        return false;
+
+    *intersect = add_vec2(p0, proj);
+    float d2 = length2_vec2(sub_vec2(c, *intersect));
     float r2 = r * r;
 
-
-    if(d2 < r2)
-    {
-        *intersect = i;
-        return true;
-        // collision
-    }
-
-    return false;
+    return (d2 <= r2);
 }
 
 float line_slope(Vec2 p0, Vec2 p1)

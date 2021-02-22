@@ -71,7 +71,7 @@ void simulate_physics(int sceneid)
             collision = rect_circle(c->entity_a, c->entity_b);
 
         else if(cb->type == COLLIDER_RECT && ca->type == COLLIDER_CIRCLE)
-            collision = rect_circle(c->entity_a, c->entity_b);
+            collision = rect_circle(c->entity_b, c->entity_a);
 
         else if(ca->type == COLLIDER_RECT && cb->type == COLLIDER_RECT)
             collision = rect_rect(c->entity_a, c->entity_b);
@@ -127,6 +127,47 @@ static void physics_query_cb(int entity_a, void *ctx)
 
 static bool rect_circle(int entity_a, int entity_b)
 {
+    Vec3 pos_a = get_entity_position(entity_a);
+    Vec3 pos_b = get_entity_position(entity_b);
+    Collider *ca = get_entity_collider(entity_a);
+    Collider *cb = get_entity_collider(entity_b);
+    Vec2 ah = mul_vec2_f(ca->rect, 0.5);
+
+    Vec2 corners[4] = {
+        sub_vec2(pos_a.xy, vec2(-ah.x, -ah.y)),
+        sub_vec2(pos_a.xy, vec2( ah.x, -ah.y)),
+        sub_vec2(pos_a.xy, vec2( ah.x,  ah.y)),
+        sub_vec2(pos_a.xy, vec2(-ah.x,  ah.y))
+    };
+    Vec2 lines[4][2] = {
+        {corners[0], corners[1]},
+        {corners[1], corners[2]},
+        {corners[2], corners[3]},
+        {corners[3], corners[0]}
+    };
+
+    // check overlapping corners
+    for(size_t i = 0; i < 4; ++i)
+    {
+        float d2 = length2_vec2(sub_vec2(pos_b.xy, corners[i]));
+        float r2 = cb->radius * cb->radius;
+
+        if(d2 < r2)
+            return true;
+    }
+    
+    // check overlapping edges
+    for(size_t i = 0; i < 4; ++i)
+    {
+        Vec2 p0 = lines[i][0];
+        Vec2 p1 = lines[i][1];
+        Vec2 c = pos_b.xy;
+        float r = cb->radius;
+        Vec2 intersect;
+        if(line_circle_collision(p0, p1, c, r, &intersect))
+            return true;
+    }
+
     return false;
 }
 
