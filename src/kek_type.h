@@ -461,6 +461,7 @@ enum {
 };
 typedef struct collider {
     int type;
+    bool dynamic;
     uint32_t mask;      // i collide with
     uint32_t category; // i am a
     CollisionFn collision_fn;
@@ -477,6 +478,8 @@ typedef struct entity {
     uint32_t type;
     Vec3 position;
     Vec3 velocity;
+    Vec3 last_position;
+    Vec3 last_velocity;
     Vec3 rotation;
     Vec3 size;
     Vec4 colormask;

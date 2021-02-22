@@ -51,6 +51,7 @@ int create_entity(uint32_t type)
     inst->collider.category = 0;
     inst->collider.collision_fn = NULL;
     inst->collider.ctx = NULL;
+    inst->collider.dynamic = true;
 
     inst->colormask = vec4(1,1,1,1);
     inst->texture = 0;

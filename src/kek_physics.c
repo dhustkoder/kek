@@ -6,8 +6,10 @@ typedef struct collision {
     int entity_b;
 } Collision;
 
-static Collision *stack_head = NULL;
-static size_t stack_count = 0; 
+static Collision *brodstack_head = NULL;
+static size_t broadstack_count = 0; 
+static Collision *narrowstack_head = NULL;
+static size_t narrowstack_count = 0; 
 
 static void physics_query_cb(int entity_a, void *ctx);
 static bool circle_circle(int entity_a, int entity_b);
@@ -25,8 +27,8 @@ void simulate_physics(int sceneid)
 
     Entity *entity = scene->entities;
 
-    stack_head = NULL;
-    stack_count = 0;
+    brodstack_head = NULL;
+    broadstack_count = 0;
 
     while(entity)
     {
@@ -35,6 +37,10 @@ void simulate_physics(int sceneid)
         Vec3 velocity = get_entity_velocity(entityid);
         Vec3 size = get_entity_size(entityid);
 
+        Vec3 last_position = position;
+        Vec3 last_velocity = velocity;
+
+        entity_position(entityid, add_vec3(position, velocity));
         Vec2 p0;
         Vec2 p1;
         p0.x = position.x - size.x * 0.5f;
@@ -43,18 +49,17 @@ void simulate_physics(int sceneid)
         p1.y = position.y + size.y * 0.5f;
 
         query_entity(p0, p1, physics_query_cb, &entityid);
-        entity_position(entityid, add_vec3(position, velocity));
         
         entity = entity->scene_next_entity;
     }
 
-    qsort(stack_head, stack_count, sizeof(Collision), collision_sort);
+    qsort(brodstack_head, broadstack_count, sizeof(Collision), collision_sort);
 
     // narrow phase  
     Collision *last = NULL;
-    for(size_t i = 0; i < stack_count; ++i)
+    for(size_t i = 0; i < broadstack_count; ++i)
     {
-        Collision *c = &stack_head[i];
+        Collision *c = &brodstack_head[i];
 
         bool collision = false;
 
@@ -78,22 +83,50 @@ void simulate_physics(int sceneid)
 
         if(collision)
         {
+            Collision *narrow_collision  = memstack_push(sizeof(Collision));
+            if(!narrowstack_head)
+                narrowstack_head = narrow_collision;
+
+            *narrow_collision = *c;
+            ++narrowstack_count;
+
             if(ca->collision_fn)
                 ca->collision_fn(c->entity_a, c->entity_b, ca->ctx);
 
             if(cb->collision_fn)
                 cb->collision_fn(c->entity_b, c->entity_a, cb->ctx);
+            
+            Vec3 posa = get_entity_position(c->entity_a);
+            Vec3 posb = get_entity_position(c->entity_b);
+            Vec3 vela = get_entity_velocity(c->entity_a);
+            Vec3 velb = get_entity_velocity(c->entity_b);
+
+            if(ca->dynamic)
+            {
+                entity_position(c->entity_a, sub_vec3(posa, vela));
+                entity_velocity(c->entity_a, zero_vec3());
+            }
+            if(cb->dynamic)
+            {
+                entity_position(c->entity_b, sub_vec3(posb, velb));
+                entity_velocity(c->entity_b, zero_vec3());
+            }
+
         }
 
         last = c;
     }
 
 
-    if(stack_head)
+    if(brodstack_head)
     {
-        memstack_pop(stack_head);
-        stack_head = NULL;
-        stack_count = 0;
+        memstack_pop(narrowstack_head);
+        narrowstack_head = NULL;
+        narrowstack_count = 0;
+
+        memstack_pop(brodstack_head);
+        brodstack_head = NULL;
+        broadstack_count = 0;
     }
 
 }
@@ -118,10 +151,10 @@ static void physics_query_cb(int entity_a, void *ctx)
     Collision *c = memstack_push(sizeof(Collision));
     c->entity_a = KEK_MAX(entity_a, entity_b);
     c->entity_b = KEK_MIN(entity_a, entity_b);
-    ++stack_count;
+    ++broadstack_count;
 
-    if(!stack_head)
-        stack_head = c;
+    if(!brodstack_head)
+        brodstack_head = c;
 
 }
 
