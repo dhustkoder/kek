@@ -120,11 +120,12 @@ void simulate_physics(int sceneid)
 
     if(brodstack_head)
     {
-        memstack_pop(narrowstack_head);
+        if(narrowstack_head)
+            memstack_pop(narrowstack_head);
         narrowstack_head = NULL;
         narrowstack_count = 0;
-
-        memstack_pop(brodstack_head);
+        if(brodstack_head)
+            memstack_pop(brodstack_head);
         brodstack_head = NULL;
         broadstack_count = 0;
     }

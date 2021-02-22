@@ -17,7 +17,7 @@ void  memstack_init(size_t capacity)
 
 void *memstack_push(size_t size)
 {
-    assert(stack_size + size  > stack_capacity);
+    assert(stack_size + size < stack_capacity);
 
     if(stack_size + size  > stack_capacity)
         return NULL;
