@@ -10,6 +10,7 @@ static Collision *brodstack_head = NULL;
 static size_t broadstack_count = 0; 
 static Collision *narrowstack_head = NULL;
 static size_t narrowstack_count = 0; 
+static Vec3 gravity_force;
 
 static void physics_query_cb(int entity_a, void *ctx);
 static bool circle_circle(int entity_a, int entity_b);
@@ -19,10 +20,15 @@ static int collision_sort(const void *a, const void *b);
 
 void init_physics(void)
 {
+   gravity_force = zero_vec3(); 
 }
+void gravity(Vec3 force)
+{
+    gravity_force = force;
+}
+
 void simulate_physics(int sceneid)
 {
-
     Scene *scene = get_scene(sceneid);
 
     Entity *entity = scene->entities;
@@ -36,11 +42,15 @@ void simulate_physics(int sceneid)
         Vec3 position = get_entity_position(entityid);
         Vec3 velocity = get_entity_velocity(entityid);
         Vec3 size = get_entity_size(entityid);
+        float gravity_scale = get_entity_gravity_scale(entityid);
 
         Vec3 last_position = position;
         Vec3 last_velocity = velocity;
+        velocity = add_vec3(velocity, mul_vec3_f(gravity_force, gravity_scale));
 
         entity_position(entityid, add_vec3(position, velocity));
+        entity_velocity(entityid, velocity);
+
         Vec2 p0;
         Vec2 p1;
         p0.x = position.x - size.x * 0.5f;

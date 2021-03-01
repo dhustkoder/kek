@@ -248,10 +248,20 @@ int             get_entity_texture(int entityid);
 void            entity_texture(int entityid, int texture);
 int             get_entity_animation(int entityid);
 void            entity_animation(int entityid, int animationid);
+
 Vec3            get_entity_rotation(int entityid);
 void            entity_rotation(int entityid, Vec3 rotation);
 float           get_entity_rotation_z(int entityid);
 void            entity_rotation_z(int entityid, float rotation);
+
+void            entity_gravity_scale(int entityid, float scale);
+float           get_entity_gravity_scale(int entityid);
+
+Vec3            get_entity_texture_rotation(int entityid);
+void            entity_texture_rotation(int entityid, Vec3 rotation);
+float           get_entity_texture_rotation_z(int entityid);
+void            entity_texture_rotation_z(int entityid, float rotation);
+
 void            reset_entity_animation(int entityid);
 void            set_entity_animation_speed(int entityid, float speed);
 AnimationFrame *get_entity_animation_frame(int entityid);
@@ -262,8 +272,9 @@ void            entity_collider_mask(int entityid, uint32_t mask);
 //**********************************************************
 // KEK PHYSICS 
 //**********************************************************
-void               init_physics(void);
-void               simulate_physics(int scene);
+void init_physics(void);
+void simulate_physics(int scene);
+void gravity(Vec3 gravity);
 
 //**********************************************************
 // KEK KEY 

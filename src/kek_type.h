@@ -478,9 +478,11 @@ typedef struct entity {
     uint32_t type;
     Vec3 position;
     Vec3 velocity;
+    float gravity_scale;
     Vec3 last_position;
     Vec3 last_velocity;
     Vec3 rotation;
+    Vec3 texture_rotation;
     Vec3 size;
     Vec4 colormask;
     Collider collider;

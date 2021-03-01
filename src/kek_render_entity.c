@@ -52,7 +52,8 @@ void draw_render_entities(Render *render, int camera, int *entities, size_t coun
             Vertex vertices[6];
             Vec3 size = mul_vec3_f(entity->size, 4.f);
 
-            fill_sprite(entity->position.xy, size.xy, entity->rotation, uv0, uv1, colormask, vertices);
+            Vec3 rot = add_vec3(entity->rotation, entity->texture_rotation);
+            fill_sprite(entity->position.xy, size.xy, rot, uv0, uv1, colormask, vertices);
             append_vertexbuffer(vb, (uint8_t *)vertices, sizeof(vertices));
 
             if(texture != draw_top->texture)

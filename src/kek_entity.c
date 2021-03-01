@@ -45,6 +45,8 @@ int create_entity(uint32_t type)
     inst->velocity = zero_vec3();
     inst->rotation = zero_vec3();
     inst->size     = vec3(128, 128, 128);
+    inst->texture_rotation = zero_vec3();
+    inst->gravity_scale = 1.0f;
 
     inst->collider.type = COLLIDER_NONE;
     inst->collider.mask = 0;
@@ -328,6 +330,12 @@ void entity_colormask(int entityid, Vec4 colormask)
     e->colormask = colormask;
 }
 
+void entity_texture(int entityid, int texture)
+{
+    Entity *e = get_entity(entityid);
+    e->texture = texture;
+}
+
 void entity_rotation(int entityid, Vec3 rotation)
 {
     Entity *e = get_entity(entityid);
@@ -340,16 +348,22 @@ Vec3 get_entity_rotation(int entityid)
 
     return e->rotation;
 }
-void entity_texture(int entityid, int texture)
-{
-    Entity *e = get_entity(entityid);
-    e->texture = texture;
-}
-
 void entity_rotation_z(int entityid, float rotation)
 {
     Entity *e = get_entity(entityid);
     e->rotation.z = rotation;
+}
+
+void entity_gravity_scale(int entityid, float scale)
+{
+    Entity *e = get_entity(entityid);
+    e->gravity_scale = scale;
+}
+
+float get_entity_gravity_scale(int entityid)
+{
+    Entity *e = get_entity(entityid);
+    return e->gravity_scale;
 }
 
 float get_entity_rotation_z(int entityid)
@@ -357,6 +371,31 @@ float get_entity_rotation_z(int entityid)
     Entity *e = get_entity(entityid);
 
     return e->rotation.z;
+}
+
+void entity_texture_rotation(int entityid, Vec3 rotation)
+{
+    Entity *e = get_entity(entityid);
+    e->texture_rotation = rotation;
+}
+
+Vec3 get_entity_texture_rotation(int entityid)
+{
+    Entity *e = get_entity(entityid);
+
+    return e->texture_rotation;
+}
+void entity_texture_rotation_z(int entityid, float rotation)
+{
+    Entity *e = get_entity(entityid);
+    e->texture_rotation.z = rotation;
+}
+
+float get_entity_texture_rotation_z(int entityid)
+{
+    Entity *e = get_entity(entityid);
+
+    return e->texture_rotation.z;
 }
 
 void reset_entity_animation(int entityid)
