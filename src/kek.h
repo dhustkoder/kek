@@ -217,7 +217,6 @@ void    update_scene(int sceneid);
 void    draw_scene(int sceneid);
 void    add_scene_entity(int sceneid, int entityid);
 void    garbage_collect_scene(int sceneid);
-void    query_scene_entities(int sceneid, Vec2 pos, Vec2 size, SceneQueryEntityFn fn, void *ctx);
 
 //**********************************************************
 // KEK ENTITY
@@ -236,8 +235,8 @@ void           *get_entity_user_data(int entityid);
 void            update_entity(int entityid);
 int             get_entity_type(int entityid);
 void            entity_type(int entityid, int type);
-Vec3            get_entity_size(int entityid);
-void            entity_size(int entityid, Vec3 size);
+Vec3            get_entity_scale(int entityid);
+void            entity_scale(int entityid, Vec3 scale);
 Vec3            get_entity_position(int entityid);
 void            entity_position(int entityid, Vec3 position);
 Vec3            get_entity_velocity(int entityid);

@@ -51,6 +51,8 @@ void add_animation_frame_clip(int animationid, int textureid, int x, int y, int 
     y = texture->height - y - clip_height;
     
     frame.texture = textureid;
+    frame.pixel_width = clip_width;
+    frame.pixel_height = clip_height;
     frame.uv0.x = (float)x/(float)texture->width;
     frame.uv0.y = (float)y/(float)texture->height;
     frame.uv1.x = (float)(x + clip_width)/(float)texture->width;

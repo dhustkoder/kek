@@ -400,6 +400,8 @@ typedef struct material {
 
 typedef struct animation_frame {
     int texture;
+    int pixel_width;
+    int pixel_height;
     Vec2 uv0;
     Vec2 uv1;
     float duration; // in seconds
@@ -483,7 +485,7 @@ typedef struct entity {
     Vec3 last_velocity;
     Vec3 rotation;
     Vec3 texture_rotation;
-    Vec3 size;
+    Vec3 scale;
     Vec4 colormask;
     Collider collider;
 

@@ -44,7 +44,7 @@ int create_entity(uint32_t type)
     inst->scene_next_entity = NULL;
     inst->velocity = zero_vec3();
     inst->rotation = zero_vec3();
-    inst->size     = vec3(128, 128, 128);
+    inst->scale = vec3(1,1,1);
     inst->texture_rotation = zero_vec3();
     inst->gravity_scale = 1.0f;
 
@@ -255,17 +255,17 @@ void entity_type(int entityid, int type)
     e->type = type;
 }
 
-Vec3 get_entity_size(int entityid)
+Vec3 get_entity_scale(int entityid)
 {
     Entity *e = get_entity(entityid);
 
-    return e->size;
+    return e->scale;
 }
 
-void entity_size(int entityid, Vec3 size)
+void entity_scale(int entityid, Vec3 scale)
 {
     Entity *e = get_entity(entityid);
-    e->size = size;
+    e->scale = scale;
 }
 
 Collider *get_entity_collider(int entityid)

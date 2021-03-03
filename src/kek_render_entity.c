@@ -38,6 +38,7 @@ void draw_render_entities(Render *render, int camera, int *entities, size_t coun
         Vec2 uv1 = {1.0f, 1.0f};
         Vec4 colormask = entity->colormask;
         int texture = entity->texture;
+        Vec3 size = entity->scale; 
 
         if(frame)
         {
@@ -45,12 +46,14 @@ void draw_render_entities(Render *render, int camera, int *entities, size_t coun
             uv1 = frame->uv1;
             
             texture = frame->texture;
+            size.x *= frame->pixel_width;
+            size.y *= frame->pixel_height;
         }
 
+        Vec3 p = entity->position;
         if(frame || entity->texture >= 0)
         {
             Vertex vertices[6];
-            Vec3 size = mul_vec3_f(entity->size, 4.f);
 
             Vec3 rot = add_vec3(entity->rotation, entity->texture_rotation);
             fill_sprite(entity->position.xy, size.xy, rot, uv0, uv1, colormask, vertices);
@@ -120,8 +123,9 @@ void draw_render_entity_boxes(Render *render, int camera, int *entities, size_t 
         Vec4 colormask = vec4(1,1,1,0.5);//entity->colormask;
         int texture = entity->texture;
 
+#warning this function is broken
         Vertex vertices[12];
-        Vec3 size = entity->size;
+        Vec3 size = entity->scale;
 
         fill_sprite_box(entity->position.xy, size.xy, entity->rotation, uv0, uv1, colormask, vertices);
         append_vertexbuffer(vb, (uint8_t *)vertices, sizeof(vertices));

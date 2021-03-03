@@ -172,20 +172,6 @@ void draw_scene(int sceneid)
     memstack_pop(sortlist);
 }
 
-void query_scene_entities_aabb(int sceneid, Vec2 pos, Vec2 size, SceneQueryEntityFn fn, void *ctx)
-{
-    Scene *scene = get_scene(sceneid);
-    Entity *entity = scene->entities;
-
-    while(entity)
-    {
-        if(aabb(pos, size, entity->position.xy, entity->size.xy))
-            fn(entity->id, ctx);
-
-        entity = entity->scene_next_entity;
-    }
-}
-
 static int sortlist_sort(const void *a, const void *b)
 {
     uint32_t akey = get_entity_render_key(*(int *)a);

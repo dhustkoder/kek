@@ -41,7 +41,6 @@ void simulate_physics(int sceneid)
         int entityid = entity->id;
         Vec3 position = get_entity_position(entityid);
         Vec3 velocity = get_entity_velocity(entityid);
-        Vec3 size = get_entity_size(entityid);
         float gravity_scale = get_entity_gravity_scale(entityid);
 
         Vec3 last_position = position;
@@ -51,14 +50,30 @@ void simulate_physics(int sceneid)
         entity_position(entityid, add_vec3(position, velocity));
         entity_velocity(entityid, velocity);
 
+        Collider *c = get_entity_collider(entityid);
         Vec2 p0;
         Vec2 p1;
-        p0.x = position.x - size.x * 0.5f;
-        p0.y = position.y - size.y * 0.5f;
-        p1.x = position.x + size.x * 0.5f;
-        p1.y = position.y + size.y * 0.5f;
 
-        query_entity(p0, p1, physics_query_cb, &entityid);
+        switch(c->type)
+        {
+            case COLLIDER_CIRCLE:
+                p0.x = position.x - c->radius * 0.5f;
+                p0.y = position.y - c->radius * 0.5f;
+                p1.x = position.x + c->radius * 0.5f;
+                p1.y = position.y + c->radius * 0.5f;
+                query_entity(p0, p1, physics_query_cb, &entityid);
+                break;
+
+            case COLLIDER_RECT:
+                p0.x = position.x - c->rect.x * 0.5f;
+                p0.y = position.y - c->rect.y * 0.5f;
+                p1.x = position.x + c->rect.x * 0.5f;
+                p1.y = position.y + c->rect.y * 0.5f;
+                query_entity(p0, p1, physics_query_cb, &entityid);
+                break;
+           default:
+                break;
+        }
         
         entity = entity->scene_next_entity;
     }
@@ -233,12 +248,15 @@ static bool circle_circle(int entity_a, int entity_b)
 
 static bool rect_rect(int entity_a, int entity_b)
 {
+    Collider *ca = get_entity_collider(entity_a);
+    Collider *cb = get_entity_collider(entity_b);
+
     Vec3 p0 = get_entity_position(entity_a);
     Vec3 p1 = get_entity_position(entity_b);
-    Vec3 s0 = get_entity_size(entity_a);
-    Vec3 s1 = get_entity_size(entity_b);
+    Vec2 s0 = ca->rect;
+    Vec2 s1 = ca->rect;
 
-   return aabb(p0.xy, s0.xy, p1.xy, s1.xy);
+   return aabb(p0.xy, s0, p1.xy, s1);
 }
 
 static int collision_sort(const void *a, const void *b)
