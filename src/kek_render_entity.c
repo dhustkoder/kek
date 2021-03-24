@@ -32,14 +32,50 @@ void draw_render_entities(Render *render, int camera, int *entities, size_t coun
     {
         int entityid = entities[i];
 
-        AnimationFrame *frame = get_entity_animation_frame(entityid);
         Entity *entity = get_entity(entityid);
+        AnimationFrame *frame = get_entity_animation_frame(entityid);
         Vec2 uv0 = {0.0f, 0.0f};
         Vec2 uv1 = {1.0f, 1.0f};
         Vec4 colormask = entity->colormask;
         int texture = entity->texture;
         Vec3 size = entity->scale; 
+        Tilemap *tilemap = entity->tilemap;
 
+#error: NO DON NO!
+        WHY THE HELL IS A TILEMAP PART OF AN ENTITY!?!?
+            IT SHOULD NOT BE!!!!! IT IS ITS OWN SYSTEM
+            WE NEED RENDER QUEUES
+        if(tilemap)
+        {
+            // do a for loop on the entire thing and cull the cells from the tilemap
+            Vec3 campos = get_camera_position(camera);
+
+            unsigned int window_width = 0;
+            unsigned int window_height = 0;
+
+            get_window_size(&window_width, &window_height);
+
+            int x0 = campos.x - window_width * 0.5f;
+            int x1 = campos.x + window_width * 0.5f;
+            int y0 = campos.y - window_height * 0.5f;
+            int y1 = campos.y + window_height * 0.5f;
+            x0 = KEK_MAX(x0, 0);
+            y0 = KEK_MAX(y0, 0);
+            x1 = KEK_MIN(x1, tilemap->num_cells_x - 1);
+            y1 = KEK_MIN(y1, tilemap->num_cells_y - 1);
+
+           //todo: account for zoom 
+           for(int y = y0; y <= y1; ++y)
+           {
+               for(int x = x0; x <= x1; ++x)
+               {
+                   // do a vertex buffer append here
+                   // the issue here is that the entities are pre-sorted, this will not work
+#error
+               }
+           }
+            
+        }
         if(frame)
         {
             uv0 = frame->uv0;

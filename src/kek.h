@@ -174,6 +174,7 @@ void submit_event(int id, void *data);
 // KEK RENDER
 //**********************************************************
 void    init_render(size_t capacity);
+Render *create_tilemap_render(void);
 Render *create_entity_render(void);
 Render *create_entity_box_render(void);
 Render *create_circle_render(void);
@@ -267,6 +268,16 @@ AnimationFrame *get_entity_animation_frame(int entityid);
 void            query_entity(Vec2 p0, Vec2 p1, EntityQueryFn fn, void *ctx);
 void            entity_circle_collider(int entityid, float radius);
 void            entity_collider_mask(int entityid, uint32_t mask);
+
+//**********************************************************
+// KEK TILEMAP
+//**********************************************************
+void     init_tilemap(size_t capacity);
+int      create_tilemap(int num_cells_x, int num_cells_y, Vec2 cell_size);
+void     destroy_tilemap(int tilemap);
+int      add_tilemap_spritesheet(int tilemap, int texture);
+void     bind_tilemap_index(int id, int index, int spritesheet, Vec2 uv0, Vec2 uv1);
+void     tilemap_cell_index(int tilemap, int cellx, int celly, int spritesheet, int index);
 
 //**********************************************************
 // KEK PHYSICS 

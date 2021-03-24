@@ -398,6 +398,30 @@ typedef struct material {
 } Material;
 #endif
 
+typedef struct tilemap_index
+{
+    int spritesheet;
+    Vec2 uv0;
+    Vec2 uv1;
+} TilemapSpritesheetClip;
+
+#define TILEMAP_SPRITESHEET_CAPACITY 8
+#define TILEMAP_INDEX_CAPACITY 1024
+typedef struct tilemap {
+    int id;
+    int textures[TILEMAP_SPRITESHEET_CAPACITY];
+    size_t texture_count;
+
+    TilemapSpritesheetClip indexmap[TILEMAP_INDEX_CAPACITY];
+
+    int *map;
+    int num_cells_x;
+    int num_cells_y;
+    Vec2 cell_size;
+    int cell_pixel_width;
+    int cell_pixel_height;
+} Tilemap;
+
 typedef struct animation_frame {
     int texture;
     int pixel_width;

@@ -63,6 +63,8 @@ int create_entity(uint32_t type)
     inst->animation_frame_time = 0.0f;
     inst->snode.data = inst;
 
+    inst->tilemap = NULL;
+
     inst->position = zero_vec3();
 
     int x = WORLD_TO_SPATIAL_CELL((int)inst->position.x);
