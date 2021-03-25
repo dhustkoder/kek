@@ -14,12 +14,13 @@ int create_tilemap(int num_cells_x, int num_cells_y, Vec2 cell_size)
     int cellcount = num_cells_x * num_cells_y;
 
     Tilemap *inst = mempool_take(&pool);
-    inst->id = mempool_get_slot(&pool, inst);
-    inst->num_cells_x = num_cells_x;
-    inst->num_cells_y = num_cells_y;
-    inst->map = calloc(cellcount, sizeof(int));
+
+    inst->id            = mempool_get_slot(&pool, inst);
+    inst->num_cells_x   = num_cells_x;
+    inst->num_cells_y   = num_cells_y;
+    inst->map           = calloc(cellcount, sizeof(int));
     inst->texture_count = 0;
-    inst->cell_size = cell_size;
+    inst->cell_size     = cell_size;
 
     for(size_t i = 0; i < TILEMAP_INDEX_CAPACITY; ++i)
     {

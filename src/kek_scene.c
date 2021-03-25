@@ -22,10 +22,12 @@ int create_scene(void)
      scene->entities = NULL;
      scene->entity_count = 0;
      scene->render_entity = create_entity_render();
+#if 0
      scene->render_spatialmap = create_entity_box_render();
      scene->render_entity_box = create_entity_box_render();
      scene->render_rect = create_rect_render();
      scene->render_circle = create_circle_render();
+#endif
     
      if(default_camera == -1)
         default_camera = create_camera();
@@ -44,7 +46,7 @@ void destroy_scene(int sceneid)
 {
     Scene *scene = get_scene(sceneid);
     destroy_render(scene->render_entity);
-    destroy_render(scene->render_entity_box);
+    //destroy_render(scene->render_entity_box);
 
     if(sceneid == active_scene)
         active_scene = -1;
@@ -142,8 +144,31 @@ void draw_scene(int sceneid)
 
     get_window_size(&window_width, &window_height);
 
+    // Submit all culled entities to the render queue
     entity = scene->entities;
 
+    while(entity)
+    {
+        draw_submit_entity(scene->render_entity, entity->id, scene->camera);
+
+        entity = entity->scene_next_entity;
+    }
+    draw();
+
+#if 0
+    // Submit all tilemaps to the render queue
+    Tilemap *tilemap = scene->tilemaps;
+    while(tilemap)
+    {
+        draw_submit_tilemap(scene->render_tilemap, tilemap->id, camera);
+
+        tilemap = tilemap->scene_next_tilemap;
+    }
+#endif
+    
+
+    //todo: ehw my, we are not doing scene culling here
+#if 0
     size_t listcount = scene->entity_count;
     int *sortlist = memstack_push(listcount * sizeof(int));
     entity = scene->entities;
@@ -170,6 +195,7 @@ void draw_scene(int sceneid)
     }
     
     memstack_pop(sortlist);
+#endif
 }
 
 static int sortlist_sort(const void *a, const void *b)

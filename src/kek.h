@@ -174,20 +174,37 @@ void submit_event(int id, void *data);
 // KEK RENDER
 //**********************************************************
 void    init_render(size_t capacity);
+int     create_render(void);
+void    destroy_render(int id);
+int     get_render_shader(int id);
+Render *get_render(int id);
+
+int    create_entity_render(void);
+#if 0
 Render *create_tilemap_render(void);
-Render *create_entity_render(void);
 Render *create_entity_box_render(void);
 Render *create_circle_render(void);
 Render *create_rect_render(void);
-void    destroy_render(Render *render);
+#endif
+void    destroy_render(int id);
+// this should be private
+void    init_draw(void);
+void    draw_submit_entity(int render, int entity, int camera);
+void    draw_submit_tilemap(int render, int tilemap, int camera);
+void    draw(void);
+
+
+#if 0 // legacy
 void    draw_render_lines_default(Render *render, int camera, Vec3 *points, size_t count, void *ctx);
 void    draw_render_entities(Render *render, int camera, int *entities, size_t count, void *ctx);
 void    draw_render_entity_boxes(Render *render, int camera, int *entities, size_t count, void *ctx);
 void    draw_render_collision_boxes(Render *render, int camera, int *entities, size_t count, void *ctx);
 void    draw_render_collision_circles(Render *render, int camera, int *entities, size_t count, void *ctx);
 void    draw_render_spatialmap(Render *render, int camera, int *entities, size_t count);
+void    draw_submit_sprite(int layer, Render *render, int camera, Vec3 pos, Vec3 scale, Vec3 rotation, int texture, Vec2 uv0, Vec2 uv1);
+#endif
 //
-//**********************************************************
+
 // KEK CAMERA 
 //**********************************************************
 void    init_camera(size_t capacity);
@@ -274,10 +291,10 @@ void            entity_collider_mask(int entityid, uint32_t mask);
 //**********************************************************
 void     init_tilemap(size_t capacity);
 int      create_tilemap(int num_cells_x, int num_cells_y, Vec2 cell_size);
-void     destroy_tilemap(int tilemap);
-int      add_tilemap_spritesheet(int tilemap, int texture);
+void     destroy_tilemap(int id);
+int      add_tilemap_spritesheet(int id, int texture);
 void     bind_tilemap_index(int id, int index, int spritesheet, Vec2 uv0, Vec2 uv1);
-void     tilemap_cell_index(int tilemap, int cellx, int celly, int spritesheet, int index);
+void     tilemap_cell_index(int id, int cellx, int celly, int spritesheet, int index);
 
 //**********************************************************
 // KEK PHYSICS 

@@ -116,7 +116,7 @@ typedef enum keyboard_key {
     KEK_KBD_KEY_LEFT            = 263,
     KEK_KBD_KEY_DOWN            = 264,
     KEK_KBD_KEY_UP              = 265,
-    KEK_KBD_KEY_PAGE_UP         = 266,
+    KidEK_KBD_KEY_PAGE_UP         = 266,
     KEK_KBD_KEY_PAGE_DOWN       = 267,
     KEK_KBD_KEY_HOME            = 268,
     KEK_KBD_KEY_END             = 269,
@@ -450,6 +450,7 @@ typedef struct vertexbuffer {
 
 
 typedef struct render {
+    int id;
     int shader;
     int vb; // vertex buffer
     void *ctx;
@@ -526,11 +527,13 @@ typedef struct entity {
 typedef struct scene {
     int id;
     Entity *entities;
-    Render *render_entity;
+    int render_entity;
+#if 0
     Render *render_entity_box;
     Render *render_rect;
     Render *render_circle;
     Render *render_spatialmap;
+#endif
     int camera;
     size_t entity_count;
 } Scene;

@@ -12,17 +12,19 @@ void init_render(size_t capacity)
     mempool_alloc(&pool, capacity, sizeof(Render));
 }
 
-Render *create_entity_render(void)
+int create_entity_render(void)
 {
-     Render *render = mempool_take(&pool);
+     Render *inst = mempool_take(&pool);
 
-     render->ctx = NULL;
+     inst->id = mempool_get_slot(&pool, inst);
 
-     render->vb = create_vertexbuffer(KEK_VERTEX_BUFFER_CAPACITY);
+     inst->ctx = NULL;
+
+     inst->vb = create_vertexbuffer(KEK_VERTEX_BUFFER_CAPACITY);
     
     size_t attribs[] = {3,3,2,4};
 
-    vertexbuffer_attribs(render->vb, attribs, 4); 
+    vertexbuffer_attribs(inst->vb, attribs, 4); 
 
     // use a default shader
     // todo: clean this up and create afunction
@@ -31,9 +33,9 @@ Render *create_entity_render(void)
         shader = create_shader();
         load_shader_files(shader, "res/shader/default.vs", "res/shader/default.fs");
     }
-    render->shader = shader;
+    inst->shader = shader;
 
-    return render;
+    return inst->id;
 }
 
 Render *create_entity_box_render(void)
@@ -109,10 +111,14 @@ Render *create_circle_render(void)
     return render;
 }
 
-
-
-void destroy_render(Render *render)
+Render *get_render(int id)
 {
+    return mempool_get_addr(&pool, id);
+}
+
+void destroy_render(int id)
+{
+    Render *render = mempool_get_addr(&pool, id);
     mempool_release(&pool, render);
 }
 

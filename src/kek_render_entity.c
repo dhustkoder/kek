@@ -1,5 +1,5 @@
 #include "kek.h"
-
+#if 0
 typedef struct draw {
     GLuint texture;
     size_t offset;
@@ -71,7 +71,6 @@ void draw_render_entities(Render *render, int camera, int *entities, size_t coun
                {
                    // do a vertex buffer append here
                    // the issue here is that the entities are pre-sorted, this will not work
-#error
                }
            }
             
@@ -409,3 +408,4 @@ static void fill_circle(Vec2 position, float radius, Vec4 colormask, CircleVerte
 
     memcpy(out, vertices, sizeof(vertices));
 }
+#endif

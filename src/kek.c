@@ -90,6 +90,7 @@ static int init_kek(int argc, char **argv)
         get_configi(KEK_CFG_MEM_ENTITY_USER_DATA_SIZE));
 
     init_random();
+    init_draw();
 
     return kek_user_enter(argc, argv);
 }
