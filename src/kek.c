@@ -89,6 +89,9 @@ static int init_kek(int argc, char **argv)
         get_configi(KEK_CFG_MEM_ENTITY_TYPE_CAPACITY),
         get_configi(KEK_CFG_MEM_ENTITY_USER_DATA_SIZE));
 
+    init_tilemap(
+        get_configi(KEK_CFG_MEM_TILEMAP_CAPACITY));
+
     init_random();
     init_draw();
 

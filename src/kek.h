@@ -214,6 +214,7 @@ void    destroy_camera(int cameraid);
 void    get_camera_ortho_mvp(int cameraid, Mat4 *mvp);
 Vec2    get_camera_mouse_position(int cameraid);
 Vec3    get_camera_position(int cameraid);
+float   get_camera_zoom(int cameraid);
 void    update_camera(int cameraid);
 void    camera_offset(int cameraid, Vec3 offset);
 void    camera_ortho_zoom(int cameraid, float zoom);
@@ -234,6 +235,7 @@ int     get_active_scene(void);
 void    update_scene(int sceneid);
 void    draw_scene(int sceneid);
 void    add_scene_entity(int sceneid, int entityid);
+void    add_scene_tilemap(int sceneid, int tilemap);
 void    garbage_collect_scene(int sceneid);
 
 //**********************************************************
@@ -292,8 +294,10 @@ void            entity_collider_mask(int entityid, uint32_t mask);
 void     init_tilemap(size_t capacity);
 int      create_tilemap(int num_cells_x, int num_cells_y, Vec2 cell_size);
 void     destroy_tilemap(int id);
+Tilemap *get_tilemap(int id);
+TilemapSpritesheetClip get_tilemap_cell_clip(int id, int cellx, int celly);
 int      add_tilemap_spritesheet(int id, int texture);
-void     bind_tilemap_index(int id, int index, int spritesheet, Vec2 uv0, Vec2 uv1);
+void     bind_tilemap_index(int id, int index, int spritesheet, int x, int y, int clip_width, int clip_height);
 void     tilemap_cell_index(int id, int cellx, int celly, int spritesheet, int index);
 
 //**********************************************************

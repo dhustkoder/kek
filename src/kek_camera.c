@@ -69,6 +69,12 @@ Vec3 get_camera_position(int cameraid)
     return camera->position;
 }
 
+float get_camera_zoom(int cameraid)
+{
+    Camera *camera = get_camera(cameraid);
+    return camera->zoom;
+}
+
 void get_camera_ortho_mvp(int cameraid, Mat4 *mvp)
 {
     Camera *camera = get_camera(cameraid);

@@ -192,6 +192,7 @@ typedef enum config_type {
     KEK_CFG_MEM_ENTITY_CAPACITY,
     KEK_CFG_MEM_ENTITY_USER_DATA_SIZE,
     KEK_CFG_MEM_ENTITY_TYPE_CAPACITY,
+    KEK_CFG_MEM_TILEMAP_CAPACITY,
     KEK_CFG_MEM_SPATIAL_MAP_CAPACITY,
     KEK_CFG_MEM_KEY_BIND_ALIAS_CAPACITY,
     KEK_CFG_SOUND_SOURCE_CAPACITY,
@@ -418,8 +419,7 @@ typedef struct tilemap {
     int num_cells_x;
     int num_cells_y;
     Vec2 cell_size;
-    int cell_pixel_width;
-    int cell_pixel_height;
+    struct tilemap *scene_next_tilemap;
 } Tilemap;
 
 typedef struct animation_frame {
@@ -527,7 +527,9 @@ typedef struct entity {
 typedef struct scene {
     int id;
     Entity *entities;
+    Tilemap *tilemaps;
     int render_entity;
+    int render_tilemap;
 #if 0
     Render *render_entity_box;
     Render *render_rect;
@@ -536,6 +538,7 @@ typedef struct scene {
 #endif
     int camera;
     size_t entity_count;
+    size_t tilemap_count;
 } Scene;
 
 typedef struct physics_body {

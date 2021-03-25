@@ -21,13 +21,16 @@ int create_tilemap(int num_cells_x, int num_cells_y, Vec2 cell_size)
     inst->map           = calloc(cellcount, sizeof(int));
     inst->texture_count = 0;
     inst->cell_size     = cell_size;
+    inst->scene_next_tilemap = NULL;
 
     for(size_t i = 0; i < TILEMAP_INDEX_CAPACITY; ++i)
     {
         inst->indexmap[i].spritesheet = 0;
         inst->indexmap[i].uv0 = vec2(0,0);
-        inst->indexmap[i].uv1 = vec2(0,0);
+        inst->indexmap[i].uv1 = vec2(1,0);
     }
+
+    return inst->id;
 }
 
 void destroy_tilemap(int id)
@@ -39,27 +42,53 @@ void destroy_tilemap(int id)
     mempool_release(&pool, tilemap);
 }
 
+TilemapSpritesheetClip get_tilemap_cell_clip(int id, int cellx, int celly)
+{
+    assert(cellx >= 0);
+    assert(celly >= 0);
+    assert(cellx < tilemap->num_cells_x);
+    assert(celly < tilemap->num_cells_y);
+
+    Tilemap *tilemap = mempool_get_addr(&pool, id);
+
+    int offset = celly * tilemap->num_cells_x + cellx;
+
+    int index = tilemap->map[offset];
+
+    return tilemap->indexmap[index];
+}
+
 int add_tilemap_spritesheet(int id, int texture)
 {
     Tilemap *tilemap = mempool_get_addr(&pool, id);
 
-    int count = tilemap->texture_count;
-    assert(count < TILEMAP_SPRITESHEET_CAPACITY);
+    int index = tilemap->texture_count;
+    assert(index < TILEMAP_SPRITESHEET_CAPACITY);
     
-    tilemap->textures[count] = texture;
+    tilemap->textures[index] = texture;
 
-    ++count;
+    tilemap->texture_count++;
 
-    tilemap->texture_count = count;
+    return index;
 }
 
-void bind_tilemap_index(int id, int index, int spritesheet, Vec2 uv0, Vec2 uv1)
+void bind_tilemap_index(int id, int index, int spritesheet, int x, int y, int clip_width, int clip_height)
 {
     Tilemap *tilemap = mempool_get_addr(&pool, id);
+    Texture *texture = get_texture(spritesheet);
+
+    y = texture->height - y - clip_height;
 
     tilemap->indexmap[index].spritesheet = spritesheet;
-    tilemap->indexmap[index].uv0 = uv0;
-    tilemap->indexmap[index].uv1 = uv1;
+    tilemap->indexmap[index].uv0.x = (float)x/(float)texture->width;
+    tilemap->indexmap[index].uv0.y = (float)y/(float)texture->height;
+    tilemap->indexmap[index].uv1.x = (float)(x + clip_width)/(float)texture->width;
+    tilemap->indexmap[index].uv1.y = (float)(y + clip_height)/(float)texture->height;
+}
+
+Tilemap *get_tilemap(int id)
+{
+    return mempool_get_addr(&pool, id);
 }
 
 void tilemap_cell_index(int id, int cellx, int celly, int spritesheet, int index)

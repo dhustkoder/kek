@@ -29,7 +29,7 @@ typedef struct draw_element {
 #define DRAW_FLAG_TEXTURE_SWAP 0x02
 #define DRAW_FLAG_CAMERA_SWAP  0x04
 #define DRAW_FLAG_RENDER_END   0x08
-#define VB_QUEUE_CAPACITY 2048
+#define VB_QUEUE_CAPACITY 16384
 static VBElement vbqueue[VB_QUEUE_CAPACITY];
 static size_t vbqueue_count = 0;
 
@@ -143,7 +143,6 @@ void draw(void)
         
         if(element->flags & DRAW_FLAG_RENDER_BEGIN)
         {
-            printf("MAP!\n");
             map_vertexbuffer(render->vb);
             clear_vertexbuffer(render->vb);
         }
@@ -158,21 +157,6 @@ void draw(void)
                 element->uv1, 
                 element->colormask, 
                 vertices);
-        for(int i = 0; i < 6; ++i)
-            printf("filling vertices %d p:%f,%f,%f, n:%f,%f,%f uv:%f,%f c:%f,%f,%f,%f\n",
-                i,
-                vertices[i].position.x,
-                vertices[i].position.y,
-                vertices[i].position.z,
-                vertices[i].normal.x,
-                vertices[i].normal.y,
-                vertices[i].normal.x,
-                vertices[i].uv.x,
-                vertices[i].uv.y,
-                vertices[i].colormask.r,
-                vertices[i].colormask.g,
-                vertices[i].colormask.b,
-                vertices[i].colormask.a);
 
         append_vertexbuffer(
                 render->vb,
@@ -181,7 +165,6 @@ void draw(void)
 
         if(element->flags & DRAW_FLAG_RENDER_END)
         {
-            printf("unMAP!\n");
             unmap_vertexbuffer(render->vb);
         }
     }
@@ -206,12 +189,6 @@ void draw(void)
         int camera       = draw->camera;
         Mat4 mvp;
 
-        printf("Drawing vb:%d[%d,%d] shader:%d texture:%d camera:%d\n", 
-                vb, 
-                draw->offset, 
-                draw->count,
-                shaderid, textureid, camera);
-
         bind_vertexbuffer(vb);
         bind_shader(shaderid);
 
@@ -233,6 +210,77 @@ void draw(void)
 
     vbqueue_count = 0;
     drawqueue_count = 0;
+}
+
+void draw_submit_tilemap(int render, int tilemapid, int camera)
+{
+    Tilemap *tilemap = get_tilemap(tilemapid);
+    Vec3 campos = get_camera_position(camera);
+
+    float zoom = get_camera_zoom(camera);
+
+    unsigned int window_width = 0;
+    unsigned int window_height = 0;
+
+    get_window_size(&window_width, &window_height);
+
+    int x0 = campos.x - window_width * 0.5f;
+    int x1 = campos.x + window_width * 0.5f;
+    int y0 = campos.y - window_height * 0.5f;
+    int y1 = campos.y + window_height * 0.5f;
+    x0 /= tilemap->cell_size.x;
+    x1 /= tilemap->cell_size.x;
+    y0 /= tilemap->cell_size.y;
+    y1 /= tilemap->cell_size.y;
+    x0 /= zoom;
+    x1 /= zoom;
+    y0 /= zoom;
+    y1 /= zoom;
+
+    x0 = KEK_MAX(x0, 0);
+    y0 = KEK_MAX(y0, 0);
+    x1 = KEK_MIN(x1, tilemap->num_cells_x - 1);
+    y1 = KEK_MIN(y1, tilemap->num_cells_y - 1);
+
+    Vec3 size;
+    size.xy = tilemap->cell_size;
+    size.z = 0;
+
+    //todo: account for zoom 
+    for(int y = y0; y <= y1; ++y)
+    {
+        for(int x = x0; x <= x1; ++x)
+        {
+            VBElement element;
+            Vec3 position = vec3(x * size.x, y * size.y, 0);
+
+            TilemapSpritesheetClip clip;
+            clip = get_tilemap_cell_clip(tilemapid, x, y);
+
+            element.render = render;
+            element.uv0 = clip.uv0;
+            element.uv1 = clip.uv1;
+            element.texture = clip.spritesheet;
+            element.colormask = vec4(1,1,1,1);
+            element.size = size;
+            element.position = position;
+            element.rotation = vec3(0,0,0);
+            element.camera = camera;
+
+            assert((uint32_t)(element.render) < 0xFFFF);
+            assert((uint32_t)(element.texture) < 0xFFFF);
+
+            element.order = 0;
+            element.order |= (uint32_t)(element.render << 16);
+            element.order |= (uint32_t)(element.texture & 0xFFFF);
+
+            assert(vbqueue_count < VB_QUEUE_CAPACITY);
+
+            vbqueue[vbqueue_count] = element;
+
+            ++vbqueue_count;
+        }
+    }
 }
 
 void draw_submit_entity(int render, int entityid, int camera)

@@ -21,7 +21,10 @@ int create_scene(void)
      scene->id = mempool_get_slot(&pool, scene);
      scene->entities = NULL;
      scene->entity_count = 0;
+     scene->tilemaps = NULL;
+     scene->tilemap_count = 0;
      scene->render_entity = create_entity_render();
+     scene->render_tilemap = create_entity_render();
 #if 0
      scene->render_spatialmap = create_entity_box_render();
      scene->render_entity_box = create_entity_box_render();
@@ -86,6 +89,15 @@ void add_scene_entity(int sceneid, int entityid)
     scene->entity_count++;
 }
 
+void add_scene_tilemap(int sceneid, int tilemapid)
+{
+    Scene *scene = get_scene(sceneid);
+    Tilemap *tilemap = get_tilemap(tilemapid);
+    tilemap->scene_next_tilemap = scene->tilemaps;
+    scene->tilemaps = tilemap;
+    scene->tilemap_count++;
+}
+
 void update_scene(int sceneid)
 {
     Scene *scene = get_scene(sceneid);
@@ -113,6 +125,7 @@ void garbage_collect_scene(int sceneid)
     {
         Entity *next = entity->scene_next_entity;
 
+#warning MUST HANDLE TILEMAP DELETIONS HERE AS WELL
         if(entity->destroy)
         {
             assert(scene->entity_count > 0);
@@ -153,49 +166,16 @@ void draw_scene(int sceneid)
 
         entity = entity->scene_next_entity;
     }
-    draw();
 
-#if 0
     // Submit all tilemaps to the render queue
     Tilemap *tilemap = scene->tilemaps;
     while(tilemap)
     {
-        draw_submit_tilemap(scene->render_tilemap, tilemap->id, camera);
+        draw_submit_tilemap(scene->render_tilemap, tilemap->id, scene->camera);
 
         tilemap = tilemap->scene_next_tilemap;
     }
-#endif
-    
-
-    //todo: ehw my, we are not doing scene culling here
-#if 0
-    size_t listcount = scene->entity_count;
-    int *sortlist = memstack_push(listcount * sizeof(int));
-    entity = scene->entities;
-
-    for(int i = 0; i < listcount; ++i)
-    {
-        assert(entity);
-        sortlist[i] = entity->id;
-        entity = entity->scene_next_entity;
-    }
-
-    // this is my intreger and it is fine...gerrrreeehhh
-    qsort(sortlist, listcount, sizeof(int), sortlist_sort);
-
-    if(listcount > 0)
-    {
-        draw_render_entities(scene->render_entity, scene->camera, sortlist, listcount, NULL);
-#if 0
-        draw_render_entity_boxes(scene->render_entity_box, scene->camera, sortlist, listcount, NULL);
-        draw_render_collision_boxes(scene->render_rect, scene->camera, sortlist, listcount, NULL);
-        draw_render_collision_circles(scene->render_circle, scene->camera, sortlist, listcount, NULL);
-        draw_render_spatialmap(scene->render_spatialmap, scene->camera, sortlist, listcount);
-#endif
-    }
-    
-    memstack_pop(sortlist);
-#endif
+    draw();
 }
 
 static int sortlist_sort(const void *a, const void *b)
