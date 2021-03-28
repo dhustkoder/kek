@@ -42,6 +42,9 @@ void     log_line(const char *file, int line, const char *function, const char *
 #define logd(...) log_line(LOG_FILENAME, __LINE__, __FUNCTION__, "DEBUG", __VA_ARGS__)
 #define logw(...) log_line(LOG_FILENAME, __LINE__, __FUNCTION__, "WARN", __VA_ARGS__)
 #define loge(...) log_line(LOG_FILENAME, __LINE__, __FUNCTION__, "ERROR", __VA_ARGS__)
+#define logdvec2(PREFIX, VAL) log_line(LOG_FILENAME, __LINE__, __FUNCTION__, "DEBUG", #PREFIX "%f,%f", VAL .x, VAL .y)
+#define logdvec3(PREFIX, VAL) log_line(LOG_FILENAME, __LINE__, __FUNCTION__, "DEBUG", #PREFIX "%f,%f,%f", VAL .x, VAL .y, VAL .z)
+#define logdvec4(PREFIX, VAL) log_line(LOG_FILENAME, __LINE__, __FUNCTION__, "DEBUG", #PREFIX "%f,%f,%f,%f", VAL .x, VAL .y, VAL .z, VAL .w)
 
 //**********************************************************
 // KEK MEMORY 
@@ -107,7 +110,7 @@ void          init_vertexbuffer(size_t capacity);
 int           create_vertexbuffer(size_t capacity);
 VertexBuffer *get_vertexbuffer(int vid);
 void          destroy_vertexbuffer(int vbid);
-void          vertexbuffer_attribs(int vbid, size_t *attribs, size_t count);
+void          vertexbuffer_attribs(int vbid, const size_t *attribs, size_t count);
 size_t        get_vertexbuffer_capacity(int vbid);
 size_t        get_vertexbuffer_size(int vbid);
 void          clear_vertexbuffer(int vbid);
@@ -174,18 +177,17 @@ void submit_event(int id, void *data);
 // KEK RENDER
 //**********************************************************
 void    init_render(size_t capacity);
-int     create_render(void);
+int     create_render(int shader, const size_t *attrib_sizes, int attrib_count);
 void    destroy_render(int id);
 int     get_render_shader(int id);
+void    render_shader(int id, int shader);
 Render *get_render(int id);
 
 int    create_entity_render(void);
-#if 0
-Render *create_tilemap_render(void);
-Render *create_entity_box_render(void);
-Render *create_circle_render(void);
-Render *create_rect_render(void);
-#endif
+int create_tilemap_render(void);
+int create_entity_box_render(void);
+int create_circle_render(void);
+int create_rect_render(void);
 void    destroy_render(int id);
 // this should be private
 void    init_draw(void);
@@ -278,8 +280,12 @@ float           get_entity_gravity_scale(int entityid);
 
 Vec3            get_entity_texture_rotation(int entityid);
 void            entity_texture_rotation(int entityid, Vec3 rotation);
+
 float           get_entity_texture_rotation_z(int entityid);
 void            entity_texture_rotation_z(int entityid, float rotation);
+
+int             get_entity_render(int entityid);
+void            entity_render(int entityid, int render);
 
 void            reset_entity_animation(int entityid);
 void            set_entity_animation_speed(int entityid, float speed);
@@ -321,12 +327,16 @@ void     remove_tag(uint32_t tag);
 // KEK HID 
 //**********************************************************
 void init_hid(size_t alias_capacity);
+void update_hid(void);
 void bind_hid_alias_to_key(int alias, KeyboardKey key);
 void unbind_hid_key(KeyboardKey key);
 void unbind_hid_alias(int alias);
 bool is_hid_alias_pressed(int alias);
 bool is_hid_key_pressed(KeyboardKey key);
 bool is_mouse_button_pressed(MouseButton button);
+bool is_mouse_button_released(enum mouse_button button);
+bool is_mouse_button_pressed_frame(MouseButton button);
+bool is_mouse_button_released_frame(MouseButton button);
 Vec2 get_mouse_position(void);
 
 //**********************************************************

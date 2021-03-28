@@ -114,6 +114,7 @@ static int run_kek(void)
         poll_window();
 
         frame_time = pal_time();
+
         clearscreen();
         kek_user_update();
         int scene = get_active_scene();
@@ -125,6 +126,7 @@ static int run_kek(void)
         swap_window_buffers();
 
         garbage_collect_scene(scene);
+        update_hid();
         while(pal_time() < wait_until) {}
     }
 

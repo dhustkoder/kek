@@ -17,3 +17,4 @@ void log_line(const char *file, int line, const char *function,
 
 	va_end(argptr);
 }
+

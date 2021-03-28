@@ -4,11 +4,14 @@
 #include <stdlib.h>
 
 static MemPool pool;
+static VertexBuffer *root = NULL;
 static int write_vertexbuffer(VertexBuffer *vb, size_t offset, uint8_t *data, size_t size);
 
 void init_vertexbuffer(size_t capacity)
 {
     mempool_alloc(&pool, capacity, sizeof(VertexBuffer));
+    root = NULL;
+
 }
 
 VertexBuffer *get_vertexbuffer(int id)
@@ -34,6 +37,9 @@ int create_vertexbuffer(size_t capacity)
     gl_bind_buffer(GL_ARRAY_BUFFER, inst->vbo);
     gl_buffer_data(GL_ARRAY_BUFFER, capacity, NULL, GL_DYNAMIC_DRAW);
 
+    inst->next = root;
+    root = inst;
+
     return inst->id;
 }
 
@@ -47,7 +53,41 @@ void destroy_vertexbuffer(int vbid)
     vb->vbo = 0;
     vb->map_buffer = NULL;
 
+    if(root == vb)
+    {
+        root  = vb->next;
+    }
+    else
+    {
+        VertexBuffer *last = root;
+        VertexBuffer *node = root->next;
+
+        while(node)
+        {
+            if(node == vb)
+            {
+                last->next = vb->next;
+                break;
+            }
+
+            last = node;
+            node = node->next;
+        }
+    }
+        
     mempool_release(&pool, vb);
+}
+
+//todo: not called or used
+void flush_dynamic_vertexbuffers(void)
+{
+    VertexBuffer *node = root;
+
+    while(node)
+    {
+        clear_vertexbuffer(node->id);
+        node = node->next;
+    }
 }
 
 size_t get_vertexbuffer_capacity(int vbid)
@@ -68,7 +108,7 @@ void clear_vertexbuffer(int vbid)
     vb->size = 0;
 }
 
-void vertexbuffer_attribs(int vbid, size_t *attribs, size_t count)
+void vertexbuffer_attribs(int vbid, const size_t *attribs, size_t count)
 {
     VertexBuffer *vb = get_vertexbuffer(vbid);
 	gl_bind_vertex_array(vb->vao);

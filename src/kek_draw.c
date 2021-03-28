@@ -2,8 +2,16 @@
 #include <stdlib.h>
 #include <assert.h>
 
+typedef struct draw_element {
+    int camera;
+    int render;
+    int texture;
+    size_t offset;
+    size_t count;
+} DrawElement;
+
 typedef struct vb_element{
-    uint32_t order;
+    int64_t order;
     Vec4 colormask;
     Vec3 position;
     Vec3 size;
@@ -16,14 +24,6 @@ typedef struct vb_element{
     uint32_t flags;
 } VBElement;
 
-typedef struct draw_element {
-    int camera;
-    int render;
-    int texture;
-    size_t offset;
-    size_t count;
-} DrawElement;
-
 #define DRAW_FLAG_NONE         0x00
 #define DRAW_FLAG_RENDER_BEGIN 0x01
 #define DRAW_FLAG_TEXTURE_SWAP 0x02
@@ -33,59 +33,13 @@ typedef struct draw_element {
 static VBElement vbqueue[VB_QUEUE_CAPACITY];
 static size_t vbqueue_count = 0;
 
-#define DRAW_QUEUE_CAPACITY 2048
-static DrawElement drawqueue[DRAW_QUEUE_CAPACITY];
-static size_t drawqueue_count = 0;
-
 static int sortlist_sort(const void *a, const void *b);
 static void fill_sprite(Vec2 position, Vec2 size, Vec3 rotation, Vec2 uv0, Vec2 uv1, Vec4 colormask, Vertex *out);
-static DrawElement *get_top_drawqueue(void);
+static void draw_submit_element(VBElement *element);
 
 void init_draw(void)
 {
     vbqueue_count = 0;
-    drawqueue_count = 0;
-}
-
-static DrawElement *add_drawqueue_item(void)
-{
-    DrawElement *top = &drawqueue[drawqueue_count];
-    top->render = 0;
-    top->texture = 0;
-    top->offset = 0;
-    top->count = 0;
-    top->camera = 0;
-
-    drawqueue_count++;
-
-    return top;
-}
-
-void add_vb_to_drawqueue(VBElement *element)
-{
-    DrawElement *top = get_top_drawqueue();
-
-    if(element->flags & DRAW_FLAG_RENDER_BEGIN)
-    {
-        top = add_drawqueue_item(); 
-        top->render = element->render;
-        top->texture = element->texture;
-        top->camera = element->camera;
-    }
-
-    if(element->flags & (DRAW_FLAG_TEXTURE_SWAP | DRAW_FLAG_CAMERA_SWAP))
-    {
-        DrawElement *last = top;
-
-        top = add_drawqueue_item();
-        top->camera = element->camera;
-        top->render = element->render;
-        top->texture = element->texture;
-        top->offset = last->offset + last->count;
-        top->count = 0;
-    }
-
-    top->count += 6;
 }
 
 void draw(void)
@@ -96,56 +50,16 @@ void draw(void)
     for(size_t i = 0; i < vbqueue_count; ++i)
         sortlist[i] = &vbqueue[i];
 
-    qsort(sortlist, vbqueue_count, sizeof(DrawElement *), sortlist_sort);
-
-    // flag the start of each drawcall
-    VBElement *last = NULL;
-    for(size_t i = 0; i < vbqueue_count; ++i)
-    {
-        VBElement *element = sortlist[i];
-
-
-        element->flags = DRAW_FLAG_NONE;
-
-        if(!last)
-        {
-            element->flags |= DRAW_FLAG_RENDER_BEGIN;
-        }
-
-        else if(last->render != element->render)
-        {
-            last->flags |= DRAW_FLAG_RENDER_END;
-            element->flags |= DRAW_FLAG_RENDER_BEGIN;
-        }
-
-        else if(last->texture != element->texture)
-        {
-            element->flags |= DRAW_FLAG_TEXTURE_SWAP;
-        }
-        else if(last->camera != element->camera)
-        {
-            element->flags |= DRAW_FLAG_CAMERA_SWAP;
-        }
-
-        if(i >= vbqueue_count - 1)
-        {
-            element->flags |= DRAW_FLAG_RENDER_END;
-        }
-
-        last = element;
-    }
+    qsort(sortlist, vbqueue_count, sizeof(VBElement *), sortlist_sort);
 
     // fill the vbos
     for(size_t i = 0; i < vbqueue_count; ++i)
     {
-        VBElement *element = &vbqueue[i];
+        VBElement *element = sortlist[i];
         Render *render = get_render(element->render); 
         
-        if(element->flags & DRAW_FLAG_RENDER_BEGIN)
-        {
-            map_vertexbuffer(render->vb);
-            clear_vertexbuffer(render->vb);
-        }
+        map_vertexbuffer(render->vb);
+        clear_vertexbuffer(render->vb);
 
         Vertex vertices[6];
 
@@ -163,36 +77,21 @@ void draw(void)
                 (uint8_t *)vertices, 
                 sizeof(vertices));
 
-        if(element->flags & DRAW_FLAG_RENDER_END)
-        {
-            unmap_vertexbuffer(render->vb);
-        }
-    }
+        unmap_vertexbuffer(render->vb);
 
-    
-    // prepare the draw call list
-    for(size_t i = 0; i < vbqueue_count; ++i)
-        add_vb_to_drawqueue(sortlist[i]);
 
-    memstack_pop(sortlist);
-
-    // do the render here
-    for(size_t i = 0; i < drawqueue_count; ++i)
-    {
-        DrawElement *draw = &drawqueue[i];
-        Render *render   = get_render(draw->render);
         int vb           = render->vb;
         int shaderid     = render->shader;
-        int textureid    = draw->texture;
+        int textureid    = element->texture;
         Shader *shader   = get_shader(render->shader);
         GLuint program   = shader->shader;
-        int camera       = draw->camera;
+        int camera       = element->camera;
         Mat4 mvp;
 
         bind_vertexbuffer(vb);
         bind_shader(shaderid);
 
-        bind_texture(draw->texture, 0);
+        bind_texture(textureid, 0);
         gl_uint utexture = gl_get_uniform_location(program, "u_texture");
         gl_uniform1i(utexture, 0);
 
@@ -204,12 +103,10 @@ void draw(void)
         gl_enable(GL_BLEND);
         gl_blend_func(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        if(draw->count)
-            draw_vertexbuffer(vb, draw->offset, draw->count);
+        draw_vertexbuffer(vb, 0, 6);
     }
 
     vbqueue_count = 0;
-    drawqueue_count = 0;
 }
 
 void draw_submit_tilemap(int render, int tilemapid, int camera)
@@ -274,11 +171,7 @@ void draw_submit_tilemap(int render, int tilemapid, int camera)
             element.order |= (uint32_t)(element.render << 16);
             element.order |= (uint32_t)(element.texture & 0xFFFF);
 
-            assert(vbqueue_count < VB_QUEUE_CAPACITY);
-
-            vbqueue[vbqueue_count] = element;
-
-            ++vbqueue_count;
+            draw_submit_element(&element);
         }
     }
 }
@@ -288,6 +181,9 @@ void draw_submit_entity(int render, int entityid, int camera)
     Entity *entity = get_entity(entityid);
     AnimationFrame *frame = get_entity_animation_frame(entityid);
     VBElement element;
+
+    if(entity->render != RENDER_DEFAULT)
+        render = entity->render;
 
     element.render = render;
     element.uv0 = vec2(0.0f, 0.0f);
@@ -303,8 +199,9 @@ void draw_submit_entity(int render, int entityid, int camera)
     assert((uint32_t)(element.texture) < 0xFFFF);
 
     element.order = 0;
-    element.order |= (uint32_t)(element.render << 16);
-    element.order |= (uint32_t)(element.texture & 0xFFFF);
+    element.order |= (int64_t)(entity->layer & 0xFFFF) << 32;
+    element.order |= (uint32_t)(element.render & 0xFFFF) << 16;
+    element.order |= (uint32_t)(element.texture & 0xFFFF) << 0; 
 
     if(frame)
     {
@@ -324,33 +221,19 @@ void draw_submit_entity(int render, int entityid, int camera)
         element.rotation = add_vec3(rot, trot);
     }
 
-    assert(vbqueue_count < VB_QUEUE_CAPACITY);
-
-    vbqueue[vbqueue_count] = element;
-
-    ++vbqueue_count;
+    draw_submit_element(&element);
 }
 
 static int sortlist_sort(const void *a, const void *b)
 {
-    VBElement *aelement = (VBElement *)a;
-    VBElement *belement = (VBElement *)b;
+    VBElement **aelement = (VBElement **)a;
+    VBElement **belement = (VBElement **)b;
 
-    if(aelement->order > belement->order)
+    if((*aelement)->order > (*belement)->order)
         return 1;
-
-    else if(aelement->order < belement->order)
+    if((*aelement)->order < (*belement)->order)
         return -1;
-
     return 0;
-}
-
-static DrawElement *get_top_drawqueue(void)
-{
-    if(drawqueue_count == 0)
-        return NULL;
-
-    return &drawqueue[drawqueue_count - 1];
 }
 
 static void fill_sprite(Vec2 position, Vec2 size, Vec3 rotation, Vec2 uv0, Vec2 uv1, Vec4 colormask, Vertex *out)
@@ -394,3 +277,13 @@ static void fill_sprite(Vec2 position, Vec2 size, Vec3 rotation, Vec2 uv0, Vec2 
 
     memcpy(out, vertices, sizeof(vertices));
 }
+
+static void draw_submit_element(VBElement *element)
+{
+    assert(vbqueue_count < VB_QUEUE_CAPACITY);
+
+    vbqueue[vbqueue_count] = *element;
+
+    ++vbqueue_count;
+}
+

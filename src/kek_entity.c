@@ -47,6 +47,7 @@ int create_entity(uint32_t type)
     inst->scale = vec3(1,1,1);
     inst->texture_rotation = zero_vec3();
     inst->gravity_scale = 1.0f;
+    inst->layer = type * 100;
 
     inst->collider.type = COLLIDER_NONE;
     inst->collider.mask = 0;
@@ -54,6 +55,7 @@ int create_entity(uint32_t type)
     inst->collider.collision_fn = NULL;
     inst->collider.ctx = NULL;
     inst->collider.dynamic = true;
+    inst->render = RENDER_DEFAULT;
 
     inst->colormask = vec4(1,1,1,1);
     inst->texture = 0;
@@ -389,6 +391,20 @@ void entity_texture_rotation_z(int entityid, float rotation)
 {
     Entity *e = get_entity(entityid);
     e->texture_rotation.z = rotation;
+}
+
+int get_entity_render(int entityid)
+{
+    Entity *e = get_entity(entityid);
+
+    return e->render;
+}
+
+void entity_render(int entityid, int render)
+{
+    Entity *e = get_entity(entityid);
+
+    e->render = render;
 }
 
 float get_entity_texture_rotation_z(int entityid)

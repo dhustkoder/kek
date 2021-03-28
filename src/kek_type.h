@@ -16,6 +16,8 @@
 #define KEK_MIN(a, b) (((a) < (b)) ? (a) : (b)) 
 #define KEK_MAX(a, b) (((a) > (b)) ? (a) : (b)) 
 
+#define RENDER_DEFAULT -1 
+
 // forward declarations
 typedef struct entity Entity;
 typedef struct camera Camera;
@@ -56,6 +58,7 @@ enum {
     KEK_WINDOW_SET_SIZE_ERROR,
     KEK_WINDOW_GET_SIZE_ERROR,
 };
+
 
 // Keyboard keys (US keyboard layout)
 typedef enum keyboard_key {
@@ -174,7 +177,8 @@ typedef enum keyboard_key {
 typedef enum mouse_button {
     KEK_MOUSE_BUTTON_LEFT   = 0,
     KEK_MOUSE_BUTTON_RIGHT  = 1,
-    KEK_MOUSE_BUTTON_MIDDLE = 2
+    KEK_MOUSE_BUTTON_MIDDLE = 2,
+    KEK_NUM_MOUSE_BUTTONS
 } MouseButton;
 
 
@@ -446,6 +450,7 @@ typedef struct vertexbuffer {
     void *map_buffer;
     size_t capacity;
     size_t size;
+    struct vertexbuffer *next;
 } VertexBuffer;
 
 
@@ -514,7 +519,9 @@ typedef struct entity {
     Vec4 colormask;
     Collider collider;
 
+    int render;
     int texture;
+    int layer;
     Animation *animation;
     unsigned int animation_frame;
     float animation_frame_time;
@@ -553,4 +560,5 @@ typedef struct event {
     int id;
     void *data;
 } Event;
+
 

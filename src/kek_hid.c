@@ -11,10 +11,21 @@ static KeyboardBind *bindings = NULL;
 static size_t binding_count = 0;
 static size_t binding_capacity = 0;
 
+static bool mousebutton_last[KEK_NUM_MOUSE_BUTTONS];
+
 void init_hid(size_t alias_capacity)
 {
     bindings = memstack_push(alias_capacity * sizeof(KeyboardBind));
     binding_capacity = alias_capacity;
+
+    for(size_t i = 0; i < KEK_NUM_MOUSE_BUTTONS; ++i)
+        mousebutton_last[i] = false;
+}
+
+void update_hid(void)
+{
+    for(size_t i = 0; i < KEK_NUM_MOUSE_BUTTONS; ++i)
+        mousebutton_last[i] = is_mouse_button_pressed(i);
 }
 
 void bind_hid_alias_to_key(int alias, enum keyboard_key key)
@@ -85,6 +96,20 @@ bool is_hid_key_pressed(enum keyboard_key key)
     return pressed;
 }
 
+bool is_mouse_button_pressed_frame(enum mouse_button button)
+{
+    bool pressed = is_mouse_button_pressed(button);
+
+    return (pressed && !mousebutton_last[button]);
+}
+
+bool is_mouse_button_released_frame(enum mouse_button button)
+{
+    bool pressed = is_mouse_button_pressed(button);
+
+    return (!pressed && mousebutton_last[button]);
+}
+
 bool is_mouse_button_pressed(enum mouse_button button)
 {
     PALWindow *window = get_pal_window();
@@ -94,6 +119,11 @@ bool is_mouse_button_pressed(enum mouse_button button)
     pal_is_mouse_button_pressed(window, button, &pressed);
 
     return pressed;
+}
+
+bool is_mouse_button_released(enum mouse_button button)
+{
+    return !is_mouse_button_pressed(button);
 }
 
 Vec2 get_mouse_position(void)
