@@ -1,7 +1,4 @@
 #include "kek.h"
-#include "entity.h"
-#include "create_tagged.h"
-#include "tag.h"
 
 static int window_width = 1920;
 static int window_height = 1080;
