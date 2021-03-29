@@ -443,3 +443,40 @@ void entity_animation_speed(int entityid, float speed)
     Entity *e = get_entity(entityid);
     e->animation_speed = speed;
 }
+
+void entity_collider_circle(int entityid, float radius)
+{
+    Collider *collider = get_entity_collider(entityid);
+    collider->type = COLLIDER_CIRCLE;
+    collider->radius = radius;
+}
+
+void entity_collider_dynamic(int entityid, bool dynamic)
+{
+    Collider *collider = get_entity_collider(entityid);
+
+    collider->dynamic = dynamic;
+}
+
+void entity_collider_collision_fn(int entityid, CollisionFn fn, void *ctx)
+{
+    Collider *collider = get_entity_collider(entityid);
+    
+    collider->collision_fn = fn;
+    collider->ctx = ctx;
+}
+
+void entity_collider_category(int entityid, uint32_t category)
+{
+    Collider *collider = get_entity_collider(entityid);
+    
+    collider->category = category;
+}
+
+void entity_collider_mask(int entityid, uint32_t mask)
+{
+    Collider *collider = get_entity_collider(entityid);
+    
+    collider->mask = mask;
+}
+

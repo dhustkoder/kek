@@ -291,8 +291,11 @@ void            reset_entity_animation(int entityid);
 void            set_entity_animation_speed(int entityid, float speed);
 AnimationFrame *get_entity_animation_frame(int entityid);
 void            query_entity(Vec2 p0, Vec2 p1, EntityQueryFn fn, void *ctx);
-void            entity_circle_collider(int entityid, float radius);
+void            entity_collider_circle(int entityid, float radius);
+void            entity_collider_dynamic(int entityid, bool dynamic);
+void            entity_collider_category(int entityid, uint32_t category);
 void            entity_collider_mask(int entityid, uint32_t mask);
+void            entity_collider_collision_fn(int entityid, CollisionFn fn, void *ctx);
 bool            is_entity_animation_complete(int entityid);
 
 //**********************************************************
