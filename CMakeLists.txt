@@ -3,10 +3,6 @@ cmake_minimum_required(VERSION 3.4.1)
 project(kek)
 
 message("Generating for system " ${CMAKE_SYSTEM_NAME})
-#set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 -Wall -Werror -Wsign-compare -O3")
-if(!MSVC)
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 -Wall -Wsign-compare -O3 -ggdb")
-endif()
 
 set(GLFW_BUILD_SHARED_LIBS OFF)
 set(GLFW_BUILD_EXAMPLES OFF)
@@ -50,6 +46,9 @@ add_library(kek_lib STATIC ${KEK_SOURCE} ${PAL_SOURCE} ${KUT_SOURCE})
 
 #linking
 target_link_libraries(kek_lib ${PAL_LIBRARIES})
+
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 -Wall -Wextra -O3 -ggdb -pedantic")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -O3 -ggdb -pedantic")
 
 add_compile_definitions(PAL_USE_GLFW)
 add_compile_definitions(PAL_USE_OPENGL)
