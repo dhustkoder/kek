@@ -87,13 +87,13 @@ int load_shader_buffer(int shaderid, const char *vert_buffer, const char *frag_b
 
     vert_result = compile_shader(vert_shader, 
                         vert_buffer, error_buffer, ERROR_BUFFER_CAPACITY);
-    if(vert_result != KEK_OK)
+    if(vert_result != PAL_OK)
         loge("Vertex shader ompile failed: %s\n\n buffer:\n%s\n\n", error_buffer, vert_buffer);
 
     frag_result = compile_shader(frag_shader, 
                         frag_buffer, error_buffer, ERROR_BUFFER_CAPACITY);
 
-    if(vert_result != KEK_OK)
+    if(vert_result != PAL_OK)
         loge("Fragment shader compile failed: %s\n\n buffer:\n%s\n\n", error_buffer, frag_buffer);
 
     gl_attach_shader(shader->shader, vert_shader);
@@ -105,10 +105,10 @@ int load_shader_buffer(int shaderid, const char *vert_buffer, const char *frag_b
 
     memstack_pop(error_buffer);
 
-    if(!vert_result)
+    if(vert_result != PAL_OK)
         return KEK_ERROR;
 
-    if(!frag_result)
+    if(frag_result != PAL_OK)
         return KEK_ERROR;
 
     return KEK_OK;

@@ -124,6 +124,7 @@ void simulate_physics(int sceneid)
             Vec3 vela = get_entity_velocity(c->entity_a);
             Vec3 velb = get_entity_velocity(c->entity_b);
 
+#if 0
             if(ca->dynamic)
             {
                 entity_position(c->entity_a, sub_vec3(posa, vela));
@@ -134,6 +135,7 @@ void simulate_physics(int sceneid)
                 entity_position(c->entity_b, sub_vec3(posb, velb));
                 entity_velocity(c->entity_b, zero_vec3());
             }
+#endif
 
         }
 
