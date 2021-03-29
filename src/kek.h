@@ -303,8 +303,11 @@ void     destroy_tilemap(int id);
 Tilemap *get_tilemap(int id);
 TilemapSpritesheetClip get_tilemap_cell_clip(int id, int cellx, int celly);
 int      add_tilemap_spritesheet(int id, int texture);
-void     bind_tilemap_index(int id, int index, int spritesheet, int x, int y, int clip_width, int clip_height);
+void     bind_tilemap_index(int id, int index, int spritesheet, int x, int y, int clip_width, int clip_height, uint32_t flags);
 void     tilemap_cell_index(int id, int cellx, int celly, int spritesheet, int index);
+void     tilemap_layer(int id, int layer);
+uint32_t get_tile_flags(int tilemapid, int x, int y);
+int      get_tilemap_layer(int id);
 
 //**********************************************************
 // KEK PHYSICS 

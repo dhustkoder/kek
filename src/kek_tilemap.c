@@ -22,12 +22,14 @@ int create_tilemap(int num_cells_x, int num_cells_y, Vec2 cell_size)
     inst->texture_count = 0;
     inst->cell_size     = cell_size;
     inst->scene_next_tilemap = NULL;
+    inst->layer         = 0;
 
     for(size_t i = 0; i < TILEMAP_INDEX_CAPACITY; ++i)
     {
         inst->indexmap[i].spritesheet = 0;
         inst->indexmap[i].uv0 = vec2(0,0);
         inst->indexmap[i].uv1 = vec2(1,0);
+        inst->indexmap[i].flags = 0;
     }
 
     return inst->id;
@@ -72,7 +74,7 @@ int add_tilemap_spritesheet(int id, int texture)
     return index;
 }
 
-void bind_tilemap_index(int id, int index, int spritesheet, int x, int y, int clip_width, int clip_height)
+void bind_tilemap_index(int id, int index, int spritesheet, int x, int y, int clip_width, int clip_height, uint32_t flags)
 {
     Tilemap *tilemap = mempool_get_addr(&pool, id);
     Texture *texture = get_texture(spritesheet);
@@ -84,6 +86,8 @@ void bind_tilemap_index(int id, int index, int spritesheet, int x, int y, int cl
     tilemap->indexmap[index].uv0.y = (float)y/(float)texture->height;
     tilemap->indexmap[index].uv1.x = (float)(x + clip_width)/(float)texture->width;
     tilemap->indexmap[index].uv1.y = (float)(y + clip_height)/(float)texture->height;
+    tilemap->indexmap[index].flags = flags;
+
 }
 
 Tilemap *get_tilemap(int id)
@@ -103,4 +107,34 @@ void tilemap_cell_index(int id, int cellx, int celly, int spritesheet, int index
     int offset = celly * tilemap->num_cells_x + cellx;
 
     tilemap->map[offset] = index;
+}
+
+void tilemap_layer(int id, int layer)
+{
+    Tilemap *tilemap = get_tilemap(id);
+    tilemap->layer = layer;
+}
+
+int get_tilemap_layer(int id)
+{
+    Tilemap *tilemap = get_tilemap(id);
+    return tilemap->layer;
+}
+
+uint32_t get_tile_flags(int tilemapid, int x, int y)
+{
+    Tilemap *tilemap = get_tilemap(tilemapid);
+    int cellx = (int)((float)x / tilemap->cell_size.x);
+    int celly = (int)((float)y / tilemap->cell_size.y);
+
+    if(cellx < 0) return 0;
+    if(celly < 0) return 0;
+    if(cellx >= tilemap->num_cells_x) return 0;
+    if(celly >= tilemap->num_cells_y) return 0;
+
+    int offset = celly * tilemap->num_cells_x + cellx;
+
+    int index = tilemap->map[offset];
+
+    return tilemap->indexmap[index].flags;
 }

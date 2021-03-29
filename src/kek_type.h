@@ -408,6 +408,7 @@ typedef struct tilemap_index
     int spritesheet;
     Vec2 uv0;
     Vec2 uv1;
+    uint32_t flags;
 } TilemapSpritesheetClip;
 
 #define TILEMAP_SPRITESHEET_CAPACITY 8
@@ -419,6 +420,7 @@ typedef struct tilemap {
 
     TilemapSpritesheetClip indexmap[TILEMAP_INDEX_CAPACITY];
 
+    int layer;
     int *map;
     int num_cells_x;
     int num_cells_y;

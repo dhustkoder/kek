@@ -167,7 +167,7 @@ void draw_submit_tilemap(int render, int tilemapid, int camera)
             assert((uint32_t)(element.render) < 0xFFFF);
             assert((uint32_t)(element.texture) < 0xFFFF);
 
-            element.order = 0;
+            element.order = tilemap->layer;
             element.order |= (uint32_t)(element.render << 16);
             element.order |= (uint32_t)(element.texture & 0xFFFF);
 

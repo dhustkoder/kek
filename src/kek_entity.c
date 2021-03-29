@@ -132,35 +132,33 @@ void update_entity(int entityid)
 
     EntityCallbacks *cb = getinsert_entity_callbacks(e->type);
     if(cb && cb->update)
+        cb->update(e->id, cb->ctx);
+
+    // update the animation
+    if(e->animation && e->animation->frame_count > 0)
     {
-        // update the animation
-        if(e->animation && e->animation->frame_count > 0)
+        unsigned int idx = e->animation_frame;
+        Animation *anim = e->animation;
+        AnimationFrame *frame = &anim->frames[idx];
+
+        // safety to prevent bad timer and being in an infinite loop
+        unsigned int counter = 0;
+        while((e->animation_frame_time > frame->duration) && (counter < anim->frame_count))
         {
-            unsigned int idx = e->animation_frame;
-            Animation *anim = e->animation;
-            AnimationFrame *frame = &anim->frames[idx];
+            e->animation_frame_time -= anim->frames[idx].duration * e->animation_speed;
+            
+            if(idx < anim->frame_count - 1)
+                ++idx;
+            else if(anim->loop)
+                idx = 0;
+            else
+                break;
 
-            // safety to prevent bad timer and being in an infinite loop
-            unsigned int counter = 0;
-            while((e->animation_frame_time > frame->duration) && (counter < anim->frame_count))
-            {
-                e->animation_frame_time -= anim->frames[idx].duration * e->animation_speed;
-                
-                if(idx < anim->frame_count - 1)
-                    ++idx;
-                else if(anim->loop)
-                    idx = 0;
-                else
-                    break;
-
-                ++counter;
-            }
-
-            e->animation_frame = idx;
-            e->animation_frame_time += get_target_frame_interval() * e->animation_speed;
+            ++counter;
         }
 
-        cb->update(e->id, cb->ctx);
+        e->animation_frame = idx;
+        e->animation_frame_time += get_target_frame_interval() * e->animation_speed;
     }
 }
 
@@ -231,6 +229,7 @@ AnimationFrame *get_entity_animation_frame(int entityid)
 
     if(e->animation->frame_count <= e->animation_frame)
         return NULL;
+
 
     return &e->animation->frames[e->animation_frame];
 }
