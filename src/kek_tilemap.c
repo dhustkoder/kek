@@ -95,7 +95,7 @@ Tilemap *get_tilemap(int id)
     return mempool_get_addr(&pool, id);
 }
 
-void tilemap_cell_index(int id, int cellx, int celly, int spritesheet, int index)
+void tilemap_cell_index(int id, int cellx, int celly, int index)
 {
     assert(cellx >= 0);
     assert(celly >= 0);

@@ -6,7 +6,7 @@
 #define MAX_TITLE_LEN 1024
 
 static PALWindow window;
-static Vec4 screen_color = { 0, 0, 0, 0};
+static Vec4 screen_color = { .x=0, .y=0, .z=0, .w=0};
 
 int init_window(void)
 {

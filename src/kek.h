@@ -38,13 +38,13 @@ void       clearscreen_color(Vec4 color);
 //**********************************************************
 #define LOG_FILENAME (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
 void     log_line(const char *file, int line, const char *function, const char *zone, const char *format, ...);
-#define log(...) log_line(LOG_FILENAME,  __LINE__, __FUNCTION__, "INFO", __VA_ARGS__)
-#define logd(...) log_line(LOG_FILENAME, __LINE__, __FUNCTION__, "DEBUG", __VA_ARGS__)
-#define logw(...) log_line(LOG_FILENAME, __LINE__, __FUNCTION__, "WARN", __VA_ARGS__)
-#define loge(...) log_line(LOG_FILENAME, __LINE__, __FUNCTION__, "ERROR", __VA_ARGS__)
-#define logdvec2(PREFIX, VAL) log_line(LOG_FILENAME, __LINE__, __FUNCTION__, "DEBUG", #PREFIX "%f,%f", VAL .x, VAL .y)
-#define logdvec3(PREFIX, VAL) log_line(LOG_FILENAME, __LINE__, __FUNCTION__, "DEBUG", #PREFIX "%f,%f,%f", VAL .x, VAL .y, VAL .z)
-#define logdvec4(PREFIX, VAL) log_line(LOG_FILENAME, __LINE__, __FUNCTION__, "DEBUG", #PREFIX "%f,%f,%f,%f", VAL .x, VAL .y, VAL .z, VAL .w)
+#define log(...) log_line(LOG_FILENAME,  __LINE__, __func__, "INFO", __VA_ARGS__)
+#define logd(...) log_line(LOG_FILENAME, __LINE__, __func__, "DEBUG", __VA_ARGS__)
+#define logw(...) log_line(LOG_FILENAME, __LINE__, __func__, "WARN", __VA_ARGS__)
+#define loge(...) log_line(LOG_FILENAME, __LINE__, __func__, "ERROR", __VA_ARGS__)
+#define logdvec2(PREFIX, VAL) log_line(LOG_FILENAME, __LINE__, __func__, "DEBUG", #PREFIX "%f,%f", VAL .x, VAL .y)
+#define logdvec3(PREFIX, VAL) log_line(LOG_FILENAME, __LINE__, __func__, "DEBUG", #PREFIX "%f,%f,%f", VAL .x, VAL .y, VAL .z)
+#define logdvec4(PREFIX, VAL) log_line(LOG_FILENAME, __LINE__, __func__, "DEBUG", #PREFIX "%f,%f,%f,%f", VAL .x, VAL .y, VAL .z, VAL .w)
 
 //**********************************************************
 // KEK MEMORY 
@@ -89,7 +89,7 @@ int   init_sound(size_t num_sources, size_t buffer_capacity, size_t sound_capaci
 void  update_sounds(void);
 int   create_sound_buffer(void);
 bool  load_wav_file_to_sound_buffer(int buffer, const char *file);
-int   master_volume(float vol);
+void  master_volume(float vol);
 int   create_sound(int buffer);
 void  play_sound(int sound);
 void  destroy_sound(int sound);
@@ -293,6 +293,7 @@ AnimationFrame *get_entity_animation_frame(int entityid);
 void            query_entity(Vec2 p0, Vec2 p1, EntityQueryFn fn, void *ctx);
 void            entity_circle_collider(int entityid, float radius);
 void            entity_collider_mask(int entityid, uint32_t mask);
+bool            is_entity_animation_complete(int entityid);
 
 //**********************************************************
 // KEK TILEMAP
@@ -304,7 +305,7 @@ Tilemap *get_tilemap(int id);
 TilemapSpritesheetClip get_tilemap_cell_clip(int id, int cellx, int celly);
 int      add_tilemap_spritesheet(int id, int texture);
 void     bind_tilemap_index(int id, int index, int spritesheet, int x, int y, int clip_width, int clip_height, uint32_t flags);
-void     tilemap_cell_index(int id, int cellx, int celly, int spritesheet, int index);
+void     tilemap_cell_index(int id, int cellx, int celly, int index);
 void     tilemap_layer(int id, int layer);
 uint32_t get_tile_flags(int tilemapid, int x, int y);
 int      get_tilemap_layer(int id);

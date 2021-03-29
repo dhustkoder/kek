@@ -42,7 +42,6 @@ void destroy_shader(int shaderid)
 
 int load_shader_files(int shaderid, const char *vert_file, const char *frag_file)
 {
-    Shader *shader = get_shader(shaderid);
     size_t vert_size = 0;
     size_t frag_size = 0;
     char *vert_buffer;
@@ -88,9 +87,14 @@ int load_shader_buffer(int shaderid, const char *vert_buffer, const char *frag_b
 
     vert_result = compile_shader(vert_shader, 
                         vert_buffer, error_buffer, ERROR_BUFFER_CAPACITY);
+    if(!vert_result)
+        loge("Vertex shader ompile failed: %s\n\n buffer:\n%s\n\n", error_buffer, vert_buffer);
 
     frag_result = compile_shader(frag_shader, 
                         frag_buffer, error_buffer, ERROR_BUFFER_CAPACITY);
+
+    if(!vert_result)
+        loge("Fragment shader compile failed: %s\n\n buffer:\n%s\n\n", error_buffer, frag_buffer);
 
     gl_attach_shader(shader->shader, vert_shader);
     gl_attach_shader(shader->shader, frag_shader);
@@ -100,6 +104,12 @@ int load_shader_buffer(int shaderid, const char *vert_buffer, const char *frag_b
     gl_delete_shader(frag_shader);
 
     memstack_pop(error_buffer);
+
+    if(!vert_result)
+        return KEK_ERROR;
+
+    if(!frag_result)
+        return KEK_ERROR;
 
     return KEK_OK;
 }

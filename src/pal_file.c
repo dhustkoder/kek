@@ -4,7 +4,7 @@
 
 PALReturn pal_file_to_buffer(const char *file, uint8_t *buffer, size_t *size_bytes, size_t capacity)
 {
-	int filesize = 0;
+	size_t filesize = 0;
 	size_t copysize = 0;
 	size_t bytesread = 0;
 
@@ -20,7 +20,16 @@ PALReturn pal_file_to_buffer(const char *file, uint8_t *buffer, size_t *size_byt
 
 	fseek(fptr, 0L, SEEK_END);
 	
-	filesize = ftell(fptr);
+    int offset = ftell(fptr);
+
+    if(offset < 0)
+    {
+	    fclose(fptr);
+        return PAL_ERROR;
+    }
+
+	filesize = (size_t)offset;
+
 		
 	if(filesize > capacity) 
 		copysize = capacity;
@@ -31,7 +40,7 @@ PALReturn pal_file_to_buffer(const char *file, uint8_t *buffer, size_t *size_byt
 	bytesread = fread(buffer, sizeof(char), copysize, fptr);
 	fclose(fptr);
 
-	if((int)bytesread != copysize)
+	if(bytesread != copysize)
 		return PAL_ERROR;
 
 	if(filesize > capacity)

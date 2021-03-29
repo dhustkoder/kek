@@ -6,15 +6,12 @@
 
 static PALReturn pal_glfw_has_error(PALWindow *window)
 {
+    (void)window;
     return (glfwGetError(NULL) == GLFW_NO_ERROR) ? PAL_OK : PAL_ERROR; 
 }
 
 PALReturn pal_init_window(void)
 {
-    PALWindow window;
-
-    window.glfw = NULL;
-
     if(glfwInit() != GLFW_TRUE)
         return PAL_ERROR;
 
@@ -81,14 +78,26 @@ PALReturn pal_window_size(PALWindow *window, unsigned int width, unsigned int he
 
 PALReturn pal_get_window_size(PALWindow *window, unsigned int *width, unsigned int *height)
 {
-    glfwGetWindowSize(window->glfw, width, height);
+    int w;
+    int h;
+
+    glfwGetWindowSize(window->glfw, (int *)&w, (int *)&h);
+
+    *width = (unsigned int)w;
+    *height = (unsigned int)h;
 
     return pal_glfw_has_error(window);
 }
 
 PALReturn pal_get_window_framebuffer_size(PALWindow *window, unsigned int *width, unsigned int *height)
 {
-    glfwGetFramebufferSize(window->glfw, width, height);
+    int w;
+    int h;
+
+    glfwGetFramebufferSize(window->glfw, (int *)&w, (int *)&h);
+
+    *width = (unsigned int)w;
+    *height = (unsigned int)h;
 
     return pal_glfw_has_error(window);
 }

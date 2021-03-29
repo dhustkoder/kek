@@ -8,11 +8,15 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
+#ifndef M_PI
+    #define M_PI 3.14159265358979323846
+#endif
+
 #define KEK_ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
 #define KEK_STRUCT_ATTRIB_SIZE(type, member) sizeof(((type *)0)->member)
 
 #define KEK_PI M_PI
-#define KEK_PI_2 (PJ_PI * 0.5f)
+#define KEK_PI_2 (KEK_PI * 0.5f)
 #define KEK_MIN(a, b) (((a) < (b)) ? (a) : (b)) 
 #define KEK_MAX(a, b) (((a) > (b)) ? (a) : (b)) 
 

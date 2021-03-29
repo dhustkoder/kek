@@ -43,8 +43,6 @@ void simulate_physics(int sceneid)
         Vec3 velocity = get_entity_velocity(entityid);
         float gravity_scale = get_entity_gravity_scale(entityid);
 
-        Vec3 last_position = position;
-        Vec3 last_velocity = velocity;
         velocity = add_vec3(velocity, mul_vec3_f(gravity_force, gravity_scale));
 
         entity_position(entityid, add_vec3(position, velocity));
@@ -91,7 +89,7 @@ void simulate_physics(int sceneid)
         Collider *ca = get_entity_collider(c->entity_a);
         Collider *cb = get_entity_collider(c->entity_b);
 
-        if(last && c->entity_a == last->entity_a && c->entity_b == c->entity_b)
+        if((last && c->entity_a == last->entity_a) || (c->entity_a == c->entity_b))
             continue;
 
         if(ca->type == COLLIDER_CIRCLE && cb->type == COLLIDER_CIRCLE)
@@ -232,8 +230,6 @@ static bool rect_circle(int entity_a, int entity_b)
 
 static bool circle_circle(int entity_a, int entity_b)
 {
-    bool jerk = false;
-
     Vec3 pos_a = get_entity_position(entity_a);
     Vec3 pos_b = get_entity_position(entity_b);
 
@@ -254,7 +250,7 @@ static bool rect_rect(int entity_a, int entity_b)
     Vec3 p0 = get_entity_position(entity_a);
     Vec3 p1 = get_entity_position(entity_b);
     Vec2 s0 = ca->rect;
-    Vec2 s1 = ca->rect;
+    Vec2 s1 = cb->rect;
 
    return aabb(p0.xy, s0, p1.xy, s1);
 }

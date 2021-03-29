@@ -91,7 +91,7 @@ void update_sounds(void)
     // add two day dependency between source and attached sound
     // traverse trhough all sounds and release the free ones
 }
-int master_volume(float vol)
+void master_volume(float vol)
 {
     alListenerf(AL_GAIN, vol);
 }

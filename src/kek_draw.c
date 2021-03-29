@@ -247,14 +247,14 @@ static void fill_sprite(Vec2 position, Vec2 size, Vec3 rotation, Vec2 uv0, Vec2 
 	const float z0 = 0.0f;
 	const float z1 = 0.0f; 
 
-	const Vec4 positions[] = { 
-		{x0, y0, z0, 0}, {x1, y0, z0, 0}, {x1, y1, z0, 0}, 
-		{x0, y0, z0, 0}, {x1, y1, z0, 0}, {x0, y1, z1, 0}
+	Vec4 positions[] = { 
+		vec4(x0, y0, z0, 0), vec4(x1, y0, z0, 0), vec4(x1, y1, z0, 0), 
+		vec4(x0, y0, z0, 0), vec4(x1, y1, z0, 0), vec4(x0, y1, z1, 0)
 	};
 
-	const Vec2 uvs[] = { 
-		{uv0.x, uv0.y}, {uv1.x, uv0.y}, {uv1.x, uv1.y}, 
-		{uv0.x, uv0.y}, {uv1.x, uv1.y}, {uv0.x, uv1.y}
+	Vec2 uvs[] = { 
+		vec2(uv0.x, uv0.y), vec2(uv1.x, uv0.y), vec2(uv1.x, uv1.y), 
+		vec2(uv0.x, uv0.y), vec2(uv1.x, uv1.y), vec2(uv0.x, uv1.y)
 	};
 
     Vertex vertices[6];

@@ -42,8 +42,6 @@ void add_animation_frame(int animationid, AnimationFrame frame)
 
 void add_animation_frame_clip(int animationid, int textureid, int x, int y, int clip_width, int clip_height, float duration)
 {
-    Animation *animation = get_animation(animationid);
-
     AnimationFrame frame;
     Texture *texture = get_texture(textureid);
 

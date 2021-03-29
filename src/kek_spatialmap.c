@@ -143,7 +143,7 @@ static SpatialMap *create_spatialmap(int basex, int basey)
 
 static SpatialMap *find_spatialmap(int basex, int basey)
 {
-    for(int i = 0; i < mapcount; ++i)
+    for(size_t i = 0; i < mapcount; ++i)
     {
         if(maps[i].basex == basex && maps[i].basey == basey)
             return &maps[i];

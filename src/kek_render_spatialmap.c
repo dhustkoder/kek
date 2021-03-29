@@ -15,8 +15,6 @@ void draw_render_spatialmap(Render *render, int camera, int *entities, size_t co
         int entityid = entities[i];
         Entity *entity = get_entity(entityid);
 
-        Vec2 uv0 = {0.0f, 0.0f};
-        Vec2 uv1 = {0.0f, 0.0f};
         Vec4 colormask = vec4(1,0,0,1.0);
 
         Vertex vertices[2];

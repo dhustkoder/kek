@@ -2,17 +2,16 @@
 
 void draw_render_lines_default(Render *render, int camera, Vec3 *points, size_t count, void *ctx)
 {
+    (void)ctx;
     size_t drawcount = 0;
-    size_t vertexcount = 0;
     int vb = render->vb;
     Shader *shader = get_shader(render->shader);
     GLuint program = shader->shader;
 
     map_vertexbuffer(vb);
     clear_vertexbuffer(vb);
-    for(int i = 0; i < count; i += 2)
+    for(size_t i = 0; i < count; i += 2)
     {
-        Vec4 colormask = {1,1,1,1};
         Vertex vertices[2];
         vertices[0].position = points[i];
         vertices[1].position = points[i+1];
@@ -30,7 +29,7 @@ void draw_render_lines_default(Render *render, int camera, Vec3 *points, size_t 
 
     bind_vertexbuffer(vb);
     bind_shader(render->shader);
-    for(int i = 0; i < drawcount; ++i)
+    for(size_t i = 0; i < drawcount; ++i)
     {
         Mat4 mvp;
 

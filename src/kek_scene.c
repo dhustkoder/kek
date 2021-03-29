@@ -3,11 +3,9 @@
 #include <stdlib.h>
 
 static MemPool pool;
-static MemPool pool_entities;
 
 static int active_scene = -1;
 static int default_camera = -1;
-static int sortlist_sort(const void *a, const void *b);
 
 void init_scene(size_t capacity)
 {
@@ -152,8 +150,8 @@ void draw_scene(int sceneid)
     Scene *scene = get_scene(sceneid);
     Entity *entity = scene->entities;
 
-    int window_width;
-    int window_height;
+    unsigned int window_width;
+    unsigned int window_height;
 
     get_window_size(&window_width, &window_height);
 
@@ -176,17 +174,5 @@ void draw_scene(int sceneid)
         tilemap = tilemap->scene_next_tilemap;
     }
     draw();
-}
-
-static int sortlist_sort(const void *a, const void *b)
-{
-    uint32_t akey = get_entity_render_key(*(int *)a);
-    uint32_t bkey = get_entity_render_key(*(int *)b);
-    if(akey > bkey)
-        return 1;
-    else if(akey < bkey)
-        return -1;
-
-    return 0;
 }
 

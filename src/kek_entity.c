@@ -161,6 +161,24 @@ void update_entity(int entityid)
         e->animation_frame_time += get_target_frame_interval() * e->animation_speed;
     }
 }
+bool is_entity_animation_complete(int entityid)
+{
+    Entity *e = get_entity(entityid);
+
+    if(!e->animation)
+        return true;
+
+    Animation *anim = e->animation;
+    AnimationFrame *frame = get_entity_animation_frame(entityid);
+
+    if(e->animation_frame < anim->frame_count - 1)
+        return false;
+
+    if(e->animation_frame_time < frame->duration)
+        return false;
+    
+    return true;
+}
 
 void entity_update_callback(uint32_t type, EntityUpdateFn callback)
 {

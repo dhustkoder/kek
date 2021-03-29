@@ -3,77 +3,77 @@
 
 Vec2 zero_vec2()
 {
-	return (Vec2){ 0.0f, 0.0f };
+    return vec2(0.0f, 0.0f);
 }
 
 Vec3 zero_vec3()
 {
-	return (Vec3){ 0.0f, 0.0f, 0.0f };
+    return vec3(0.0f, 0.0f, 0.0f);
 }
 
 Vec4 zero_vec4()
 {
-	return (Vec4){ 0.0f, 0.0f, 0.0f, 0.0f };
+    return vec4(0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 Vec2 identity_vec2()
 {
-	return (Vec2){ 1.0f, 1.0f };
+	return vec2( 1.0f, 1.0f );
 }
 
 Vec3 identity_vec3()
 {
-	return (Vec3){ 1.0f, 1.0f, 1.0f };
+	return vec3( 1.0f, 1.0f, 1.0f );
 }
 
 Vec4 identity_vec4()
 {
-	return (Vec4){ 1.0f, 1.0f, 1.0f, 1.0f };
+	return vec4( 1.0f, 1.0f, 1.0f, 1.0f );
 }
 
 Vec2 vec2(float x, float y)
 {
-	return (Vec2){ x, y };
+	return (Vec2){ .x=x, .y=y };
 }
 
 Vec3 vec3(float x, float y, float z)
 {
-	return (Vec3){ x, y, z };
+	return (Vec3){ .x=x, .y=y, .z=z };
 }
 
 Vec4 vec4(float x, float y, float z, float w)
 {
-	return (Vec4){ x, y, z, w };
+	return (Vec4){ .x=x, .y=y, .z=z, .w=w };
 }
 
 Vec2 vec3to2(Vec3 v)
 {
-	return (Vec2){ v.x, v.y };
+	return vec2( v.x, v.y );
 }
 
 Vec2 vec4to2(Vec4 v)
 {
-	return (Vec2){ v.x, v.y };
+	return vec2( v.x, v.y );
 }
 
 Vec3 vec2to3(Vec2 v)
 {
-	return (Vec3){ v.x, v.y, 0 };
+	return vec3( v.x, v.y, 0 );
 }
 
 Vec3 vec4to3(Vec4 v)
 {
-	return (Vec3){ v.x, v.y, v.z };
+	return vec3( v.x, v.y, v.z );
 }
 
 Vec4 vec2to4(Vec2 v)
 {
-	return (Vec4){ v.x, v.y, 0.0f, 0.0f };
+	return vec4( v.x, v.y, 0.0f, 0.0f );
 }
 
 Vec4 vec3to4(Vec3 v)
 {
-	return (Vec4){ v.x, v.y, v.z, 0.0f };
+	return vec4( v.x, v.y, v.z, 0.0f );
 }
 
 float dot_product_vec2(Vec2 a, Vec2 b)
@@ -298,123 +298,122 @@ Vec4 clamp_vec4(Vec4 v, Vec4 min, Vec4 max)
 
 Vec2 add_vec2(Vec2 a, Vec2 b)
 {
-	return (Vec2){ a.x + b.x, a.y + b.y };
+	return vec2( a.x + b.x, a.y + b.y );
 }
 
 Vec2 sub_vec2(Vec2 a, Vec2 b)
 {
-	return (Vec2){ a.x - b.x, a.y - b.y };
+	return vec2( a.x - b.x, a.y - b.y );
 }
 
 Vec2 mul_vec2(Vec2 a, Vec2 b)
 {
-	return (Vec2){ a.x * b.x, a.y * b.y };
+	return vec2( a.x * b.x, a.y * b.y );
 }
 
 Vec2 div_vec2(Vec2 a, Vec2 b)
 {
-	return (Vec2){ a.x / b.x, a.y / b.y };
+	return vec2( a.x / b.x, a.y / b.y );
 }
 
 Vec2 add_vec2_f(Vec2 a, float b)
 {
-
-	return (Vec2){ a.x + b, a.y + b };
+	return vec2( a.x + b, a.y + b );
 }
 
 Vec2 sub_vec2_f(Vec2 a, float b)
 {
-	return (Vec2){ a.x - b, a.y - b };
+	return vec2( a.x - b, a.y - b );
 }
 
 Vec2 mul_vec2_f(Vec2 a, float b)
 {
-	return (Vec2){ a.x * b, a.y * b };
+	return vec2( a.x * b, a.y * b );
 }
 
 Vec2 div_vec2_f(Vec2 a, float b)
 {
-	return (Vec2){ a.x / b, a.y / b };
+	return vec2( a.x / b, a.y / b );
 }
 
 Vec3 add_vec3(Vec3 a, Vec3 b)
 {
-	return (Vec3){ a.x + b.x, a.y + b.y, a.z + b.z };
+	return vec3( a.x + b.x, a.y + b.y, a.z + b.z );
 }
 
 Vec3 sub_vec3(Vec3 a, Vec3 b)
 {
-	return (Vec3){ a.x - b.x, a.y - b.y, a.z - b.z };
+	return vec3( a.x - b.x, a.y - b.y, a.z - b.z );
 }
 
 Vec3 mul_vec3(Vec3 a, Vec3 b)
 {
-	return (Vec3){ a.x * b.x, a.y * b.y, a.z * b.z };
+	return vec3( a.x * b.x, a.y * b.y, a.z * b.z );
 }
 
 Vec3 vec3_div(Vec3 a, Vec3 b)
 {
-	return (Vec3){ a.x / b.x, a.y / b.y, a.z / b.z };
+	return vec3( a.x / b.x, a.y / b.y, a.z / b.z );
 }
 
 Vec3 add_vec3_f(Vec3 a, float b)
 {
-	return (Vec3){ a.x + b, a.y + b, a.z + b };
+	return vec3( a.x + b, a.y + b, a.z + b );
 }
 
 Vec3 subf_vec3(Vec3 a, float b)
 {
-	return (Vec3){ a.x - b, a.y - b, a.z - b };
+	return vec3( a.x - b, a.y - b, a.z - b );
 }
 
 Vec3 mul_vec3_f(Vec3 a, float b)
 {
-	return (Vec3){ a.x * b, a.y * b, a.z * b };
+	return vec3( a.x * b, a.y * b, a.z * b );
 }
 
 Vec3 div_vec3_f(Vec3 a, float b)
 {
-	return (Vec3){ a.x / b, a.y / b, a.z / b };
+	return vec3( a.x / b, a.y / b, a.z / b );
 }
 
 Vec4 add_vec4(Vec4 a, Vec4 b)
 {
-	return (Vec4){ a.x + b.x, a.y + b.y, a.z + b.z, a.w + b.w };
+	return vec4( a.x + b.x, a.y + b.y, a.z + b.z, a.w + b.w );
 }
 
 Vec4 sub_vec4(Vec4 a, Vec4 b)
 {
-	return (Vec4){ a.x - b.x, a.y - b.y, a.z - b.z, a.w - b.w };
+	return vec4( a.x - b.x, a.y - b.y, a.z - b.z, a.w - b.w );
 }
 
 Vec4 mul_vec4(Vec4 a, Vec4 b)
 {
-	return (Vec4){ a.x * b.x, a.y * b.y, a.z * b.z, a.w * b.w };
+	return vec4 (a.x * b.x, a.y * b.y, a.z * b.z, a.w * b.w );
 }
 
 Vec4 div_vec4(Vec4 a, Vec4 b)
 {
-	return (Vec4){ a.x / b.x, a.y / b.y, a.z / b.z, a.w / b.w };
+	return vec4 (a.x / b.x, a.y / b.y, a.z / b.z, a.w / b.w );
 }
 
 Vec4 add_vec4_f(Vec4 a, float b)
 {
-	return (Vec4){ a.x + b, a.y + b, a.z + b, a.w + b };
+	return vec4( a.x + b, a.y + b, a.z + b, a.w + b );
 }
 
 Vec4 sub_vec4_f(Vec4 a, float b)
 {
-	return (Vec4){ a.x - b, a.y - b, a.z - b, a.w - b };
+	return vec4(a.x - b, a.y - b, a.z - b, a.w - b );
 }
 
 Vec4 mul_vec4_f(Vec4 a, float b)
 {
-	return (Vec4){ a.x * b, a.y * b, a.z * b, a.w * b };
+	return vec4( a.x * b, a.y * b, a.z * b, a.w * b );
 }
 
 Vec4 div_vec4_f(Vec4 a, float b)
 {
-	return (Vec4){ a.x / b, a.y / b, a.z / b, a.w / b };
+	return vec4( a.x / b, a.y / b, a.z / b, a.w / b );
 }
 
 Mat4 mul_mat4(Mat4 a, Mat4 b)
@@ -1008,8 +1007,8 @@ void order_vec3(Vec3 *p0, Vec3 *p1)
 
 Vec2 line_line_intersect_point(Vec2 p0, Vec2 p1, Vec2 q0, Vec2 q1)
 {
-	float pa = p1.x - p0.x;
-	float pb = p1.y - p0.y;
+	//float pa = p1.x - p0.x;
+	//float pb = p1.y - p0.y;
 
 	// using Y = MX + B to solve
 	// MX - Y + B = 0

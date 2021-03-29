@@ -6,7 +6,6 @@
 static int init_kek(int argc, char **argv);
 static int run_kek(void);
 static int terminate(void);
-static void kek_print_screen_size(void);
 
 extern int kek_user_pre_init(int argc, char **argv);
 extern int kek_user_enter(int argc, char **argv);
