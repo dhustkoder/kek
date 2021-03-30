@@ -47,8 +47,18 @@ add_library(kek_lib STATIC ${KEK_SOURCE} ${PAL_SOURCE} ${KUT_SOURCE})
 #linking
 target_link_libraries(kek_lib ${PAL_LIBRARIES})
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 -Wall -Wextra -O3 -ggdb -pedantic")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -O3 -ggdb -pedantic")
+#examples
+add_executable(example example/example.c)
+target_link_libraries(example kek_lib ${PAL_LIBRARIES})
+
+
+if(MSVC)
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /W3 /Ox /DEBUG:FULL /DDEBUG")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W3 /Ox /DEBUG:FULL /DDEBUG")
+else()
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 -Wall -Wextra -O3 -ggdb -pedantic")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -O3 -ggdb -pedantic")
+endif()
 
 add_compile_definitions(PAL_USE_GLFW)
 add_compile_definitions(PAL_USE_OPENGL)

@@ -122,8 +122,12 @@ void garbage_collect_scene(int sceneid)
     while(entity)
     {
         Entity *next = entity->scene_next_entity;
-
+#ifdef _MSC_VER
+#pragma message("MUST HANDLE TILEMAP DELETIONS HERE AS WELL")
+#else
 #warning MUST HANDLE TILEMAP DELETIONS HERE AS WELL
+#endif
+
         if(entity->destroy)
         {
             assert(scene->entity_count > 0);

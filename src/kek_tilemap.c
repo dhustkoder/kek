@@ -46,12 +46,12 @@ void destroy_tilemap(int id)
 
 TilemapSpritesheetClip get_tilemap_cell_clip(int id, int cellx, int celly)
 {
+    Tilemap *tilemap = mempool_get_addr(&pool, id);
+
     assert(cellx >= 0);
     assert(celly >= 0);
     assert(cellx < tilemap->num_cells_x);
     assert(celly < tilemap->num_cells_y);
-
-    Tilemap *tilemap = mempool_get_addr(&pool, id);
 
     int offset = celly * tilemap->num_cells_x + cellx;
 
@@ -97,12 +97,12 @@ Tilemap *get_tilemap(int id)
 
 void tilemap_cell_index(int id, int cellx, int celly, int index)
 {
+    Tilemap *tilemap = mempool_get_addr(&pool, id);
+
     assert(cellx >= 0);
     assert(celly >= 0);
     assert(cellx < tilemap->num_cells_x);
     assert(celly < tilemap->num_cells_y);
-
-    Tilemap *tilemap = mempool_get_addr(&pool, id);
 
     int offset = celly * tilemap->num_cells_x + cellx;
 
